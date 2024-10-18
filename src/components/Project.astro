@@ -1,0 +1,85 @@
+---
+interface Props {
+	title: string;
+    date: string;
+    img: string;
+	href: string;
+}
+
+const { title, date, img, href } = Astro.props;
+---
+
+<div class="grid-element" style=`grid-area: ${title}`>
+    <div>
+        <div class="inset">
+            <img src={img} alt={img} >
+            <span>
+                <p>{title}</p>
+                <p style="color: gray;">{date}</p>
+            </span>
+        </div>
+    </div>
+        <a href={href}>
+            View Production
+        </a>
+</div>
+
+<style>
+    .grid-element > div {
+        height: 100%;
+        z-index: 10;
+    }
+    .inset {
+        width: 100%;
+        height: 100%;
+        box-shadow: inset 0px -70px 20px -20px rgba(0, 0, 0, 0.75);
+        position: relative;
+        border-radius: 1.5rem;
+        padding: 2px;
+    }
+    span {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        position: absolute;
+        width: -webkit-fill-available;
+        bottom: 1rem;
+        margin: 0 1rem;
+    }
+    p {
+        font-size: 26px;
+        color: white;
+        text-align: center;
+        margin: 0;
+    }
+    .grid-element {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        border: 3px solid rgba(24, 24, 24, 1);
+        border-radius: 1.5rem;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        overflow: hidden;
+        padding: 0.7rem;
+        gap: 1vh;
+    }
+    .grid-element > a {
+        background-color: rgba(14, 14, 14, 1);
+        border-radius: 1.5rem;
+        color: white;
+        text-decoration: none;
+        text-align: center;
+        width: 100%;
+        padding: 1vh 0;
+    } 
+    img {
+        position: relative;
+        width: inherit;
+        height: inherit;
+        object-fit: cover;
+        border-radius: 1.5rem;
+        filter: blur(1px);
+        z-index: -1;
+    }
+</style>
