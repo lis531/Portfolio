@@ -4,15 +4,19 @@ interface Props {
     date: string;
     img: string;
     href: string;
+    hrefTryOut: string;
 }
 
-const { title, date, img, href } = Astro.props;
+const { title, date, img, href, hrefTryOut } = Astro.props;
+const images = import.meta.glob('/public/images/*/*.{jpg,png,jpeg,gif,webp}');
+const imageUrls = Object.keys(images).map((imagePath) => imagePath.replace('/public', ''));
+const filteredImageUrls = imageUrls.filter(url => url.startsWith(`/images/${title}/`));
 ---
 
 <button class="grid-element" id={title} style={`grid-area: ${title}`}>
     <div>
         <div class="inset">
-            <img src={img} alt={img} id={`button-img-${title}`} data-view-transition-name={`img-${title}`}>
+            <img src={img} alt={img} id={`button-img-${title}`} />
             <span>
                 <p>{title}</p>
                 <p style="color: gray;">{date}</p>
@@ -23,65 +27,152 @@ const { title, date, img, href } = Astro.props;
         View Production
     </a>
 </button>
-<!-- <dialog id={`dialog-${title}`} class="dialog">
+<dialog id={`dialog-${title}`} class="dialog">
     <div>
-        <img src={img} alt={img} id={`dialog-img-${title}`} style="width: 100%; height: 100%; object-fit: cover; border-radius: 1.5rem;" data-view-transition-name={`img-${title}`}>
+        <div class="images">
+            <button class="prev-button">&lt;</button>
+            {filteredImageUrls.map((url, index) => (
+                <img src={url} alt={url} class={index === 0 ? 'fade-in' : 'fade-out'} style="display: none;" />
+            ))}
+            <button class="next-button">&gt;</button>
+        </div>
+
         <h1>{title}</h1>
         <p>Click the button below to view the production.</p>
-        <a href={href}>
-            View Production
-        </a>
+        <br>
+        <div class="dialog-buttons">
+            <a href={href}>
+                View Production
+            </a>
+            {hrefTryOut !== '' ? <a href={hrefTryOut}>Try out</a> : ''}
+        </div>
     </div>
-</dialog> -->
-<!-- <script>
+</dialog>
+
+<script>
     const gridElements = document.querySelectorAll('.grid-element');
     gridElements.forEach(element => {
         element.addEventListener('click', (e) => {
-            const target = e.currentTarget;
-            const dialog = document.getElementById(`dialog-${target.id}`);
+            let currentIndex = 0;
+            const target = e.currentTarget as HTMLElement;
+            const dialog = document.getElementById(`dialog-${target.id}`) as HTMLDialogElement;
+            const images = dialog.querySelectorAll('.images img') as NodeListOf<HTMLImageElement>;
 
-            dialog.classList.add('fade-in');
+            for (let i = 0; i < images.length; i++) {
+                if(i != 0) {
+                    images[i].style.display = 'none';
+                } else {
+                    images[i].style.display = 'block';
+                }
+                images[i].classList.remove('fade-out');
+            }
+
             dialog.showModal();
             document.body.style.overflow = 'hidden';
 
             document.body.addEventListener('click', (e) => {
                 if (e.target === dialog) {
-                    dialog.classList.remove('fade-in');
                     dialog.classList.add('fade-out');
                     setTimeout(() => {
                         dialog.close();
                         dialog.classList.remove('fade-out');
                         document.body.style.overflow = 'auto';
-                    }, 300);
+                    }, 290);
                 }
+            });
+
+            const prevButton = dialog.querySelector('.prev-button') as HTMLButtonElement;
+            const nextButton = dialog.querySelector('.next-button') as HTMLButtonElement;
+            
+            const updateImageDisplay = (newIndex: number) => {
+                images[currentIndex].classList.remove('fade-in');
+                images[currentIndex].classList.add('fade-out');
+
+                setTimeout(() => {
+                    images[currentIndex].style.display = 'none';
+                    currentIndex = newIndex;
+                    images[currentIndex].style.display = 'block';
+                    images[currentIndex].classList.remove('fade-out');
+                    images[currentIndex].classList.add('fade-in');
+                }, 290);
+            };
+
+            prevButton.addEventListener('click', () => {
+                if (images[currentIndex].classList.contains('fade-out')) return;
+                const newIndex = (currentIndex > 0) ? currentIndex - 1 : images.length - 1;
+                updateImageDisplay(newIndex);                
+            });
+
+            nextButton.addEventListener('click', () => {
+                if (images[currentIndex].classList.contains('fade-out')) return;
+                const newIndex = (currentIndex < images.length - 1) ? currentIndex + 1 : 0;
+                updateImageDisplay(newIndex);
             });
         });
     });
-</script> -->
+</script>
 
 <style>
-    .dialog {
-        z-index: 100;
+    .images {
+        position: relative;
+        width: 100%;
+        height: 38vh;
+        object-fit: cover;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: row;
+        overflow: hidden;
+    }
+    .images > img {
+        border-radius: 1.5rem;
+        display: none;
+        max-width: -webkit-fill-available;
+        max-height: -webkit-fill-available;
+        z-index: -10;
+    }
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+        }
+        to {
+            opacity: 1;
+        }
+    }
+    @keyframes fadeOut {
+        from {
+            opacity: 1;
+        }
+        to {
+            opacity: 0;
+        }
+    }
+    .fade-out {
+        animation: fadeOut 0.3s;
+    }
+    .fade-out::backdrop {
+        animation: fadeOut 0.3s;
+    }
+    .fade-in {
+        animation: fadeIn 0.3s;
+    }
+    dialog {
+        animation: fadeIn 0.3s;
+    }
+    dialog {
         background-color: rgba(0, 0, 0, 0.75);
         color: white;
         text-align: center;
-        width: 40%;
+        padding: 0;
         border: none;
         border-radius: 1.5rem;
-        box-shadow: 0 0 15px 5px rgba(0, 0, 0, 0.5);
-        padding: 0;
-        opacity: 0;
-        transition: opacity 0.3s ease;
+        width: 40%;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
     }
-
-    .dialog.fade-in {
-        opacity: 1;
+    dialog h1 {
+        font-size: 64px;
+        margin-top: 0;
     }
-
-    .dialog.fade-out {
-        opacity: 0;
-    }
-
     dialog > div {
         border: 3px solid rgba(24, 24, 24, 1);
         padding: 1.5rem;
@@ -92,7 +183,13 @@ const { title, date, img, href } = Astro.props;
         justify-content: center;
         gap: 1rem;
     }
-    dialog > div > a {
+    .dialog-buttons {
+        display: flex;
+        width: 100%;
+        flex-direction: row;
+        gap: 1rem;
+    }
+    .dialog-buttons > a {
         display: block;
         background-color: rgba(14, 14, 14, 1);
         border-radius: 1.5rem;
@@ -102,15 +199,38 @@ const { title, date, img, href } = Astro.props;
         width: 100%;
         padding: 1vh 0;
     }
-    dialog > div > img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        border-radius: 1.5rem;
-    }
     dialog::backdrop {
         background-color: rgba(0, 0, 0, 0.75);
         backdrop-filter: blur(10px);
+        animation: fadeIn 0.3s;
+    }
+    .next-button, .prev-button {
+        user-select: none;
+        position: absolute;
+        border-radius: 100rem;
+        font-size: x-large;
+        color: white;
+        text-decoration: none;
+        text-align: center;
+        width: 3rem;
+        height: 3rem;
+        cursor: pointer;
+        border: none;
+        background-color: rgba(32, 32, 32, 0.6);
+        box-shadow: inset 0px 0px 15px 0px rgba(72, 72, 72, 0.5);
+        backdrop-filter: blur(4px);
+    }
+    .next-button {
+        right: 1vw;
+    }
+    .prev-button {
+        left: 1vw;
+    }
+    p {
+        font-size: 26px;
+        color: white;
+        text-align: center;
+        margin: 0;
     }
     .grid-element > div {
         height: 100%;
@@ -163,7 +283,7 @@ const { title, date, img, href } = Astro.props;
         width: 100%;
         padding: 1vh 0;
     } 
-    img {
+    .inset > img {
         position: relative;
         width: inherit;
         height: inherit;
@@ -171,5 +291,27 @@ const { title, date, img, href } = Astro.props;
         border-radius: 1.5rem;
         filter: blur(1px);
         z-index: -1;
+    }
+    @media screen and (max-width: 600px) {
+        dialog {
+            width: 90%;
+        }
+        .images {
+            height: 30vh;
+        }
+        .grid-element {
+            padding: 0.5rem;
+        }
+        .inset {
+            padding: 1px;
+        }
+        .inset > img {
+            filter: blur(0.5px);
+        }
+        .next-button, .prev-button {
+            width: 2rem;
+            height: 2rem;
+            font-size: large;
+        }
     }
 </style>

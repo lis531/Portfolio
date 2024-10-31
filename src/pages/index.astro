@@ -40,29 +40,33 @@ import NavBar from '../components/NavBar.astro';
 					title="Borufi"
 					date="June 2023"
 					date="January 2024"
-					img="/images/borufi.png"
+					img="/images/Borufi/main.png"
 					href="https://github.com/lis531/borufi"
+					hrefTryOut="https://borufi.netlify.app/"
 				/>
 				<Project
 					title="SchoolProjects"
 					date="2022 - now"
 					date="2022 - 2024"
-					img="/images/schoolProjectBg.png"
+					img="/images/SchoolProjects/main.png"
 					href="https://github.com/lis531/schoolProjects"
+					hrefTryOut='https://lis531.github.io/schoolProjects/'
 				/>
 				<Project
-					title="SnakeTheGame"
+					title="SnakeTHEgame"
 					date="N/A"
-					img="/images/snake.png"
+					img="/images/SnakeTHEgame/snake.png"
 					href="https://github.com/lis531/borufi"
 					href="https://github.com/lis531/SnakeTHEgame"
+					hrefTryOut=''
 				/>
 				<Project
 					title="TechNews"
 					date="June 2023"
-					img="/images/techNewsBg.png"
+					img="/images/TechNews/main.png"
 					href="https://github.com/lis531/borufi"
 					href="https://github.com/lis531/TechNews"
+					hrefTryOut='https://lis531.github.io/TechNews/'
 				/>
 			</div>
 		</div>
@@ -113,7 +117,7 @@ import NavBar from '../components/NavBar.astro';
   		gap: 1em 1em; 
   		grid-template-areas: 
   		  	"Borufi Borufi Borufi SchoolProjects SchoolProjects"
-  		  	"SnakeTheGame SnakeTheGame TechNews TechNews TechNews"
+  		  	"SnakeTHEgame SnakeTHEgame TechNews TechNews TechNews"
 	}
 	@media screen and (max-width: 600px) {
 		.grid {
@@ -121,9 +125,12 @@ import NavBar from '../components/NavBar.astro';
 				"Borufi"
 				"SchoolProjects"
 				"TechNews"
-				"SnakeTheGame";
+				"SnakeTHEgame";
 			grid-template-rows: repeat(4, 1fr);
 			margin: 3px;
+		}
+		.space-end {
+			padding: 25vh 0 !important;
 		}
 	}
 	.contact {
