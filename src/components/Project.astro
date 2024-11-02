@@ -16,7 +16,7 @@ const filteredImageUrls = imageUrls.filter(url => url.startsWith(`/images/${titl
 <button class="grid-element" id={title} style={`grid-area: ${title}`}>
     <div>
         <div class="inset">
-            <img src={img} alt={img} id={`button-img-${title}`} />
+            <img src={img} alt={img} id={`button-img-${title}`} transition:name={img} />
             <span>
                 <p>{title}</p>
                 <p style="color: gray;">{date}</p>
@@ -27,12 +27,12 @@ const filteredImageUrls = imageUrls.filter(url => url.startsWith(`/images/${titl
         View Production
     </a>
 </button>
-<dialog id={`dialog-${title}`} class="dialog">
+<dialog id={`dialog-${title}`} class="dialog" data-current-index="0">
     <div>
         <div class="images">
             <button class="prev-button">&lt;</button>
             {filteredImageUrls.map((url, index) => (
-                <img src={url} alt={url} class={index === 0 ? 'fade-in' : 'fade-out'} style="display: none;" />
+                <img src={url} alt={url} transition:name={img} class={index === 0 ? 'fade-in' : 'fade-out'} style={index === 0 ? 'display: block;' : 'display: none;'} />
             ))}
             <button class="next-button">&gt;</button>
         </div>
@@ -53,24 +53,23 @@ const filteredImageUrls = imageUrls.filter(url => url.startsWith(`/images/${titl
     const gridElements = document.querySelectorAll('.grid-element');
     gridElements.forEach(element => {
         element.addEventListener('click', (e) => {
-            let currentIndex = 0;
+            if(e.target instanceof HTMLAnchorElement) return;
+
             const target = e.currentTarget as HTMLElement;
             const dialog = document.getElementById(`dialog-${target.id}`) as HTMLDialogElement;
             const images = dialog.querySelectorAll('.images img') as NodeListOf<HTMLImageElement>;
 
-            for (let i = 0; i < images.length; i++) {
-                if(i != 0) {
-                    images[i].style.display = 'none';
-                } else {
-                    images[i].style.display = 'block';
-                }
-                images[i].classList.remove('fade-out');
-            }
+            images.forEach((img, i) => {
+                img.style.display = i === 0 ? 'block' : 'none';
+                img.classList.toggle('fade-in', i === 0);
+                img.classList.remove('fade-out');
+            });
 
+            dialog.dataset.currentIndex = '0';
             dialog.showModal();
             document.body.style.overflow = 'hidden';
 
-            document.body.addEventListener('click', (e) => {
+            const handleDialogClose = (e) => {
                 if (e.target === dialog) {
                     dialog.classList.add('fade-out');
                     setTimeout(() => {
@@ -79,38 +78,57 @@ const filteredImageUrls = imageUrls.filter(url => url.startsWith(`/images/${titl
                         document.body.style.overflow = 'auto';
                     }, 290);
                 }
-            });
+            };
+
+            document.body.removeEventListener('click', handleDialogClose);
+            document.body.addEventListener('click', handleDialogClose);
 
             const prevButton = dialog.querySelector('.prev-button') as HTMLButtonElement;
             const nextButton = dialog.querySelector('.next-button') as HTMLButtonElement;
-            
-            const updateImageDisplay = (newIndex: number) => {
-                images[currentIndex].classList.remove('fade-in');
-                images[currentIndex].classList.add('fade-out');
 
-                setTimeout(() => {
-                    images[currentIndex].style.display = 'none';
-                    currentIndex = newIndex;
-                    images[currentIndex].style.display = 'block';
-                    images[currentIndex].classList.remove('fade-out');
-                    images[currentIndex].classList.add('fade-in');
-                }, 290);
-            };
+            prevButton.style.display = images.length > 1 ? 'block' : 'none';
+            nextButton.style.display = images.length > 1 ? 'block' : 'none';
 
-            prevButton.addEventListener('click', () => {
-                if (images[currentIndex].classList.contains('fade-out')) return;
-                const newIndex = (currentIndex > 0) ? currentIndex - 1 : images.length - 1;
-                updateImageDisplay(newIndex);                
-            });
+            if (images.length <= 1) return;
 
-            nextButton.addEventListener('click', () => {
-                if (images[currentIndex].classList.contains('fade-out')) return;
-                const newIndex = (currentIndex < images.length - 1) ? currentIndex + 1 : 0;
-                updateImageDisplay(newIndex);
-            });
+            if (!dialog.dataset.listenersAdded) {
+                const updateImageDisplay = (newIndex) => {
+                    const currentIndex = parseInt(dialog.dataset.currentIndex);
+                    images[currentIndex].classList.remove('fade-in');
+                    images[currentIndex].classList.add('fade-out');
+
+                    setTimeout(() => {
+                        images[currentIndex].style.display = 'none';
+                        images[newIndex].style.display = 'block';
+                        images[newIndex].classList.remove('fade-out');
+                        images[newIndex].classList.add('fade-in');
+                        dialog.dataset.currentIndex = newIndex.toString();
+                    }, 290);
+                };
+
+                const handlePrevClick = () => {
+                    const currentIndex = parseInt(dialog.dataset.currentIndex);
+                    if (images[currentIndex].classList.contains('fade-out')) return;
+                    const newIndex = (currentIndex > 0) ? currentIndex - 1 : images.length - 1;
+                    updateImageDisplay(newIndex);
+                };
+
+                const handleNextClick = () => {
+                    const currentIndex = parseInt(dialog.dataset.currentIndex);
+                    if (images[currentIndex].classList.contains('fade-out')) return;
+                    const newIndex = (currentIndex < images.length - 1) ? currentIndex + 1 : 0;
+                    updateImageDisplay(newIndex);
+                };
+
+                prevButton.addEventListener('click', handlePrevClick);
+                nextButton.addEventListener('click', handleNextClick);
+
+                dialog.dataset.listenersAdded = 'true';
+            }
         });
     });
 </script>
+
 
 <style>
     .images {
@@ -232,10 +250,6 @@ const filteredImageUrls = imageUrls.filter(url => url.startsWith(`/images/${titl
         text-align: center;
         margin: 0;
     }
-    .grid-element > div {
-        height: 100%;
-        z-index: 10;
-    }
     .inset {
         width: 100%;
         height: 100%;
@@ -273,6 +287,9 @@ const filteredImageUrls = imageUrls.filter(url => url.startsWith(`/images/${titl
         font-family: inherit;
         background-color: inherit;
         cursor: pointer;
+    }
+    .grid-element > div {
+        height: 100%;
     }
     .grid-element > a {
         background-color: rgba(14, 14, 14, 1);
