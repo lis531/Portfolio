@@ -16,7 +16,7 @@ const filteredImageUrls = imageUrls.filter(url => url.startsWith(`/images/${titl
 <button class="grid-element" id={title} style={`grid-area: ${title}`}>
     <div>
         <div class="inset">
-            <img src={img} alt={img} id={`button-img-${title}`} transition:name={img} />
+            <img src={img} alt={img} id={`button-img-${title}`} />
             <span>
                 <p>{title}</p>
                 <p style="color: gray;">{date}</p>
@@ -32,7 +32,7 @@ const filteredImageUrls = imageUrls.filter(url => url.startsWith(`/images/${titl
         <div class="images">
             <button class="prev-button">&lt;</button>
             {filteredImageUrls.map((url, index) => (
-                <img src={url} alt={url} transition:name={img} class={index === 0 ? 'fade-in' : 'fade-out'} style={index === 0 ? 'display: block;' : 'display: none;'} />
+                <img src={url} alt={url} class={index === 0 ? 'fade-in' : 'fade-out'} style={index === 0 ? 'display: block;' : 'display: none;'} />
             ))}
             <button class="next-button">&gt;</button>
         </div>
@@ -69,14 +69,14 @@ const filteredImageUrls = imageUrls.filter(url => url.startsWith(`/images/${titl
             dialog.showModal();
             document.body.style.overflow = 'hidden';
 
-            const handleDialogClose = (e) => {
+            const handleDialogClose = (e: Event) => {
                 if (e.target === dialog) {
                     dialog.classList.add('fade-out');
                     setTimeout(() => {
                         dialog.close();
                         dialog.classList.remove('fade-out');
                         document.body.style.overflow = 'auto';
-                    }, 290);
+                    }, 300);
                 }
             };
 
@@ -92,8 +92,8 @@ const filteredImageUrls = imageUrls.filter(url => url.startsWith(`/images/${titl
             if (images.length <= 1) return;
 
             if (!dialog.dataset.listenersAdded) {
-                const updateImageDisplay = (newIndex) => {
-                    const currentIndex = parseInt(dialog.dataset.currentIndex);
+                const updateImageDisplay = (newIndex: number) => {
+                    const currentIndex = parseInt(dialog.dataset.currentIndex || '0');
                     images[currentIndex].classList.remove('fade-in');
                     images[currentIndex].classList.add('fade-out');
 
@@ -103,18 +103,18 @@ const filteredImageUrls = imageUrls.filter(url => url.startsWith(`/images/${titl
                         images[newIndex].classList.remove('fade-out');
                         images[newIndex].classList.add('fade-in');
                         dialog.dataset.currentIndex = newIndex.toString();
-                    }, 290);
+                    }, 300);
                 };
 
                 const handlePrevClick = () => {
-                    const currentIndex = parseInt(dialog.dataset.currentIndex);
+                    const currentIndex = parseInt(dialog.dataset.currentIndex || '0');
                     if (images[currentIndex].classList.contains('fade-out')) return;
                     const newIndex = (currentIndex > 0) ? currentIndex - 1 : images.length - 1;
                     updateImageDisplay(newIndex);
                 };
 
                 const handleNextClick = () => {
-                    const currentIndex = parseInt(dialog.dataset.currentIndex);
+                    const currentIndex = parseInt(dialog.dataset.currentIndex || '0');
                     if (images[currentIndex].classList.contains('fade-out')) return;
                     const newIndex = (currentIndex < images.length - 1) ? currentIndex + 1 : 0;
                     updateImageDisplay(newIndex);
@@ -146,8 +146,9 @@ const filteredImageUrls = imageUrls.filter(url => url.startsWith(`/images/${titl
         border-radius: 1.5rem;
         display: none;
         max-width: -webkit-fill-available;
+        max-width: -moz-available;
         max-height: -webkit-fill-available;
-        z-index: -10;
+        max-height: -moz-available;
     }
     @keyframes fadeIn {
         from {
@@ -165,6 +166,22 @@ const filteredImageUrls = imageUrls.filter(url => url.startsWith(`/images/${titl
             opacity: 0;
         }
     }
+    @keyframes transformIn {
+        from {
+            transform: translate3d(0, 100%, 0);
+        }
+        to {
+            transform: translate3d(0, 0, 0);
+        }
+    }
+    @keyframes transformOut {
+        from {
+            transform: translate3d(0, 0, 0);
+        }
+        to {
+            transform: translate3d(0, 100%, 0);
+        }
+    }
     .fade-out {
         animation: fadeOut 0.3s;
     }
@@ -174,32 +191,56 @@ const filteredImageUrls = imageUrls.filter(url => url.startsWith(`/images/${titl
     .fade-in {
         animation: fadeIn 0.3s;
     }
-    dialog {
+    .fade-in::backdrop {
         animation: fadeIn 0.3s;
     }
+
+    .fade-in > div {
+        animation: transformIn 0.3s;
+    }
+    .fade-out > div {
+        animation: transformOut 0.3s;
+    }
+
     dialog {
-        background-color: rgba(0, 0, 0, 0.75);
+        animation: fadeIn 0.3s;
         color: white;
         text-align: center;
         padding: 0;
         border: none;
         border-radius: 1.5rem;
-        width: 40%;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-    }
-    dialog h1 {
-        font-size: 64px;
-        margin-top: 0;
-    }
-    dialog > div {
-        border: 3px solid rgba(24, 24, 24, 1);
-        padding: 1.5rem;
-        border-radius: 1.5rem;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        gap: 1rem;
+        background: transparent;
+        justify-items: center;
+        align-content: center;
+        margin: 0;
+        width: 100%;
+        height: 100%;
+        max-width: none;
+        max-height: none;
+        overflow: hidden;
+        & h1 {
+            font-size: 64px;
+            margin-top: 0;
+        }
+        & > div {
+            width: 40%;
+            animation: transformIn 0.3s;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            background-color: rgba(0, 0, 0, 0.75);
+            border: 3px solid rgba(24, 24, 24, 1);
+            padding: 1.5rem;
+            border-radius: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+        }
+        &::backdrop {
+            background-color: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(10px);
+            animation: fadeIn 0.3s;
+        }
     }
     .dialog-buttons {
         display: flex;
@@ -208,19 +249,15 @@ const filteredImageUrls = imageUrls.filter(url => url.startsWith(`/images/${titl
         gap: 1rem;
     }
     .dialog-buttons > a {
-        display: block;
+        display: flex;
+        justify-content: center;
+        align-items: center;
         background-color: rgba(14, 14, 14, 1);
         border-radius: 1.5rem;
         color: white;
         text-decoration: none;
-        text-align: center;
         width: 100%;
         padding: 1vh 0;
-    }
-    dialog::backdrop {
-        background-color: rgba(0, 0, 0, 0.75);
-        backdrop-filter: blur(10px);
-        animation: fadeIn 0.3s;
     }
     .next-button, .prev-button {
         user-select: none;
@@ -237,6 +274,7 @@ const filteredImageUrls = imageUrls.filter(url => url.startsWith(`/images/${titl
         background-color: rgba(32, 32, 32, 0.6);
         box-shadow: inset 0px 0px 15px 0px rgba(72, 72, 72, 0.5);
         backdrop-filter: blur(4px);
+        z-index: 10;
     }
     .next-button {
         right: 1vw;
@@ -264,6 +302,7 @@ const filteredImageUrls = imageUrls.filter(url => url.startsWith(`/images/${titl
         justify-content: space-between;
         position: absolute;
         width: -webkit-fill-available;
+        width: -moz-available;
         bottom: 1rem;
         margin: 0 1rem;
     }
@@ -287,19 +326,19 @@ const filteredImageUrls = imageUrls.filter(url => url.startsWith(`/images/${titl
         font-family: inherit;
         background-color: inherit;
         cursor: pointer;
+        & > div {
+            height: 100%;
+        }
+        & > a {
+            background-color: rgba(14, 14, 14, 1);
+            border-radius: 1.5rem;
+            color: white;
+            text-decoration: none;
+            text-align: center;
+            width: 100%;
+            padding: 1vh 0;
+        }
     }
-    .grid-element > div {
-        height: 100%;
-    }
-    .grid-element > a {
-        background-color: rgba(14, 14, 14, 1);
-        border-radius: 1.5rem;
-        color: white;
-        text-decoration: none;
-        text-align: center;
-        width: 100%;
-        padding: 1vh 0;
-    } 
     .inset > img {
         position: relative;
         width: inherit;
@@ -311,7 +350,9 @@ const filteredImageUrls = imageUrls.filter(url => url.startsWith(`/images/${titl
     }
     @media screen and (max-width: 600px) {
         dialog {
-            width: 90%;
+            & > div {
+                width: 80%;
+            }
         }
         .images {
             height: 30vh;
