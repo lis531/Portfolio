@@ -5,17 +5,15 @@ import NavBar from '../components/NavBar.astro';
 ---
 
 <!-- <script>
-	const grid = document.querySelector('.grid');
+	const grid = document.getElementsByClassName('grid')[0];
 	grid.addEventListener('mousemove', (e) => {
 		const gridElement = e.target.closest('.grid-element');
 		if (!gridElement) return;
 		
-		// Calculate the mouse position relative to the grid element
 		const rect = gridElement.getBoundingClientRect();
 		const xPos = e.clientX - rect.left;
 		const yPos = e.clientY - rect.top;
 		
-		// Set CSS variables for the position of the gradient
 		gridElement.style.setProperty('--xPos', `${xPos}px`);
 		gridElement.style.setProperty('--yPos', `${yPos}px`);
 	});
@@ -42,31 +40,28 @@ import NavBar from '../components/NavBar.astro';
 					date="January 2024"
 					img="/images/Borufi/main.png"
 					href="https://github.com/lis531/borufi"
-					hrefTryOut="https://borufi.netlify.app/"
+					hrefTryOut="https://borufi.netlify.app"
 				/>
 				<Project
 					title="SchoolProjects"
-					date="2022 - now"
 					date="2022 - 2024"
 					img="/images/SchoolProjects/main.png"
 					href="https://github.com/lis531/schoolProjects"
-					hrefTryOut='https://lis531.github.io/schoolProjects/'
+					hrefTryOut='https://lis531.github.io/schoolProjects'
 				/>
 				<Project
-					title="SnakeTHEgame"
-					date="N/A"
-					img="/images/SnakeTHEgame/snake.png"
-					href="https://github.com/lis531/borufi"
-					href="https://github.com/lis531/SnakeTHEgame"
-					hrefTryOut=''
+					title="TicTacToe"
+					date="November 2024"
+					img="/images/TicTacToe/main.png"
+					href="https://github.com/lis531/Tic-tac-toe"
+					hrefTryOut='https://lis531.vercel.app'
 				/>
 				<Project
 					title="TechNews"
 					date="June 2023"
 					img="/images/TechNews/main.png"
-					href="https://github.com/lis531/borufi"
 					href="https://github.com/lis531/TechNews"
-					hrefTryOut='https://lis531.github.io/TechNews/'
+					hrefTryOut='https://lis531.github.io/TechNews'
 				/>
 			</div>
 		</div>
@@ -118,7 +113,7 @@ import NavBar from '../components/NavBar.astro';
   		gap: 1em 1em; 
   		grid-template-areas: 
   		  	"Borufi Borufi Borufi SchoolProjects SchoolProjects"
-  		  	"SnakeTHEgame SnakeTHEgame TechNews TechNews TechNews"
+  		  	"TicTacToe TicTacToe TechNews TechNews TechNews"
 	}
 	@media screen and (max-width: 600px) {
 		.grid {

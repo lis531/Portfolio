@@ -76,7 +76,7 @@ const filteredImageUrls = imageUrls.filter(url => url.startsWith(`/images/${titl
                         dialog.close();
                         dialog.classList.remove('fade-out');
                         document.body.style.overflow = 'auto';
-                    }, 300);
+                    }, 290);
                 }
             };
 
@@ -103,7 +103,7 @@ const filteredImageUrls = imageUrls.filter(url => url.startsWith(`/images/${titl
                         images[newIndex].classList.remove('fade-out');
                         images[newIndex].classList.add('fade-in');
                         dialog.dataset.currentIndex = newIndex.toString();
-                    }, 300);
+                    }, 290);
                 };
 
                 const handlePrevClick = () => {
@@ -169,17 +169,21 @@ const filteredImageUrls = imageUrls.filter(url => url.startsWith(`/images/${titl
     @keyframes transformIn {
         from {
             transform: translate3d(0, 100%, 0);
+            opacity: 0;
         }
         to {
             transform: translate3d(0, 0, 0);
+            opacity: 1;
         }
     }
     @keyframes transformOut {
         from {
             transform: translate3d(0, 0, 0);
+            opacity: 1;
         }
         to {
             transform: translate3d(0, 100%, 0);
+            opacity: 0;
         }
     }
     .fade-out {
