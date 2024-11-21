@@ -4,23 +4,43 @@ import Project from '../components/Project.astro';
 import NavBar from '../components/NavBar.astro';
 ---
 
-<!-- <script>
-	const grid = document.getElementsByClassName('grid')[0];
-	grid.addEventListener('mousemove', (e) => {
-		const gridElement = e.target.closest('.grid-element');
-		if (!gridElement) return;
-		
-		const rect = gridElement.getBoundingClientRect();
-		const xPos = e.clientX - rect.left;
-		const yPos = e.clientY - rect.top;
-		
-		gridElement.style.setProperty('--xPos', `${xPos}px`);
-		gridElement.style.setProperty('--yPos', `${yPos}px`);
+<script>
+	const gridElements = document.querySelectorAll('.grid-element') as NodeListOf<HTMLElement>;
+	gridElements.forEach((element) => {
+	    element.addEventListener('mousemove', (e) => {
+	        const rect = element.getBoundingClientRect();
+	        const x = e.clientX - rect.left;
+	        const y = e.clientY - rect.top;
+	        const centerX = rect.width / 2;
+	        const centerY = rect.height / 2;
+	        const rotateX = (centerY - y) / 30;
+	        const rotateY = (x - centerX) / 30;
+	        element.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+	    });
+	    element.addEventListener('mouseleave', () => {
+	        element.style.transform = 'rotateX(0deg) rotateY(0deg)';
+	    });
 	});
-</script> -->
+
+	const img = document.querySelector('main > img') as HTMLImageElement;
+	document.addEventListener('scroll', () => {
+		const y = window.scrollY / window.innerHeight;
+		img.style.transform = `translateY(-${y * 100}px)`;
+	});
+
+	const light = document.querySelector('.light') as HTMLElement;
+	document.addEventListener('mousemove', (e) => {
+		const x = e.clientX / window.innerWidth;
+		const y = e.clientY / window.innerHeight;
+		light.style.background = `radial-gradient(circle at ${x * 100}% ${y * 100}%, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.8) 20%)`;
+	});
+</script>
 
 <Layout title="Portfolio">
 	<main id="home">
+		<img src="images/background.jpg" alt="">
+		<div class="overlay"></div>
+		<div class="light"></div>
 		<NavBar />
 		<div class="space-start">
 			<h1>About me</h1>
@@ -80,10 +100,6 @@ import NavBar from '../components/NavBar.astro';
 </Layout>
 
 <style>
-	:root {
-		--xPos: 0;
-		--yPos: 0;
-	}
 	html {
 		scroll-behavior: smooth;
 		scrollbar-width: thin;
@@ -100,6 +116,36 @@ import NavBar from '../components/NavBar.astro';
 		display: flex;
 		flex-direction: column;
 		align-items: center;
+	}
+	main > img {
+    	position: fixed;
+    	top: 0;
+    	left: 0;
+    	width: 100%;
+    	height: 100%;
+    	/* object-fit: cover; */
+    	z-index: -100;
+    	filter: brightness(0.3);
+	}
+	.overlay {
+	    position: fixed;
+	    top: 0;
+	    left: 0;
+	    width: 100%;
+	    height: 100%;
+	    pointer-events: none;
+	    background: linear-gradient(to right, rgba(0, 0, 0, 1), rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 1));
+	    z-index: -99;
+	}
+	.light {
+		position: fixed;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		pointer-events: none;
+		z-index: -98;
+		background: rgba(0, 0, 0, 0.8);
 	}
 	h1 {
 		line-height: 1;
@@ -121,9 +167,9 @@ import NavBar from '../components/NavBar.astro';
 				"Borufi"
 				"SchoolProjects"
 				"TechNews"
-				"SnakeTHEgame";
+				"TicTacToe";
 			grid-template-rows: repeat(4, 1fr);
-			margin: 3px;
+			margin: 0 3px;
 		}
 		.space-end {
 			padding: 25vh 0 !important;
@@ -172,18 +218,4 @@ import NavBar from '../components/NavBar.astro';
 			width: 90%;
 		}
 	}
-</style>
-<style is:global>
-	/* .grid-element {
-		position: relative;
-		background: none;
-	}
-	.grid-element:hover {
-		background: radial-gradient(
-			circle at var(--xPos) var(--yPos),
-			rgba(136, 58, 234, 0.5) 0%,
-			rgba(136, 58, 234, 0) 30%
-		);
-		background-repeat: no-repeat;
-	} */
 </style>
