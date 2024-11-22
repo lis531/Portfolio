@@ -22,23 +22,24 @@ import NavBar from '../components/NavBar.astro';
 	    });
 	});
 
-	const img = document.querySelector('main > img') as HTMLImageElement;
-	document.addEventListener('scroll', () => {
-		const y = window.scrollY / window.innerHeight;
-		img.style.transform = `translateY(-${y * 100}px)`;
-	});
-
 	const light = document.querySelector('.light') as HTMLElement;
 	document.addEventListener('mousemove', (e) => {
 		const x = e.clientX / window.innerWidth;
 		const y = e.clientY / window.innerHeight;
 		light.style.background = `radial-gradient(circle at ${x * 100}% ${y * 100}%, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.8) 20%)`;
 	});
+
+	const parallax = document.querySelector('.parallax') as HTMLElement;
+	document.addEventListener('scroll', () => {
+        const scrollPosition = window.scrollY;
+        const yPos = scrollPosition * 0.3;
+        parallax.style.backgroundPosition = `center ${-yPos}px`;
+    });
 </script>
 
 <Layout title="Portfolio">
 	<main id="home">
-		<img src="images/background.jpg" alt="">
+		<div class="parallax"></div>
 		<div class="overlay"></div>
 		<div class="light"></div>
 		<NavBar />
@@ -117,15 +118,16 @@ import NavBar from '../components/NavBar.astro';
 		flex-direction: column;
 		align-items: center;
 	}
-	main > img {
-    	position: fixed;
+	.parallax {
+		position: fixed;
     	top: 0;
     	left: 0;
     	width: 100%;
     	height: 100%;
-    	/* object-fit: cover; */
-    	z-index: -100;
+	    background-image: url('/images/Background/background.jpg');
+		background-size: cover;
     	filter: brightness(0.3);
+    	z-index: -102;
 	}
 	.overlay {
 	    position: fixed;
@@ -134,8 +136,8 @@ import NavBar from '../components/NavBar.astro';
 	    width: 100%;
 	    height: 100%;
 	    pointer-events: none;
-	    background: linear-gradient(to right, rgba(0, 0, 0, 1), rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 1));
-	    z-index: -99;
+	    background: linear-gradient(to right, rgba(0, 0, 0, 1), rgba(0, 0, 0, 0.5) 40%, rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0.5) 60%, rgba(0, 0, 0, 1));
+	    z-index: -101;
 	}
 	.light {
 		position: fixed;
@@ -144,7 +146,7 @@ import NavBar from '../components/NavBar.astro';
 		width: 100%;
 		height: 100%;
 		pointer-events: none;
-		z-index: -98;
+		z-index: -100;
 		background: rgba(0, 0, 0, 0.8);
 	}
 	h1 {
@@ -185,6 +187,7 @@ import NavBar from '../components/NavBar.astro';
 		text-decoration: none;
 		color: white;
 		border: 2px solid rgba(72, 72, 72, 1);
+		backdrop-filter: blur(4px);
 		border-radius: 90pt;
 		padding: 0.5rem 5rem;
 		text-align: center;

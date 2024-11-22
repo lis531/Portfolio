@@ -1,4 +1,6 @@
 ---
+import Image from 'astro/components/Image.astro';
+
 interface Props {
     title: string;
     date: string;
@@ -16,7 +18,7 @@ const filteredImageUrls = imageUrls.filter(url => url.startsWith(`/images/${titl
 <button class="grid-element" id={title} style={`grid-area: ${title}`}>
     <div>
         <div class="inset">
-            <img src={img} alt={img} id={`button-img-${title}`} />
+            <Image src={img} alt={img} id={`button-img-${title}`} width="600" height="400" />
             <span>
                 <p>{title}</p>
                 <p style="color: gray;">{date}</p>
@@ -67,7 +69,6 @@ const filteredImageUrls = imageUrls.filter(url => url.startsWith(`/images/${titl
 
             dialog.dataset.currentIndex = '0';
             dialog.showModal();
-            document.body.style.overflow = 'hidden';
 
             const handleDialogClose = (e: Event) => {
                 if (e.target === dialog) {
@@ -75,7 +76,6 @@ const filteredImageUrls = imageUrls.filter(url => url.startsWith(`/images/${titl
                     setTimeout(() => {
                         dialog.close();
                         dialog.classList.remove('fade-out');
-                        document.body.style.overflow = 'auto';
                     }, 290);
                 }
             };
@@ -207,7 +207,6 @@ const filteredImageUrls = imageUrls.filter(url => url.startsWith(`/images/${titl
     }
 
     dialog {
-        animation: fadeIn 0.3s;
         color: white;
         text-align: center;
         padding: 0;
@@ -245,6 +244,12 @@ const filteredImageUrls = imageUrls.filter(url => url.startsWith(`/images/${titl
             backdrop-filter: blur(10px);
             animation: fadeIn 0.3s;
         }
+    }
+    dialog[open] {
+        animation: fadeIn 0.3s;
+    }
+    body:has(dialog[open]) {
+        overflow: hidden;
     }
     .dialog-buttons {
         display: flex;
@@ -324,11 +329,11 @@ const filteredImageUrls = imageUrls.filter(url => url.startsWith(`/images/${titl
         border: 3px solid rgba(24, 24, 24, 1);
         border-radius: 1.5rem;
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-        overflow: hidden;
         padding: 0.7rem;
         gap: 1vh;
         font-family: inherit;
         background-color: inherit;
+        backdrop-filter: blur(4px);
         cursor: pointer;
         & > div {
             height: 100%;
