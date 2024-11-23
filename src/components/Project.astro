@@ -141,6 +141,9 @@ const filteredImageUrls = imageUrls.filter(url => url.startsWith(`/images/${titl
         justify-content: center;
         flex-direction: row;
         overflow: hidden;
+        @media (max-width: 600px) {
+            display: none;
+        }
     }
     .images > img {
         border-radius: 1.5rem;
@@ -224,6 +227,9 @@ const filteredImageUrls = imageUrls.filter(url => url.startsWith(`/images/${titl
         & h1 {
             font-size: 64px;
             margin-top: 0;
+            @media (max-width: 600px) {
+                font-size: 44px;
+            }
         }
         & > div {
             width: 40%;
@@ -238,6 +244,11 @@ const filteredImageUrls = imageUrls.filter(url => url.startsWith(`/images/${titl
             align-items: center;
             justify-content: center;
             gap: 1rem;
+            box-shadow: inset 0px 0px 15px 0px rgba(72, 72, 72, 0.5);
+            @media (max-width: 600px) {
+                width: 85%;
+                padding: 1rem;
+            }
         }
         &::backdrop {
             background-color: rgba(0, 0, 0, 0.75);
@@ -284,6 +295,11 @@ const filteredImageUrls = imageUrls.filter(url => url.startsWith(`/images/${titl
         box-shadow: inset 0px 0px 15px 0px rgba(72, 72, 72, 0.5);
         backdrop-filter: blur(4px);
         z-index: 10;
+        @media (max-width: 600px) {
+            width: 2rem;
+            height: 2rem;
+            font-size: large;
+        }
     }
     .next-button {
         right: 1vw;
@@ -296,6 +312,9 @@ const filteredImageUrls = imageUrls.filter(url => url.startsWith(`/images/${titl
         color: white;
         text-align: center;
         margin: 0;
+        @media (max-width: 600px) {
+            font-size: 20px;
+        }
     }
     .inset {
         width: 100%;
@@ -304,6 +323,9 @@ const filteredImageUrls = imageUrls.filter(url => url.startsWith(`/images/${titl
         position: relative;
         border-radius: 1.5rem;
         padding: 2px;
+        @media (max-width: 600px) {
+            padding: 1px;
+        }
     }
     span {
         display: flex;
@@ -314,12 +336,6 @@ const filteredImageUrls = imageUrls.filter(url => url.startsWith(`/images/${titl
         width: -moz-available;
         bottom: 1rem;
         margin: 0 1rem;
-    }
-    p {
-        font-size: 26px;
-        color: white;
-        text-align: center;
-        margin: 0;
     }
     .grid-element {
         display: flex;
@@ -337,6 +353,10 @@ const filteredImageUrls = imageUrls.filter(url => url.startsWith(`/images/${titl
         cursor: pointer;
         & > div {
             height: 100%;
+            @media (max-width: 600px) {
+                height: 228px;
+                width: 100%;
+            }
         }
         & > a {
             background-color: rgba(14, 14, 14, 1);
@@ -347,6 +367,11 @@ const filteredImageUrls = imageUrls.filter(url => url.startsWith(`/images/${titl
             width: 100%;
             padding: 1vh 0;
         }
+        @media (max-width: 600px) {
+            padding: 0.5rem;
+            height: 300px;
+            /* height: 30vh; */
+        }
     }
     .inset > img {
         position: relative;
@@ -356,27 +381,8 @@ const filteredImageUrls = imageUrls.filter(url => url.startsWith(`/images/${titl
         border-radius: 1.5rem;
         filter: blur(1px);
         z-index: -1;
-    }
-    @media screen and (max-width: 600px) {
-        dialog {
-            & > div {
-                width: 80%;
-            }
-        }
-        .images {
-            height: 30vh;
-        }
-        .grid-element {
-            padding: 0.5rem;
-            /* height: 30vh; */
-        }
-        .inset {
-            padding: 1px;
-        }
-        .next-button, .prev-button {
-            width: 2rem;
-            height: 2rem;
-            font-size: large;
+        @media (max-width: 600px) {
+            object-fit: cover;
         }
     }
 </style>

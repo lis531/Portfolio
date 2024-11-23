@@ -25,6 +25,9 @@ const links = [
         backdrop-filter: blur(4px);
         z-index: 100;
         box-shadow: inset 0px 0px 15px 0px rgba(72, 72, 72, 0.5);
+        @media (max-width: 600px) {
+            width: 90%;
+        }
     }
     div {
         display: flex;
@@ -40,10 +43,5 @@ const links = [
     }
     a:hover {
         text-decoration: underline;
-    }
-    @media screen and (max-width: 600px) {
-        nav {
-            width: 90%;
-        }
     }
 </style>
