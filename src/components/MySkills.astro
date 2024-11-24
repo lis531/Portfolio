@@ -12,7 +12,7 @@ const { skills } = Astro.props;
 
 <div class="allSkills">
     {skills.map((skill) => (
-        <div class="skill" style={`background-image: conic-gradient(rgb(0, 255, 170) ${(skill.level / 100) * 360}deg, rgba(32, 32, 32, 0.6) ${(skill.level / 100) * 360}deg 360deg)`} >
+        <div class="skill animate" style={`background-image: conic-gradient(rgb(0, 255, 170) ${(skill.level / 100) * 360}deg, rgba(32, 32, 32, 0.6) ${(skill.level / 100) * 360}deg 360deg)`} >
             <img src={skill.logo} alt={skill.alt} loading="lazy"/>
         </div>
     ))}

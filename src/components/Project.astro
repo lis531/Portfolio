@@ -63,8 +63,6 @@ const filteredImageUrls = imageUrls.filter(url => url.startsWith(`/images/${titl
 
             images.forEach((img, i) => {
                 img.style.display = i === 0 ? 'block' : 'none';
-                img.classList.toggle('fade-in', i === 0);
-                img.classList.remove('fade-out');
             });
 
             dialog.dataset.currentIndex = '0';
@@ -72,63 +70,65 @@ const filteredImageUrls = imageUrls.filter(url => url.startsWith(`/images/${titl
 
             const handleDialogClose = (e: Event) => {
                 if (e.target === dialog) {
-                    dialog.classList.add('fade-out');
-                    setTimeout(() => {
+                    dialog.animate([
+                        { transform: 'translate3d(0, 0, 0)', opacity: 1 },
+                        { transform: 'translate3d(0, 100%, 0)', opacity: 0 }
+                    ], 200).finished.then(() => {
                         dialog.close();
-                        dialog.classList.remove('fade-out');
-                    }, 290);
+                    });
                 }
             };
 
-            document.body.removeEventListener('click', handleDialogClose);
             document.body.addEventListener('click', handleDialogClose);
+
+            if (images.length <= 1) return;
 
             const prevButton = dialog.querySelector('.prev-button') as HTMLButtonElement;
             const nextButton = dialog.querySelector('.next-button') as HTMLButtonElement;
 
-            prevButton.style.display = images.length > 1 ? 'block' : 'none';
-            nextButton.style.display = images.length > 1 ? 'block' : 'none';
+            prevButton.style.display = 'block';
+            nextButton.style.display = 'block';
 
-            if (images.length <= 1) return;
+            let isAllowed = true;
 
-            if (!dialog.dataset.listenersAdded) {
-                const updateImageDisplay = (newIndex: number) => {
-                    const currentIndex = parseInt(dialog.dataset.currentIndex || '0');
-                    images[currentIndex].classList.remove('fade-in');
-                    images[currentIndex].classList.add('fade-out');
-
-                    setTimeout(() => {
-                        images[currentIndex].style.display = 'none';
-                        images[newIndex].style.display = 'block';
-                        images[newIndex].classList.remove('fade-out');
-                        images[newIndex].classList.add('fade-in');
+            const updateImages = (newIndex: number) => {
+                const currentIndex = parseInt(dialog.dataset.currentIndex || '0');
+                isAllowed = false;
+                images[currentIndex].animate([
+                    { opacity: 1 },
+                    { opacity: 0 }
+                ], 200).finished.then(() => {
+                    images[currentIndex].style.display = 'none';
+                    images[newIndex].style.display = 'block';
+                    images[newIndex].animate([
+                        { opacity: 0 },
+                        { opacity: 1 }
+                    ], 200).finished.then(() => {
                         dialog.dataset.currentIndex = newIndex.toString();
-                    }, 290);
-                };
-
-                const handlePrevClick = () => {
-                    const currentIndex = parseInt(dialog.dataset.currentIndex || '0');
-                    if (images[currentIndex].classList.contains('fade-out')) return;
-                    const newIndex = (currentIndex > 0) ? currentIndex - 1 : images.length - 1;
-                    updateImageDisplay(newIndex);
-                };
-
-                const handleNextClick = () => {
-                    const currentIndex = parseInt(dialog.dataset.currentIndex || '0');
-                    if (images[currentIndex].classList.contains('fade-out')) return;
-                    const newIndex = (currentIndex < images.length - 1) ? currentIndex + 1 : 0;
-                    updateImageDisplay(newIndex);
-                };
-
-                prevButton.addEventListener('click', handlePrevClick);
-                nextButton.addEventListener('click', handleNextClick);
-
-                dialog.dataset.listenersAdded = 'true';
+                        isAllowed = true;
+                    });
+                });
             }
+
+            const handlePrevClick = () => {
+                if (!isAllowed) return;
+                const currentIndex = parseInt(dialog.dataset.currentIndex || '0');
+                const newIndex = (currentIndex > 0) ? currentIndex - 1 : images.length - 1;
+                updateImages(newIndex);
+            };
+
+            const handleNextClick = () => {
+                if (!isAllowed) return;
+                const currentIndex = parseInt(dialog.dataset.currentIndex || '0');
+                const newIndex = (currentIndex < images.length - 1) ? currentIndex + 1 : 0;
+                updateImages(newIndex);
+            };
+
+            prevButton.addEventListener('click', handlePrevClick);
+            nextButton.addEventListener('click', handleNextClick);
         });
     });
 </script>
-
 
 <style>
     .images {
@@ -148,26 +148,8 @@ const filteredImageUrls = imageUrls.filter(url => url.startsWith(`/images/${titl
     .images > img {
         border-radius: 1.5rem;
         display: none;
-        max-width: -webkit-fill-available;
-        max-width: -moz-available;
-        max-height: -webkit-fill-available;
-        max-height: -moz-available;
-    }
-    @keyframes fadeIn {
-        from {
-            opacity: 0;
-        }
-        to {
-            opacity: 1;
-        }
-    }
-    @keyframes fadeOut {
-        from {
-            opacity: 1;
-        }
-        to {
-            opacity: 0;
-        }
+        max-width: 100%;
+        max-height: 100%;
     }
     @keyframes transformIn {
         from {
@@ -179,35 +161,6 @@ const filteredImageUrls = imageUrls.filter(url => url.startsWith(`/images/${titl
             opacity: 1;
         }
     }
-    @keyframes transformOut {
-        from {
-            transform: translate3d(0, 0, 0);
-            opacity: 1;
-        }
-        to {
-            transform: translate3d(0, 100%, 0);
-            opacity: 0;
-        }
-    }
-    .fade-out {
-        animation: fadeOut 0.3s;
-    }
-    .fade-out::backdrop {
-        animation: fadeOut 0.3s;
-    }
-    .fade-in {
-        animation: fadeIn 0.3s;
-    }
-    .fade-in::backdrop {
-        animation: fadeIn 0.3s;
-    }
-
-    .fade-in > div {
-        animation: transformIn 0.3s;
-    }
-    .fade-out > div {
-        animation: transformOut 0.3s;
-    }
 
     dialog {
         color: white;
@@ -216,7 +169,6 @@ const filteredImageUrls = imageUrls.filter(url => url.startsWith(`/images/${titl
         border: none;
         border-radius: 1.5rem;
         background: transparent;
-        justify-items: center;
         align-content: center;
         margin: 0;
         width: 100%;
@@ -232,8 +184,8 @@ const filteredImageUrls = imageUrls.filter(url => url.startsWith(`/images/${titl
             }
         }
         & > div {
+            margin-inline: auto;
             width: 40%;
-            animation: transformIn 0.3s;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
             background-color: rgba(0, 0, 0, 0.75);
             border: 3px solid rgba(24, 24, 24, 1);
@@ -257,7 +209,7 @@ const filteredImageUrls = imageUrls.filter(url => url.startsWith(`/images/${titl
         }
     }
     dialog[open] {
-        animation: fadeIn 0.3s;
+        animation: transformIn 0.3s;
     }
     body:has(dialog[open]) {
         overflow: hidden;
@@ -302,9 +254,11 @@ const filteredImageUrls = imageUrls.filter(url => url.startsWith(`/images/${titl
         }
     }
     .next-button {
+        display: none;
         right: 1vw;
     }
     .prev-button {
+        display: none;
         left: 1vw;
     }
     p {
@@ -370,7 +324,6 @@ const filteredImageUrls = imageUrls.filter(url => url.startsWith(`/images/${titl
         @media (max-width: 600px) {
             padding: 0.5rem;
             height: 300px;
-            /* height: 30vh; */
         }
     }
     .inset > img {
