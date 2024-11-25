@@ -66,21 +66,23 @@ import MySkills from '../components/MySkills.astro';
 				{ logo: '/images/Logos/JS.svg', alt: "JS", level: 85 },
 				{ logo: '/images/Logos/TS.svg', alt: "TS", level: 75 },
 				{ logo: '/images/Logos/React.svg', alt: "React", level: 70 },
-				{ logo: '/images/Logos/Vue.svg', alt: "Vue", level: 50 },
+				{ logo: '/images/Logos/Vue.svg', alt: "Vue", level: 40 },
 				{ logo: '/images/Logos/Astro.svg', alt: "Astro", level: 70 },
 				{ logo: '/images/Logos/Firebase.svg', alt: "Firebase", level: 50 },
-				{ logo: '/images/Logos/Python.svg', alt: "Python", level: 60 },
-				{ logo: '/images/Logos/CPP.svg', alt: "CPP", level: 25 },
-				{ logo: '/images/Logos/Csharp.svg', alt: "Csharp", level: 40 },
+				{ logo: '/images/Logos/Python.svg', alt: "Python", level: 40 },
+				{ logo: '/images/Logos/CPP.svg', alt: "CPP", level: 20 },
+				{ logo: '/images/Logos/Csharp.svg', alt: "Csharp", level: 30 },
 				{ logo: '/images/Logos/Java.svg', alt: "Java", level: 10 },
-				{ logo: '/images/Logos/Unity.svg', alt: "Unity", level: 60 },
-				{ logo: '/images/Logos/Unreal.svg', alt: "Unreal", level: 10 }
+				{ logo: '/images/Logos/Unity.svg', alt: "Unity", level: 50 },
+				{ logo: '/images/Logos/Unreal.svg', alt: "Unreal", level: 10 },
+				{ logo: '/images/Logos/Figma.svg', alt: "Figma", level: 60 }
 			]}
 		/>
 		<h1 id="projects">My projects</h1>
 		<div class="grid">
 			<Project
 				title="Borufi"
+				description='It is my own music library (AKA Spotify).'
 				date="June 2023"
 				date="January 2024"
 				img="/images/Borufi/main.png"
@@ -89,6 +91,7 @@ import MySkills from '../components/MySkills.astro';
 			/>
 			<Project
 				title="SchoolProjects"
+				description='Contains some of my smaller school projects yet when combined it is big enough to upload here.'
 				date="2022 - 2024"
 				img="/images/SchoolProjects/main.png"
 				href="https://github.com/lis531/schoolProjects"
@@ -96,6 +99,7 @@ import MySkills from '../components/MySkills.astro';
 			/>
 			<Project
 				title="TicTacToe"
+				description='Simple tic-tac-toe game made using Vue and Vite.'
 				date="November 2024"
 				img="/images/TicTacToe/main.png"
 				href="https://github.com/lis531/Tic-tac-toe"
@@ -103,6 +107,7 @@ import MySkills from '../components/MySkills.astro';
 			/>
 			<Project
 				title="TechNews"
+				description='It is website created in js that fetches news from www.wired.com and lets you order them or select certain categories. Made as a school project.'
 				date="June 2023"
 				img="/images/TechNews/main.png"
 				href="https://github.com/lis531/TechNews"
@@ -118,7 +123,7 @@ import MySkills from '../components/MySkills.astro';
 			</div>
 		</div>
 		<footer>
-			Copyright © 2024 | Borys Gajewski | All Rights Reserved
+			{new Date().getFullYear()} &copy; Borys Gajewski
 		</footer>
 	</main>
 </Layout>
@@ -250,7 +255,7 @@ import MySkills from '../components/MySkills.astro';
 		text-align: center;
 		color: white;
 		font-size: 24px;
-		font-family: Gloock, serif;
+		font-family: Alata, sans-serif;
 		margin-bottom: 1rem;
 		@media (max-width: 600px) {
 			font-size: 16px;

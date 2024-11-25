@@ -3,13 +3,14 @@ import Image from 'astro/components/Image.astro';
 
 interface Props {
     title: string;
+    description: string;
     date: string;
     img: string;
     href: string;
     hrefTryOut: string;
 }
 
-const { title, date, img, href, hrefTryOut } = Astro.props;
+const { title, description, date, img, href, hrefTryOut } = Astro.props;
 const images = import.meta.glob('/public/images/*/*.{jpg,png,jpeg,gif,webp}');
 const imageUrls = Object.keys(images).map((imagePath) => imagePath.replace('/public', ''));
 const filteredImageUrls = imageUrls.filter(url => url.startsWith(`/images/${title}/`));
@@ -25,8 +26,8 @@ const filteredImageUrls = imageUrls.filter(url => url.startsWith(`/images/${titl
             </span>
         </div>
     </div>
-    <a href={href}>
-        View Production
+    <a class="link" href={href}>
+        View Production <img src="/images/Icons/arrow.svg" alt="arrow" width="16px" loading="lazy" />
     </a>
 </button>
 <dialog id={`dialog-${title}`} class="dialog" data-current-index="0">
@@ -40,13 +41,14 @@ const filteredImageUrls = imageUrls.filter(url => url.startsWith(`/images/${titl
         </div>
 
         <h1>{title}</h1>
-        <p>Click the button below to view the production.</p>
+        <p>{description}</p>
         <br>
         <div class="dialog-buttons">
-            <a href={href}>
+            <a class="link" href={href}>
                 View Production
+                <img src="/images/Icons/arrow.svg" alt="arrow" width="16px" loading="lazy" />
             </a>
-            {hrefTryOut !== '' ? <a href={hrefTryOut}>Try out</a> : ''}
+            {hrefTryOut !== '' ? <a class="link" href={hrefTryOut}>Try out <img src="/images/Icons/arrow.svg" alt="arrow" width="16px" loading="lazy" /></a> : ''}
         </div>
     </div>
 </dialog>
@@ -70,11 +72,13 @@ const filteredImageUrls = imageUrls.filter(url => url.startsWith(`/images/${titl
 
             const handleDialogClose = (e: Event) => {
                 if (e.target === dialog) {
+                    dialog.classList.add('closing');
                     dialog.animate([
                         { transform: 'translate3d(0, 0, 0)', opacity: 1 },
                         { transform: 'translate3d(0, 100%, 0)', opacity: 0 }
                     ], 200).finished.then(() => {
                         dialog.close();
+                        dialog.classList.remove('closing');
                     });
                 }
             };
@@ -134,7 +138,7 @@ const filteredImageUrls = imageUrls.filter(url => url.startsWith(`/images/${titl
     .images {
         position: relative;
         width: 100%;
-        height: 38vh;
+        height: 35vh;
         object-fit: cover;
         display: flex;
         align-items: center;
@@ -161,7 +165,42 @@ const filteredImageUrls = imageUrls.filter(url => url.startsWith(`/images/${titl
             opacity: 1;
         }
     }
-
+    @keyframes backdropAppear {
+        from {
+            opacity: 0;
+            filter: blur(0px);
+        }
+        to {
+            opacity: 1;
+            filter: blur(10px);
+        }
+    }
+    @keyframes backdropDisappear {
+        from {
+            opacity: 1;
+            filter: blur(10px);
+        }
+        to {
+            opacity: 0;
+            filter: blur(0px);
+        }
+    }
+    .link {
+        font-size: 30px;
+        background-color: rgba(24, 24, 24, 0.5);
+        border-radius: 1.5rem;
+        color: white;
+        text-decoration: none;
+        text-align: center;
+        width: 100%;
+        padding: 1vh 0;
+        & > img {
+            margin-left: 0.5rem;
+        }
+        @media (max-width: 600px) {
+            font-size: 20px;
+        }
+    }
     dialog {
         color: white;
         text-align: center;
@@ -177,11 +216,14 @@ const filteredImageUrls = imageUrls.filter(url => url.startsWith(`/images/${titl
         max-height: none;
         overflow: hidden;
         & h1 {
+            margin: 0.5rem;
             font-size: 64px;
-            margin-top: 0;
             @media (max-width: 600px) {
                 font-size: 44px;
             }
+        }
+        & p {
+            max-width: 90%;
         }
         & > div {
             margin-inline: auto;
@@ -205,8 +247,11 @@ const filteredImageUrls = imageUrls.filter(url => url.startsWith(`/images/${titl
         &::backdrop {
             background-color: rgba(0, 0, 0, 0.75);
             backdrop-filter: blur(10px);
-            animation: fadeIn 0.3s;
+            animation: backdropAppear 0.3s;
         }
+    }
+    dialog.closing::backdrop {
+        animation: backdropDisappear 0.3s;
     }
     dialog[open] {
         animation: transformIn 0.3s;
@@ -219,17 +264,10 @@ const filteredImageUrls = imageUrls.filter(url => url.startsWith(`/images/${titl
         width: 100%;
         flex-direction: row;
         gap: 1rem;
-    }
-    .dialog-buttons > a {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        background-color: rgba(14, 14, 14, 1);
-        border-radius: 1.5rem;
-        color: white;
-        text-decoration: none;
-        width: 100%;
-        padding: 1vh 0;
+        @media (max-width: 600px) {
+            gap: 0.5rem;
+            flex-direction: column;
+        }
     }
     .next-button, .prev-button {
         user-select: none;
@@ -311,15 +349,6 @@ const filteredImageUrls = imageUrls.filter(url => url.startsWith(`/images/${titl
                 height: 228px;
                 width: 100%;
             }
-        }
-        & > a {
-            background-color: rgba(14, 14, 14, 1);
-            border-radius: 1.5rem;
-            color: white;
-            text-decoration: none;
-            text-align: center;
-            width: 100%;
-            padding: 1vh 0;
         }
         @media (max-width: 600px) {
             padding: 0.5rem;
