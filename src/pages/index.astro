@@ -23,6 +23,18 @@ import MySkills from '../components/MySkills.astro';
 		});
 	});
 
+	const images = document.querySelectorAll('.hidden');
+    images.forEach((img) => {
+        img.addEventListener('load', () => {
+            img.animate([
+                { opacity: 0, filter: 'blur(10px)' },
+                { opacity: 1, filter: 'blur(1px)' }
+            ], 500).finished.then(() => {
+                img.classList.remove('hidden');
+            });
+        });
+    });
+
 	const gridElements = document.querySelectorAll('.grid-element') as NodeListOf<HTMLElement>;
 	gridElements.forEach((element) => {
 		observer.observe(element);
@@ -200,6 +212,7 @@ import MySkills from '../components/MySkills.astro';
 		display: grid; 
   		grid-template-columns: repeat(auto-fit, minmax(10ch, 1fr));
 		max-width: 1200px;
+		width: 100%;
   		gap: 1em 1em; 
   		grid-template-areas: 
   		  	"Borufi Borufi Borufi SchoolProjects SchoolProjects"
