@@ -11,7 +11,7 @@ interface Props {
 }
 
 const { title, description, date, img, href, hrefTryOut } = Astro.props;
-const images = import.meta.glob('/public/images/*/*.{jpg,png,jpeg,gif,webp}');
+const images = import.meta.glob('/public/images/*/*.avif');
 const imageUrls = Object.keys(images).map((imagePath) => imagePath.replace('/public', ''));
 const filteredImageUrls = imageUrls.filter(url => url.startsWith(`/images/${title}/`));
 ---
@@ -128,6 +128,10 @@ const filteredImageUrls = imageUrls.filter(url => url.startsWith(`/images/${titl
 
             prevButton.addEventListener('click', handlePrevClick);
             nextButton.addEventListener('click', handleNextClick);
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'ArrowLeft') handlePrevClick();
+                if (e.key === 'ArrowRight') handleNextClick();
+            });
         });
     });
 </script>

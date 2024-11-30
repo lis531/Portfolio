@@ -66,11 +66,11 @@ import MySkills from '../components/MySkills.astro';
 		<div class="overlay"></div>
 		<div class="light"></div>
 		<NavBar />
-		<div class="space-start">
+		<div class="space">
 			<h1 class="animate">About me</h1>
 			<p class="animate">My name is Borys Gajewski, and I’m a developer from Poland. I create websites, small games, and other programs.</p>
 		</div>
-		<h1 class="space-middle animate">My Skills</h1>
+		<h1 class="animate">My Skills</h1>
 		<MySkills
 			skills={[
 				{ logo: '/images/Logos/HTML5.svg', alt: "HTML5", level: 95 },
@@ -93,11 +93,11 @@ import MySkills from '../components/MySkills.astro';
 		<h1 id="projects">My projects</h1>
 		<div class="grid">
 			<Project
-				title="Borufi"
+			title="Borufi"
 				description='It is my own music library (AKA Spotify).'
 				date="June 2023"
 				date="January 2024"
-				img="/images/Borufi/main.png"
+				img="/images/Borufi/main.avif"
 				href="https://github.com/lis531/borufi"
 				hrefTryOut="https://borufi.netlify.app"
 			/>
@@ -105,7 +105,7 @@ import MySkills from '../components/MySkills.astro';
 				title="SchoolProjects"
 				description='Contains some of my smaller school projects yet when combined it is big enough to upload here.'
 				date="2022 - 2024"
-				img="/images/SchoolProjects/main.png"
+				img="/images/SchoolProjects/main.avif"
 				href="https://github.com/lis531/schoolProjects"
 				hrefTryOut='https://lis531.github.io/schoolProjects'
 			/>
@@ -113,7 +113,7 @@ import MySkills from '../components/MySkills.astro';
 				title="TicTacToe"
 				description='Simple tic-tac-toe game made using Vue and Vite.'
 				date="November 2024"
-				img="/images/TicTacToe/main.png"
+				img="/images/TicTacToe/main.avif"
 				href="https://github.com/lis531/Tic-tac-toe"
 				hrefTryOut='https://lis531.vercel.app'
 			/>
@@ -121,12 +121,12 @@ import MySkills from '../components/MySkills.astro';
 				title="TechNews"
 				description='It is website created in js that fetches news from www.wired.com and lets you order them or select certain categories. Made as a school project.'
 				date="June 2023"
-				img="/images/TechNews/main.png"
+				img="/images/TechNews/main.avif"
 				href="https://github.com/lis531/TechNews"
 				hrefTryOut='https://lis531.github.io/TechNews'
 			/>
 		</div>
-		<div class="space-end">
+		<div class="space">
 			<h1 class="animate">Contact</h1>
 			<div class="contact" id="contact">
 				<a class="animate" href="https://x.com/Lisu22361857">Twitter</a>
@@ -164,7 +164,7 @@ import MySkills from '../components/MySkills.astro';
     	left: 0;
     	width: 100%;
     	height: 100%;
-	    background-image: url('/images/Background/background.jpg');
+	    background-image: url('/images/Background/background.avif');
 		background-size: cover;
 		filter: brightness(0.3);
 		z-index: -102;
@@ -205,7 +205,7 @@ import MySkills from '../components/MySkills.astro';
 		margin-bottom: 1em;
 	}
 	#projects[data-astro-cid-j7pv25f6] {
-        padding-top: 15vh;
+		padding-top: 15vh;
 		margin-top: 20vh;
     }
 	.grid {
@@ -244,24 +244,21 @@ import MySkills from '../components/MySkills.astro';
 		width: 120px;
 		box-shadow: inset 0px 0px 15px 0px rgba(72, 72, 72, 0.5)
 	}
-	.space-middle {
-		padding-top: 30vh;
-	}
-	.space-start {
-		padding-top: 35vh;
-		width: 60%;
-		@media (max-width: 600px) {
-			width: 90%;
-			padding-top: 35vh;
-		}
-	}
 	.space {
-		padding-top: 50vh;
-	}
-	.space-end {
-		padding: 40vh 0;
+		height: 100lvh;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+		& > p {
+			margin: 0;
+			width: 60vw;
+		}
 		@media (max-width: 600px) {
-			padding: 30vh 0;
+			& > p {
+				width: 90vw;
+			}
+			width: 90%;
 		}
 	}
 	footer {
