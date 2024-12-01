@@ -20,16 +20,18 @@ const { skills } = Astro.props;
 
 <style>
     .allSkills {
-        width: 50vw;
+        width: 55vw;
         display: flex;
         justify-content: center;
         align-items: center;
         flex-wrap: wrap;
         @media (max-width: 600px) {
-            width: 90%;
+            width: 90vw;
+        }
+        @media (max-width: 1200px) {
+            width: 80vw;
         }
     }
-
     .skill {
         width: 100px;
         height: 100px;

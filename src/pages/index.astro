@@ -60,7 +60,7 @@ import MySkills from '../components/MySkills.astro';
     });
 </script>
 
-<Layout title="Portfolio">
+<Layout title="Borys Gajewski">
 	<main id="home">
 		<div class="parallax"></div>
 		<div class="overlay"></div>
@@ -79,13 +79,13 @@ import MySkills from '../components/MySkills.astro';
 				{ logo: '/images/Logos/TS.svg', alt: "TS", level: 75 },
 				{ logo: '/images/Logos/React.svg', alt: "React", level: 75 },
 				{ logo: '/images/Logos/Vue.svg', alt: "Vue", level: 40 },
-				{ logo: '/images/Logos/Astro.svg', alt: "Astro", level: 65 },
-				{ logo: '/images/Logos/Firebase.svg', alt: "Firebase", level: 50 },
+				{ logo: '/images/Logos/Astro.svg', alt: "Astro", level: 60 },
+				{ logo: '/images/Logos/Firebase.svg', alt: "Firebase", level: 30 },
 				{ logo: '/images/Logos/Python.svg', alt: "Python", level: 35 },
 				{ logo: '/images/Logos/CPP.svg', alt: "CPP", level: 20 },
 				{ logo: '/images/Logos/Csharp.svg', alt: "Csharp", level: 30 },
 				{ logo: '/images/Logos/Java.svg', alt: "Java", level: 5 },
-				{ logo: '/images/Logos/Unity.svg', alt: "Unity", level: 50 },
+				{ logo: '/images/Logos/Unity.svg', alt: "Unity", level: 30 },
 				{ logo: '/images/Logos/Unreal.svg', alt: "Unreal", level: 1 },
 				{ logo: '/images/Logos/Figma.svg', alt: "Figma", level: 70 }
 			]}
@@ -168,7 +168,7 @@ import MySkills from '../components/MySkills.astro';
 		background-size: cover;
 		filter: brightness(0.3);
 		z-index: -102;
-		@media (max-width: 600px) {
+		@media (max-width: 1200px) {
 			filter: brightness(0.2);
 			background-position: 0 !important;
 		}
@@ -182,7 +182,7 @@ import MySkills from '../components/MySkills.astro';
 	    pointer-events: none;
 		background: linear-gradient(to right, rgba(0, 0, 0, 1), rgba(0, 0, 0, 0.2) 50%, rgba(0, 0, 0, 1));
 		z-index: -101;
-		@media (max-width: 600px) {
+		@media (max-width: 1200px) {
 			background: linear-gradient(to right, rgba(0, 0, 0, 1), rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 1));
 		}
 	}
@@ -195,7 +195,7 @@ import MySkills from '../components/MySkills.astro';
 		pointer-events: none;
 		z-index: -100;
 		background: rgba(0, 0, 0, 0.8);
-		@media (max-width: 600px) {
+		@media (max-width: 1200px) {
 			display: none;
 		}
 	}
@@ -213,11 +213,11 @@ import MySkills from '../components/MySkills.astro';
   		grid-template-columns: repeat(auto-fit, minmax(10ch, 1fr));
 		max-width: 1200px;
 		width: 100%;
-  		gap: 1em 1em; 
+  		gap: 0.7em 0.7em; 
   		grid-template-areas: 
   		  	"Borufi Borufi Borufi SchoolProjects SchoolProjects"
   		  	"TicTacToe TicTacToe TechNews TechNews TechNews";
-		@media (max-width: 600px) {
+		@media (max-width: 750px) {
 			grid-template-areas: 
 				"Borufi"
 				"SchoolProjects"
@@ -232,6 +232,7 @@ import MySkills from '../components/MySkills.astro';
 		justify-content: center;
 		gap: 5vw;
 		flex-wrap: wrap;
+		padding: 1rem;
 	}
 	.contact > a {
 		text-decoration: none;
@@ -252,13 +253,18 @@ import MySkills from '../components/MySkills.astro';
 		align-items: center;
 		& > p {
 			margin: 0;
-			width: 60vw;
+			width: 55vw;
 		}
 		@media (max-width: 600px) {
 			& > p {
 				width: 90vw;
 			}
 			width: 90%;
+		}
+		@media (max-width: 1200px) {
+			& > p {
+				width: 80vw;
+			}
 		}
 	}
 	footer {
