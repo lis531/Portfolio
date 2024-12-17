@@ -9,16 +9,20 @@ import MySkills from '../components/MySkills.astro';
 	const observer = new IntersectionObserver((entries) => {
 		entries.forEach((entry) => {
 			if (entry.isIntersecting && !entry.target.classList.contains('animated')) {
-				entry.target.animate([
-					{ opacity: 0, transform: 'translateY(100px)' },
-					{ opacity: 1, transform: 'translateY(0)' }
-				], {
-					duration: 500,
-					easing: 'ease-out',
-					fill: 'forwards'
-				}).finished.then(() => {
-					entry.target.classList.add('animated');
-				});
+				if (entry.target.tagName.toLowerCase() === 'mark') {
+					entry.target.classList.add('animate-mark');
+				} else {
+					entry.target.animate([
+						{ opacity: 0, transform: 'translateY(100px)' },
+						{ opacity: 1, transform: 'translateY(0)' }
+					], {
+						duration: 500,
+						easing: 'ease-out',
+						fill: 'forwards'
+					}).finished.then(() => {
+						entry.target.classList.add('animated');
+					});
+				}
 			}
 		});
 	});
@@ -45,6 +49,11 @@ import MySkills from '../components/MySkills.astro';
 		observer.observe(element);
 	});
 
+	const marks = document.querySelectorAll('mark');
+	marks.forEach((mark) => {
+		observer.observe(mark);
+	});
+
 	const light = document.querySelector('.light') as HTMLElement;
 	document.addEventListener('mousemove', (e) => {
 		const x = e.clientX / window.innerWidth;
@@ -68,7 +77,7 @@ import MySkills from '../components/MySkills.astro';
 		<NavBar />
 		<div class="space">
 			<h1 class="animate">About me</h1>
-			<p class="animate">My name is Borys Gajewski, and I’m a developer from Poland. I create websites, small games, and other programs.</p>
+			<p class="animate">My name is <span class="underlined">Borys Gajewski</span>, and I’m a <mark>developer</mark> from Poland. I create websites, small games, and other programs.</p>
 		</div>
 		<h1 class="animate">My Skills</h1>
 		<MySkills
@@ -90,41 +99,43 @@ import MySkills from '../components/MySkills.astro';
 				{ logo: '/images/Logos/Figma.svg', alt: "Figma", level: 70 }
 			]}
 		/>
-		<h1 id="projects">My projects</h1>
-		<div class="grid">
-			<Project
-			title="Borufi"
-				description='It is my own music library (AKA Spotify).'
-				date="June 2023"
-				date="January 2024"
-				img="/images/Borufi/main.avif"
-				href="https://github.com/lis531/borufi"
-				hrefTryOut="https://borufi.netlify.app"
-			/>
-			<Project
-				title="SchoolProjects"
-				description='Contains some of my smaller school projects yet when combined it is big enough to upload here.'
-				date="2022 - 2024"
-				img="/images/SchoolProjects/main.avif"
-				href="https://github.com/lis531/schoolProjects"
-				hrefTryOut='https://lis531.github.io/schoolProjects'
-			/>
-			<Project
-				title="TicTacToe"
-				description='Simple tic-tac-toe game made using Vue and Vite.'
-				date="November 2024"
-				img="/images/TicTacToe/main.avif"
-				href="https://github.com/lis531/Tic-tac-toe"
-				hrefTryOut='https://lis531.vercel.app'
-			/>
-			<Project
-				title="TechNews"
-				description='It is website created in js that fetches news from www.wired.com and lets you order them or select certain categories. Made as a school project.'
-				date="June 2023"
-				img="/images/TechNews/main.avif"
-				href="https://github.com/lis531/TechNews"
-				hrefTryOut='https://lis531.github.io/TechNews'
-			/>
+		<div id="projects">
+			<h1 style="margin-left: auto; margin-right: auto; width: fit-content;">My projects</h1>
+			<div class="grid">
+				<Project
+				title="Borufi"
+					description='It is my own music library (AKA Spotify).'
+					date="June 2023"
+					date="January 2024"
+					img="/images/Borufi/main.avif"
+					href="https://github.com/lis531/borufi"
+					hrefTryOut="https://borufi.netlify.app"
+				/>
+				<Project
+					title="SchoolProjects"
+					description='Contains some of my smaller school projects yet when combined it is big enough to upload here.'
+					date="2022 - 2024"
+					img="/images/SchoolProjects/main.avif"
+					href="https://github.com/lis531/schoolProjects"
+					hrefTryOut='https://lis531.github.io/schoolProjects'
+				/>
+				<Project
+					title="TicTacToe"
+					description='Simple tic-tac-toe game made using Vue and Vite.'
+					date="November 2024"
+					img="/images/TicTacToe/main.avif"
+					href="https://github.com/lis531/Tic-tac-toe"
+					hrefTryOut='https://lis531.vercel.app'
+				/>
+				<Project
+					title="TechNews"
+					description='It is website created in js that fetches news from www.wired.com and lets you order them or select certain categories. Made as a school project.'
+					date="June 2023"
+					img="/images/TechNews/main.avif"
+					href="https://github.com/lis531/TechNews"
+					hrefTryOut='https://lis531.github.io/TechNews'
+				/>
+			</div>
 		</div>
 		<div class="space">
 			<h1 class="animate">Contact</h1>
@@ -203,6 +214,41 @@ import MySkills from '../components/MySkills.astro';
 		line-height: 1;
 		text-align: center;
 		margin-bottom: 1em;
+		/* background-image: linear-gradient(0deg, rgb(var(--accent-dark)), rgb(var(--accent)), rgb(var(--accent-light)), white); */
+		background-image: linear-gradient(45deg, #2e99f0, #9b27b0);
+		background-clip: text;
+		color: transparent;
+	}
+	.underlined {
+		text-decoration: wavy;
+    	text-decoration-line: underline;
+    	text-underline-position: under;
+		text-decoration-thickness: 2px;
+	}
+	mark {
+		position: relative;
+		background-color: transparent;
+	}
+	mark::before {
+		content: '';
+		position: absolute;
+		top: 0;
+		left: 0;
+		height: 100%;
+		width: 0;
+		background-color: yellow;
+		z-index: -1;
+	}
+	mark.animate-mark::before {
+		animation: animateMarkBefore 1s .5s forwards;
+	}
+	@keyframes animateMarkBefore {
+		from {
+			width: 0;
+		}
+		to {
+			width: 100%;
+		}
 	}
 	#projects[data-astro-cid-j7pv25f6] {
 		padding-top: 15vh;
@@ -212,7 +258,7 @@ import MySkills from '../components/MySkills.astro';
 		display: grid; 
   		grid-template-columns: repeat(auto-fit, minmax(10ch, 1fr));
 		max-width: 1200px;
-		width: 100%;
+		width: 95%;
   		gap: 0.7em 0.7em; 
   		grid-template-areas: 
   		  	"Borufi Borufi Borufi SchoolProjects SchoolProjects"
@@ -238,7 +284,7 @@ import MySkills from '../components/MySkills.astro';
 		text-decoration: none;
 		color: white;
 		border: 2px solid rgba(72, 72, 72, 1);
-		backdrop-filter: blur(4px);
+		backdrop-filter: blur(7px);
 		border-radius: 90pt;
 		padding: 0.5rem 5rem;
 		text-align: center;
