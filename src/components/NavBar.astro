@@ -41,10 +41,22 @@ const links = [
         color: white;
         text-decoration: none;
         border-radius: 90pt;
-        padding: 0.5vh 1vw;
-        color: rgba(225, 225, 225, 0.9);
+        margin: 0.5vh 1vw;
+        color: rgb(216, 216, 216);
+        position: relative;
     }
-    a:hover {
-        text-decoration: underline;
+    a::after {
+        content: '';
+        display: block;
+        position: absolute;
+        height: 4px;
+        width: 100%;
+        transform: scaleX(0);
+        transition: transform 0.3s;
+        background: rgb(216, 216, 216);
+        bottom: 4px;
+    }
+    a:hover::after {
+        transform: scaleX(1);
     }
 </style>

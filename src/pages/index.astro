@@ -90,7 +90,7 @@ import MySkills from '../components/MySkills.astro';
 				{ logo: '/images/Logos/Vue.svg', alt: "Vue", level: 40 },
 				{ logo: '/images/Logos/Astro.svg', alt: "Astro", level: 60 },
 				{ logo: '/images/Logos/Firebase.svg', alt: "Firebase", level: 30 },
-				{ logo: '/images/Logos/Python.svg', alt: "Python", level: 35 },
+				{ logo: '/images/Logos/Python.svg', alt: "Python", level: 40 },
 				{ logo: '/images/Logos/CPP.svg', alt: "CPP", level: 20 },
 				{ logo: '/images/Logos/Csharp.svg', alt: "Csharp", level: 30 },
 				{ logo: '/images/Logos/Java.svg', alt: "Java", level: 5 },
@@ -100,7 +100,7 @@ import MySkills from '../components/MySkills.astro';
 			]}
 		/>
 		<div id="projects">
-			<h1 style="margin-left: auto; margin-right: auto; width: fit-content;">My projects</h1>
+			<h1>My projects</h1>
 			<div class="grid">
 				<Project
 				title="Borufi"
@@ -220,10 +220,11 @@ import MySkills from '../components/MySkills.astro';
 		color: transparent;
 	}
 	.underlined {
-		text-decoration: wavy;
+		/* text-decoration: wavy;
     	text-decoration-line: underline;
     	text-underline-position: under;
-		text-decoration-thickness: 2px;
+		text-decoration-thickness: 2px; */
+		font-weight: bold;
 	}
 	mark {
 		position: relative;
@@ -253,6 +254,9 @@ import MySkills from '../components/MySkills.astro';
 	#projects[data-astro-cid-j7pv25f6] {
 		padding-top: 15vh;
 		margin-top: 20vh;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
     }
 	.grid {
 		display: grid; 
