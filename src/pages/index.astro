@@ -230,7 +230,7 @@ import MySkills from '../components/MySkills.astro';
 		position: relative;
 		background-color: transparent;
 	}
-	mark::before {
+	mark::after {
 		content: '';
 		position: absolute;
 		top: 0;
@@ -240,7 +240,7 @@ import MySkills from '../components/MySkills.astro';
 		background-color: yellow;
 		z-index: -1;
 	}
-	mark.animate-mark::before {
+	mark.animate-mark::after {
 		animation: animateMarkBefore 1s .5s forwards;
 	}
 	@keyframes animateMarkBefore {
