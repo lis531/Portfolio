@@ -91,8 +91,8 @@ import MySkills from '../components/MySkills.astro';
 				{ logo: '/images/Logos/Astro.svg', alt: "Astro", level: 60 },
 				{ logo: '/images/Logos/Firebase.svg', alt: "Firebase", level: 30 },
 				{ logo: '/images/Logos/Python.svg', alt: "Python", level: 40 },
-				{ logo: '/images/Logos/CPP.svg', alt: "CPP", level: 20 },
-				{ logo: '/images/Logos/Csharp.svg', alt: "Csharp", level: 30 },
+				{ logo: '/images/Logos/CPP.svg', alt: "CPP", level: 15 },
+				{ logo: '/images/Logos/Csharp.svg', alt: "Csharp", level: 20 },
 				{ logo: '/images/Logos/Java.svg', alt: "Java", level: 5 },
 				{ logo: '/images/Logos/Unity.svg', alt: "Unity", level: 30 },
 				{ logo: '/images/Logos/Unreal.svg', alt: "Unreal", level: 1 },
@@ -105,17 +105,14 @@ import MySkills from '../components/MySkills.astro';
 				<Project
 				title="Borufi"
 					description='It is my own music library (AKA Spotify).'
-					date="June 2023"
 					date="January 2024"
-					img="/images/Borufi/main.avif"
 					href="https://github.com/lis531/borufi"
 					hrefTryOut="https://borufi.netlify.app"
 				/>
 				<Project
-					title="SchoolProjects"
+					title="School Projects"
 					description='Contains some of my smaller school projects yet when combined it is big enough to upload here.'
 					date="2022 - 2024"
-					img="/images/SchoolProjects/main.avif"
 					href="https://github.com/lis531/schoolProjects"
 					hrefTryOut='https://lis531.github.io/schoolProjects'
 				/>
@@ -123,7 +120,6 @@ import MySkills from '../components/MySkills.astro';
 					title="TicTacToe"
 					description='Simple tic-tac-toe game made using Vue and Vite.'
 					date="November 2024"
-					img="/images/TicTacToe/main.avif"
 					href="https://github.com/lis531/Tic-tac-toe"
 					hrefTryOut='https://lis531.vercel.app'
 				/>
@@ -131,9 +127,15 @@ import MySkills from '../components/MySkills.astro';
 					title="TechNews"
 					description='It is website created in js that fetches news from www.wired.com and lets you order them or select certain categories. Made as a school project.'
 					date="June 2023"
-					img="/images/TechNews/main.avif"
 					href="https://github.com/lis531/TechNews"
 					hrefTryOut='https://lis531.github.io/TechNews'
+				/>
+				<Project
+					title="Image Comparison"
+					description='Image comparison tool to compare images made using Vue 3 and Vite.'
+					date="December 2024"
+					href="https://github.com/lis531/image-compare"
+					hrefTryOut='https://lis531-image-compare.vercel.app/'
 				/>
 			</div>
 		</div>
@@ -266,13 +268,15 @@ import MySkills from '../components/MySkills.astro';
   		gap: 0.7em 0.7em; 
   		grid-template-areas: 
   		  	"Borufi Borufi Borufi SchoolProjects SchoolProjects"
-  		  	"TicTacToe TicTacToe TechNews TechNews TechNews";
+  		  	"TicTacToe TicTacToe TechNews TechNews TechNews"
+			"ImageComparison ImageComparison . . .";
 		@media (max-width: 750px) {
 			grid-template-areas: 
 				"Borufi"
 				"SchoolProjects"
 				"TechNews"
-				"TicTacToe";
+				"TicTacToe"
+				"ImageComparison";
 			grid-template-rows: repeat(4, 1fr);
 			margin: 0 3px;
 		}

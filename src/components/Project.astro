@@ -5,20 +5,20 @@ interface Props {
     title: string;
     description: string;
     date: string;
-    img: string;
     href: string;
     hrefTryOut: string;
 }
 
-const { title, description, date, img, href, hrefTryOut } = Astro.props;
+const { title, description, date, href, hrefTryOut } = Astro.props;
 const images = import.meta.glob('/public/images/*/*.avif');
 const imageUrls = Object.keys(images).map((imagePath) => imagePath.replace('/public', ''));
-const filteredImageUrls = imageUrls.filter(url => url.startsWith(`/images/${title}/`));
+const filteredImageUrls = imageUrls.filter(url => url.startsWith(`/images/${title.replace(/\s/g, "")}/`));
+console.log(filteredImageUrls, title);
 ---
 
-<button class="grid-element" id={title} style={`grid-area: ${title}`}>
+<button class="grid-element" id={title.replace(/\s/g, "")} style={`grid-area: ${title.replace(/\s/g, "")}`}>
     <div class="inset">
-        <Image src={img} alt={img} class={'hidden'} id={`button-img-${title}`} width="600" height="400" />
+        <Image src={filteredImageUrls[0]} alt={filteredImageUrls[0]} class={'hidden'} id={`button-img-${title}`} width="600" height="400" />
         <span>
             <p style="color: #ebebeb;">{title}</p>
             <p style="color: rgba(204, 204, 204, 0.75);">{date}</p>
@@ -28,7 +28,7 @@ const filteredImageUrls = imageUrls.filter(url => url.startsWith(`/images/${titl
         View Production <img src="/images/Icons/arrow.svg" alt="arrow" width="16px" height="16px" loading="lazy" />
     </a>
 </button>
-<dialog id={`dialog-${title}`} class="dialog" data-current-index="0">
+<dialog id={`dialog-${title.replace(/\s/g, "")}`} class="dialog" data-current-index="0">
     <div>
         <button class="closeIcon" aria-label="Close dialog" onclick="() => handleDialogClose">✕</button>
         <div class="images">
@@ -370,7 +370,7 @@ const filteredImageUrls = imageUrls.filter(url => url.startsWith(`/images/${titl
     }
     span {
         display: flex;
-        align-items: center;
+        align-items: end;
         justify-content: space-between;
         position: absolute;
         width: -webkit-fill-available;
@@ -378,6 +378,23 @@ const filteredImageUrls = imageUrls.filter(url => url.startsWith(`/images/${titl
         bottom: 1rem;
         margin: 0 1rem;
     }
+    span > p:first-of-type {
+        /* font-size: 32px; */
+    }
+
+    span > p:first-of-type {
+        text-align: left;
+    }
+
+    span > p:last-of-type {
+        text-align: right;
+    }
+
+    span > p {
+        font-family: "Bricolage Grotesque";
+        line-height: 1;
+    }
+
     .grid-element {
         display: flex;
         flex-direction: column;
