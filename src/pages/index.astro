@@ -67,6 +67,10 @@ import MySkills from '../components/MySkills.astro';
         const yPos = scrollPosition * 0.3;
         parallax.style.backgroundPosition = `center ${-yPos}px`;
     });
+
+	document.addEventListener('DOMContentLoaded', () => {
+        (document.querySelector('footer') as HTMLElement).textContent = new Date().getFullYear().toString() + ' © Borys Gajewski';
+    });
 </script>
 
 <Layout title="Borys Gajewski">
@@ -259,34 +263,48 @@ import MySkills from '../components/MySkills.astro';
 		display: flex;
 		flex-direction: column;
 		align-items: center;
+		@media screen and (max-width: 600px) {
+			width: 100%;
+		}
     }
 	.grid {
-		display: grid; 
-  		grid-template-columns: repeat(auto-fit, minmax(10ch, 1fr));
-		max-width: 1200px;
-		width: 95%;
-  		gap: 0.7em 0.7em; 
-  		grid-template-areas: 
-  		  	"Borufi Borufi Borufi SchoolProjects SchoolProjects"
-  		  	"TicTacToe TicTacToe TechNews TechNews TechNews"
-			"ImageComparison ImageComparison . . .";
-		@media (max-width: 750px) {
-			grid-template-areas: 
-				"Borufi"
-				"SchoolProjects"
-				"TechNews"
-				"TicTacToe"
-				"ImageComparison";
-			grid-template-rows: repeat(4, 1fr);
-			margin: 0 3px;
+	    display: grid;
+	    grid-template-columns: repeat(5, 1fr);
+		grid-template-rows: repeat(6, 220px);
+	    max-width: 1250px;
+	    width: 95%;
+	    gap: 0.7em 0.7em;
+	    grid-template-areas: 
+	        "Borufi Borufi Borufi SchoolProjects SchoolProjects"
+	        "Borufi Borufi Borufi SchoolProjects SchoolProjects"
+	        "TicTacToe TicTacToe TechNews TechNews TechNews"
+	        "TicTacToe TicTacToe TechNews TechNews TechNews"
+	        "TicTacToe TicTacToe ImageComparison ImageComparison ImageComparison"
+	        ". . ImageComparison ImageComparison ImageComparison";
+	    @media (max-width: 900px) {
+	        grid-template-areas: 
+	            "Borufi"
+	            "SchoolProjects"
+	            "TechNews"
+	            "TicTacToe"
+	            "ImageComparison";
+	        grid-template-rows: repeat(5, 440px);
+			grid-template-columns: 1fr;
+	        margin: 0 3px;
+	    }
+		@media screen and (max-width: 600px) {
+			grid-template-rows: auto;
 		}
 	}
 	.contact {
 		display: flex;
 		justify-content: center;
 		gap: 5vw;
-		flex-wrap: wrap;
 		padding: 1rem;
+		@media screen and (max-width: 1000px) {
+			flex-direction: column;
+			width: 100%;
+		}
 	}
 	.contact > a {
 		text-decoration: none;
@@ -297,7 +315,11 @@ import MySkills from '../components/MySkills.astro';
 		padding: 0.5rem 5rem;
 		text-align: center;
 		width: 120px;
-		box-shadow: inset 0px 0px 15px 0px rgba(72, 72, 72, 0.5)
+		box-shadow: inset 0px 0px 15px 0px rgba(72, 72, 72, 0.5);
+		@media screen and (max-width: 1000px) {
+			width: auto;
+			margin: 0 2rem;
+		}
 	}
 	.space {
 		height: 100lvh;
