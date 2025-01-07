@@ -12,7 +12,7 @@ const { title } = Astro.props;
 		<meta charset="UTF-8" />
 		<meta name="description" content="Borys Gajewski portfolio" />
 		<meta name="viewport" content="width=device-width" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.jpeg" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.avif" />
 		<meta name="generator" content={Astro.generator} />
 		<title>{title}</title>
 	</head>
@@ -23,17 +23,17 @@ const { title } = Astro.props;
 <style is:global>
 	@font-face {
 	    font-family: 'Alata';
-	    src: url('/fonts/Alata-Regular.ttf') format('truetype');
+	    src: url('/fonts/Alata.woff2') format('truetype');
 	    font-display: swap;
 	}
 	@font-face {
 	    font-family: 'Albert Sans';
-	    src: url('/fonts/AlbertSans-VariableFont_wght.ttf') format('truetype');
+	    src: url('/fonts/AlbertSans.woff2') format('truetype');
 	    font-display: swap;
 	}
 	@font-face {
 	    font-family: 'Bricolage Grotesque';
-	    src: url('/fonts/BricolageGrotesque-VariableFont_opsz,wdth,wght.ttf') format('truetype');
+	    src: url('/fonts/BricolageGrotesque.woff2') format('truetype');
 	    font-display: swap;
 	}
 	:root {
