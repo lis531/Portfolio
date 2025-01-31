@@ -141,6 +141,13 @@ import MySkills from '../components/MySkills.astro';
 					href="https://github.com/lis531/image-compare"
 					hrefTryOut='https://lis531-image-compare.vercel.app/'
 				/>
+				<Project
+					title="Discord Bot"
+					description='Discord bot that can play music, queue songs, and more.'
+					date="January 2024"
+					href="https://github.com/lis531/DiscordBot"
+					hrefTryOut=''
+					/>
 			</div>
 		</div>
 		<div class="space">
@@ -220,16 +227,11 @@ import MySkills from '../components/MySkills.astro';
 		line-height: 1;
 		text-align: center;
 		margin-bottom: 1em;
-		/* background-image: linear-gradient(0deg, rgb(var(--accent-dark)), rgb(var(--accent)), rgb(var(--accent-light)), white); */
 		background-image: linear-gradient(45deg, #2e99f0, #9b27b0);
 		background-clip: text;
 		color: transparent;
 	}
 	.underlined {
-		/* text-decoration: wavy;
-    	text-decoration-line: underline;
-    	text-underline-position: under;
-		text-decoration-thickness: 2px; */
 		font-weight: bold;
 	}
 	mark {
@@ -280,14 +282,16 @@ import MySkills from '../components/MySkills.astro';
 	        "TicTacToe TicTacToe TechNews TechNews TechNews"
 	        "TicTacToe TicTacToe TechNews TechNews TechNews"
 	        "TicTacToe TicTacToe ImageComparison ImageComparison ImageComparison"
-	        ". . ImageComparison ImageComparison ImageComparison";
+	        "DiscordBot DiscordBot ImageComparison ImageComparison ImageComparison"
+			"DiscordBot DiscordBot . . .";
 	    @media (max-width: 900px) {
 	        grid-template-areas: 
 	            "Borufi"
 	            "SchoolProjects"
 	            "TechNews"
 	            "TicTacToe"
-	            "ImageComparison";
+	            "ImageComparison"
+				"DiscordBot";
 	        grid-template-rows: repeat(5, 440px);
 			grid-template-columns: 1fr;
 	        margin: 0 3px;
