@@ -24,7 +24,7 @@ console.log(filteredImageUrls, title);
             <p style="color: rgba(204, 204, 204, 0.75);">{date}</p>
         </span>
     </div>
-    <a class="link" href={href}>
+    <a class="link" href={href} target="_blank">
         View Production <img src="/images/Icons/arrow.svg" alt="arrow" width="16px" height="16px" loading="lazy" />
     </a>
 </button>
@@ -43,11 +43,11 @@ console.log(filteredImageUrls, title);
         <p>{description}</p>
         <br>
         <div class="dialog-buttons">
-            <a class="link" href={href}>
+            <a class="link" href={href} target="_blank">
                 View Production
                 <img src="/images/Icons/arrow.svg" alt="arrow" width="16px" height="16px" loading="lazy" />
             </a>
-            {hrefTryOut !== '' ? <a class="link" href={hrefTryOut}>Try out <img src="/images/Icons/arrow.svg" alt="arrow" width="16px" height="16px" loading="lazy" /></a> : ''}
+            {hrefTryOut !== '' ? <a class="link" href={hrefTryOut} target="_blank">Try out <img src="/images/Icons/arrow.svg" alt="arrow" width="16px" height="16px" loading="lazy" /></a> : ''}
         </div>
     </div>
 </dialog>
