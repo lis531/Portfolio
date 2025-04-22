@@ -81,7 +81,7 @@ import MySkills from '../components/MySkills.astro';
 		<NavBar />
 		<div class="space">
 			<h1 class="animate">About me</h1>
-			<p class="animate">My name is <span class="underlined">Borys Gajewski</span>, and I’m a <mark>developer</mark> from Poland. I create websites, small games, and other programs.</p>
+			<p class="animate">My name is <b>Borys Gajewski</b>, and I’m a <mark>developer</mark> from Poland. I create websites, small games, and other programs.</p>
 		</div>
 		<h1 class="animate">My Skills</h1>
 		<MySkills
@@ -89,18 +89,19 @@ import MySkills from '../components/MySkills.astro';
 				{ logo: '/images/Logos/HTML5.svg', alt: "HTML5", level: 95 },
 				{ logo: '/images/Logos/CSS.svg', alt: "CSS", level: 90 },
 				{ logo: '/images/Logos/JS.svg', alt: "JS", level: 85 },
-				{ logo: '/images/Logos/TS.svg', alt: "TS", level: 75 },
-				{ logo: '/images/Logos/React.svg', alt: "React", level: 75 },
+				{ logo: '/images/Logos/TS.svg', alt: "TS", level: 80 },
+				{ logo: '/images/Logos/React.svg', alt: "React", level: 80 },
 				{ logo: '/images/Logos/Vue.svg', alt: "Vue", level: 40 },
 				{ logo: '/images/Logos/Astro.svg', alt: "Astro", level: 60 },
+				{ logo: '/images/Logos/Nodejs.svg', alt: "Node", level: 50 },
 				{ logo: '/images/Logos/Firebase.svg', alt: "Firebase", level: 30 },
-				{ logo: '/images/Logos/Python.svg', alt: "Python", level: 40 },
+				{ logo: '/images/Logos/Python.svg', alt: "Python", level: 55 },
 				{ logo: '/images/Logos/CPP.svg', alt: "CPP", level: 15 },
 				{ logo: '/images/Logos/Csharp.svg', alt: "Csharp", level: 20 },
 				{ logo: '/images/Logos/Java.svg', alt: "Java", level: 5 },
 				{ logo: '/images/Logos/Unity.svg', alt: "Unity", level: 30 },
 				{ logo: '/images/Logos/Unreal.svg', alt: "Unreal", level: 1 },
-				{ logo: '/images/Logos/Figma.svg', alt: "Figma", level: 70 }
+				{ logo: '/images/Logos/Figma.svg', alt: "Figma", level: 75 }
 			]}
 		/>
 		<div id="projects">
@@ -151,7 +152,7 @@ import MySkills from '../components/MySkills.astro';
 				<Project
 					title="Bargebo Guesser"
 					description='A game where you guess the song that is currently playing built with React, Vite and Firebase.'
-					date="March 2025"
+					date="Mar - Apr 2025"
 					href="https://github.com/lis531/bargebo-guesser"
 					hrefTryOut='https://bargebo-guesser.vercel.app/'
 					/>
@@ -175,7 +176,6 @@ import MySkills from '../components/MySkills.astro';
 	html {
 		scroll-behavior: smooth;
 		scrollbar-width: thin;
-		scrollbar-gutter: stable;
 		scrollbar-color: rgb(255, 255, 255) rgba(0, 0, 0, 0);
 	}
 	body {
@@ -238,9 +238,6 @@ import MySkills from '../components/MySkills.astro';
 		background-clip: text;
 		color: transparent;
 	}
-	.underlined {
-		font-weight: bold;
-	}
 	mark {
 		position: relative;
 		background-color: transparent;
@@ -298,7 +295,8 @@ import MySkills from '../components/MySkills.astro';
 	            "TechNews"
 	            "TicTacToe"
 	            "ImageComparison"
-				"DiscordBot";
+				"DiscordBot"
+				"BargeboGuesser";
 	        grid-template-rows: repeat(5, 440px);
 			grid-template-columns: 1fr;
 	        margin: 0 3px;
@@ -321,6 +319,7 @@ import MySkills from '../components/MySkills.astro';
 		text-decoration: none;
 		color: white;
 		border: 2px solid rgba(72, 72, 72, 1);
+		-webkit-backdrop-filter: blur(7px);
 		backdrop-filter: blur(7px);
 		border-radius: 90pt;
 		padding: 0.5rem 5rem;
