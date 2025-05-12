@@ -275,10 +275,9 @@ import MySkills from '../components/MySkills.astro';
     }
 	.grid {
 	    display: grid;
-	    grid-template-columns: repeat(5, 1fr);
-		grid-template-rows: repeat(6, 220px);
+	    grid-template-columns: repeat(5, 220px);
+		grid-template-rows: repeat(8, 220px);
 	    max-width: 1250px;
-	    width: 95%;
 	    gap: 0.7em 0.7em;
 	    grid-template-areas: 
 	        "Borufi Borufi Borufi SchoolProjects SchoolProjects"
@@ -287,6 +286,7 @@ import MySkills from '../components/MySkills.astro';
 	        "TicTacToe TicTacToe TechNews TechNews TechNews"
 	        "TicTacToe TicTacToe ImageComparison ImageComparison ImageComparison"
 	        "DiscordBot DiscordBot ImageComparison ImageComparison ImageComparison"
+			"DiscordBot DiscordBot BargeboGuesser BargeboGuesser BargeboGuesser"
 			"DiscordBot DiscordBot BargeboGuesser BargeboGuesser BargeboGuesser";
 	    @media (max-width: 900px) {
 	        grid-template-areas: 
