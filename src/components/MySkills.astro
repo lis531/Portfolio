@@ -1,74 +1,82 @@
 ---
 interface Props {
 	skills: Array<{
-        logo: string;
-        alt: string;
-        level: number;
-    }>;
+		logo: string;
+		alt: string;
+		level: number;
+	}>;
 }
 
 const { skills } = Astro.props;
 ---
 
 <div class="allSkills">
-    {skills.map((skill) => (
-        <div class="skill animate" style={`background-image: conic-gradient(rgb(0, 124, 83) 0deg, rgb(0, 182, 121) ${(skill.level / 100) * 360}deg, rgba(32, 32, 32, 0.5) ${(skill.level / 100) * 360}deg 360deg)`} >
-            <img src={skill.logo} alt={skill.alt} loading="lazy"/>
-        </div>
-    ))}
+	{
+		skills.map((skill) => (
+			<div class="skill animate" style={`--skill-level: ${(skill.level / 100) * 360}deg;`}>
+				<img src={skill.logo} alt={skill.alt} loading="lazy" />
+			</div>
+		))
+	}
 </div>
 
 <style>
-    .allSkills {
-        width: 55vw;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        flex-wrap: wrap;
-        @media (max-width: 600px) {
-            width: 90vw;
-        }
-        @media (max-width: 1200px) {
-            width: 80vw;
-        }
-    }
-    .skill {
-        width: 100px;
-        height: 100px;
-        border-radius: 25%;
-        margin: 20px;
-        padding: 0;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        transition: margin 0.3s, padding 0.3s;
-        cursor: pointer;
-        @media (max-width: 600px) {
-            width: 70px;
-            height: 70px;
-            margin: 10px;
-            padding: 7px;
-        }
-    }
-    .skill:hover {
-        @media (min-width: 600px) {
-            margin: 10px;
-            padding: 10px;
-            /* margin-left: 1.2rem;
-            margin-right: 1.2rem; */
-        }
-    }
-    .skill > img {
-        background-color: rgba(0, 0, 0, 1);
-        width: 80px;
-        height: 80px;
-        padding: 9px;
-        border: 2px solid rgba(255, 255, 255, 0.1);
-        border-radius: 25%;
-        @media (max-width: 600px) {
-            width: 60px;
-            height: 60px;
-            padding: 5px;
-        }
-    }
+	.allSkills {
+		width: 55vw;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		flex-wrap: wrap;
+		@media (max-width: 600px) {
+			width: 90vw;
+		}
+		@media (max-width: 1200px) {
+			width: 80vw;
+		}
+	}
+	.skill {
+		position: relative;
+		width: 100px;
+		height: 100px;
+		border-radius: 25%;
+		margin: 20px;
+		padding: 0px;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		cursor: pointer;
+		transition: box-shadow 0.3s;
+	}
+	.skill::before {
+		content: "";
+		position: absolute;
+		inset: 0;
+		border-radius: 25%;
+		z-index: 0;
+		transition: transform 0.3s;
+		transform: scale(1);
+		background-image: conic-gradient(
+			rgb(0, 124, 83) 0deg,
+			rgb(0, 182, 121) var(--skill-level, 180deg),
+			rgba(32, 32, 32, 0.5) var(--skill-level, 180deg) 360deg
+		);
+	}
+	.skill:hover::before {
+		transform: scale(1.2);
+	}
+	.skill > img {
+		position: relative;
+		z-index: 1;
+		background-color: rgba(0, 0, 0, 1);
+		width: 80px;
+		height: 80px;
+		padding: 9px;
+		border: 2px solid rgba(255, 255, 255, 0.1);
+		border-radius: 25%;
+		@media (max-width: 600px) {
+			width: 60px;
+			height: 60px;
+			padding: 5px;
+		}
+	}
 </style>

@@ -25,18 +25,22 @@ console.log(filteredImageUrls, title);
         </span>
     </div>
     <a class="link" href={href} target="_blank">
-        View Production <img src="/images/Icons/arrow.svg" alt="arrow" width="16px" height="16px" loading="lazy" />
+        View Production <img src="/images/Icons/arrow_link.svg" alt="arrow" width="16px" height="16px" loading="lazy" />
     </a>
 </button>
 <dialog id={`dialog-${title.replace(/\s/g, "")}`} class="dialog" data-current-index="0">
     <div>
         <button class="closeIcon" aria-label="Close dialog" onclick="() => handleDialogClose">✕</button>
         <div class="images">
-            <button class="prev-button">&lt;</button>
+            <button class="prev-button">
+                <img src="/images/Icons/arrow_modal.svg" alt="arrow" width="22px" height="22px" loading="lazy" />
+            </button>
             {filteredImageUrls.map((url, index) => (
                 <img src={url} alt={title + index} loading="lazy" class={index === 0 ? 'fade-in' : 'fade-out'} style={index === 0 ? 'display: block;' : ''} />
             ))}
-            <button class="next-button">&gt;</button>
+            <button class="next-button">
+                <img src="/images/Icons/arrow_modal.svg" alt="arrow" width="22px" height="22px" loading="lazy" />
+            </button>
         </div>
 
         <h1>{title}</h1>
@@ -45,9 +49,9 @@ console.log(filteredImageUrls, title);
         <div class="dialog-buttons">
             <a class="link" href={href} target="_blank">
                 View Production
-                <img src="/images/Icons/arrow.svg" alt="arrow" width="16px" height="16px" loading="lazy" />
+                <img src="/images/Icons/arrow_link.svg" alt="arrow" width="16px" height="16px" loading="lazy" />
             </a>
-            {hrefTryOut !== '' ? <a class="link" href={hrefTryOut} target="_blank">Try out <img src="/images/Icons/arrow.svg" alt="arrow" width="16px" height="16px" loading="lazy" /></a> : ''}
+            {hrefTryOut !== '' ? <a class="link" href={hrefTryOut} target="_blank">Try out <img src="/images/Icons/arrow_link.svg" alt="arrow" width="16px" height="16px" loading="lazy" /></a> : ''}
         </div>
     </div>
 </dialog>
@@ -60,7 +64,7 @@ console.log(filteredImageUrls, title);
 
             const target = e.currentTarget as HTMLElement;
             const dialog = document.getElementById(`dialog-${target.id}`) as HTMLDialogElement;
-            const images = dialog.querySelectorAll('.images img') as NodeListOf<HTMLImageElement>;
+            const images = dialog.querySelectorAll('.images > img') as NodeListOf<HTMLImageElement>;
 
             images.forEach((img, i) => {
                 img.style.display = i === 0 ? 'block' : '';
@@ -305,6 +309,7 @@ console.log(filteredImageUrls, title);
     }
     body:has(dialog[open]) {
         overflow: hidden;
+        margin-right: 10px;
     }
     .dialog-buttons {
         display: flex;
@@ -329,8 +334,9 @@ console.log(filteredImageUrls, title);
         color: white;
         text-decoration: none;
         text-align: center;
-        width: 3rem;
-        height: 3rem;
+        width: 50px;
+        height: 50px;
+        padding: 0;
         cursor: pointer;
         border: none;
         background-color: rgba(32, 32, 32, 0.6);
@@ -338,6 +344,9 @@ console.log(filteredImageUrls, title);
         -webkit-backdrop-filter: blur(7px);
         backdrop-filter: blur(7px);
         z-index: 10;
+        & > img {
+            padding: 14px;
+        }
         @media (max-width: 600px) {
             font-size: x-large;
             width: 40%;
@@ -347,6 +356,9 @@ console.log(filteredImageUrls, title);
     .next-button {
         display: none;
         right: 1vw;
+        & > img {
+            transform: rotate(180deg);
+        }
     }
     .prev-button {
         display: none;
