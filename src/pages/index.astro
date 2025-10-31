@@ -86,16 +86,18 @@ import MySkills from '../components/MySkills.astro';
 		<h1 class="animate">My Skills</h1>
 		<MySkills
 			skills={[
-				{ logo: '/images/Logos/HTML5.svg', alt: "HTML5", level: 95 },
-				{ logo: '/images/Logos/CSS.svg', alt: "CSS", level: 90 },
-				{ logo: '/images/Logos/JS.svg', alt: "JS", level: 85 },
-				{ logo: '/images/Logos/TS.svg', alt: "TS", level: 80 },
+				{ logo: '/images/Logos/HTML5.svg', alt: "HTML5", level: 100 },
+				{ logo: '/images/Logos/CSS.svg', alt: "CSS", level: 95 },
+				{ logo: '/images/Logos/FramerMotion.svg', alt: "Framer Motion", level: 60 },
+				{ logo: '/images/Logos/JS.svg', alt: "JS", level: 95 },
+				{ logo: '/images/Logos/TS.svg', alt: "TS", level: 85 },
 				{ logo: '/images/Logos/React.svg', alt: "React", level: 80 },
-				{ logo: '/images/Logos/Vue.svg', alt: "Vue", level: 40 },
-				{ logo: '/images/Logos/Astro.svg', alt: "Astro", level: 60 },
-				{ logo: '/images/Logos/Nodejs.svg', alt: "Node", level: 50 },
-				{ logo: '/images/Logos/Firebase.svg', alt: "Firebase", level: 30 },
-				{ logo: '/images/Logos/Python.svg', alt: "Python", level: 55 },
+				{ logo: '/images/Logos/Vue.svg', alt: "Vue", level: 50 },
+				{ logo: '/images/Logos/Astro.svg', alt: "Astro", level: 75 },
+				{ logo: '/images/Logos/Nodejs.svg', alt: "Node", level: 60 },
+				{ logo: '/images/Logos/Nextjs.svg', alt: "Next.js", level: 40 },
+				{ logo: '/images/Logos/Firebase.svg', alt: "Firebase", level: 65 },
+				{ logo: '/images/Logos/Python.svg', alt: "Python", level: 60 },
 				{ logo: '/images/Logos/CPP.svg', alt: "CPP", level: 15 },
 				{ logo: '/images/Logos/Csharp.svg', alt: "Csharp", level: 20 },
 				{ logo: '/images/Logos/Java.svg', alt: "Java", level: 5 },
@@ -112,7 +114,7 @@ import MySkills from '../components/MySkills.astro';
 					description='It is my own music library (AKA Spotify). Made using Astro, TS and Firebase.'
 					date="January 2024"
 					href="https://github.com/lis531/borufi"
-					hrefTryOut="https://borufi.netlify.app"
+					hrefTryOut=""
 				/>
 				<Project
 					title="School Projects"
@@ -163,6 +165,23 @@ import MySkills from '../components/MySkills.astro';
 					href="https://github.com/lis531/spotify-liked-toggle"
 					hrefTryOut=''
 					/>
+				<!-- add photos -->
+				<Project
+					title="Spotilyzer"
+					description='A tool to analyze your Spotify data and generate insights about your music preferences.'
+					date="August 2025"
+					href="https://github.com/lis531/Spotilyzer"
+					hrefTryOut='https://spotilyzer.vercel.app/'
+				/>
+				<!-- add photos -->
+				<!-- <Project
+					title="Borufi Remake"
+					description='A remake of my music library (AKA Spotify) with new design and features. Made using Astro, TS and Firebase.'
+					date="Jun - Sep 2025"
+					href="https://github.com/lis531/borufi-remake"
+					hrefTryOut="https://borufi.netlify.app"
+				/> -->
+				<!-- add photos -->
 			</div>
 		</div>
 		<div class="space">
@@ -283,7 +302,7 @@ import MySkills from '../components/MySkills.astro';
 	.grid {
 	    display: grid;
 	    grid-template-columns: repeat(5, 220px);
-		grid-template-rows: repeat(10, 220px);
+		grid-template-rows: repeat(12, 220px);
 	    max-width: 1250px;
 	    gap: 0.7em 0.7em;
 	    grid-template-areas: 
@@ -295,8 +314,9 @@ import MySkills from '../components/MySkills.astro';
 	        "DiscordBot DiscordBot ImageComparison ImageComparison ImageComparison"
 			"DiscordBot DiscordBot BargeboGuesser BargeboGuesser BargeboGuesser"
 			"DiscordBot DiscordBot BargeboGuesser BargeboGuesser BargeboGuesser"
-			"SpotifyLikeScript SpotifyLikeScript SpotifyLikeScript SpotifyLikeScript SpotifyLikeScript"
-			"SpotifyLikeScript SpotifyLikeScript SpotifyLikeScript SpotifyLikeScript SpotifyLikeScript";
+			"Spotilyzer Spotilyzer Spotilyzer SpotifyLikeScript SpotifyLikeScript"
+			"Spotilyzer Spotilyzer Spotilyzer SpotifyLikeScript SpotifyLikeScript"
+			". . . SpotifyLikeScript SpotifyLikeScript";
 	    @media (max-width: 900px) {
 	        grid-template-areas: 
 	            "Borufi"
@@ -305,13 +325,19 @@ import MySkills from '../components/MySkills.astro';
 	            "TicTacToe"
 	            "ImageComparison"
 				"DiscordBot"
-				"BargeboGuesser";
+				"BargeboGuesser"
+				"SpotifyLikeScript"
+				"Spotilyzer";
 	        grid-template-rows: repeat(5, 440px);
 			grid-template-columns: 1fr;
 	        margin: 0 3px;
 	    }
 		@media screen and (max-width: 600px) {
 			grid-template-rows: auto;
+		}
+		@media (min-width: 1000px) and (max-width: 1920px) {
+			grid-template-columns: repeat(5, 190px);
+			grid-template-rows: repeat(12, 190px);
 		}
 	}
 	.contact {
@@ -334,10 +360,13 @@ import MySkills from '../components/MySkills.astro';
 		padding: 0.5rem 5rem;
 		text-align: center;
 		width: 120px;
-		box-shadow: inset 0px 0px 15px 0px rgba(72, 72, 72, 0.5);
+		box-shadow: inset 0 0 15px 0 rgba(72, 72, 72, 0.5), 0 0 15px 0 rgba(72, 72, 72, 0.5);
 		@media screen and (max-width: 1000px) {
 			width: auto;
 			margin: 0 2rem;
+		}
+		@media (min-width: 1000px) and (max-width: 1920px) {
+			padding: 0.5rem 3rem;
 		}
 	}
 	.space {

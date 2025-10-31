@@ -48,19 +48,22 @@ const { title } = Astro.props;
 		);
 	}
 	html {
-		font-family: "Alata";
+		font-family: "Alata",serif;
 		background: rgba(0, 0, 0, 1);
 	}
 	h1 {
-		font-family: "Bricolage Grotesque";
+		font-family: "Bricolage Grotesque",serif;
 		font-size: 96px;
 		margin: 0;
 		@media (max-width: 600px) {
 			font-size: 56px;
 		}
+		@media (min-width: 1000px) and (max-width: 1920px) {
+			font-size: 72px;
+		}
 	}
 	p {
-		font-family: "Albert Sans";
+		font-family: "Albert Sans",serif;
 		font-weight: 400;
 		font-style: normal;
 		font-size: 40px;
@@ -68,13 +71,19 @@ const { title } = Astro.props;
 		@media (max-width: 600px) {
 			font-size: 22px;
 		}
+		@media (min-width: 1000px) and (max-width: 1920px) {
+			font-size: 28px;
+		}
 	}
 	a {
-		font-family: "Alata";
+		font-family: "Alata",serif;
 		font-size: 40px;
 		text-align: center;
 		@media (max-width: 600px) {
 			font-size: 22px;
+		}
+		@media (min-width: 1000px) and (max-width: 1920px) {
+			font-size: 24px;
 		}
 	}
 	.animate {

@@ -40,12 +40,22 @@ const { skills } = Astro.props;
 		height: 100px;
 		border-radius: 25%;
 		margin: 20px;
-		padding: 0px;
+		padding: 0;
 		display: flex;
 		justify-content: center;
 		align-items: center;
 		cursor: pointer;
 		transition: box-shadow 0.3s;
+		@media (max-width: 1000px) {
+			width: 90px;
+			height: 90px;
+			margin: 12px;
+		}
+		@media (min-width: 1000px) and (max-width: 1920px) {
+			width: 90px;
+			height: 90px;
+			margin: 16px;
+		}
 	}
 	.skill::before {
 		content: "";
@@ -62,7 +72,9 @@ const { skills } = Astro.props;
 		);
 	}
 	.skill:hover::before {
-		transform: scale(1.2);
+		@media (orientation: landscape) {
+			transform: scale(1.2);
+		}
 	}
 	.skill > img {
 		position: relative;
@@ -77,6 +89,11 @@ const { skills } = Astro.props;
 			width: 60px;
 			height: 60px;
 			padding: 5px;
+		}
+		@media (min-width: 1000px) and (max-width: 1920px) {
+			width: 70px;
+			height: 70px;
+			padding: 10px;
 		}
 	}
 </style>
