@@ -16,7 +16,7 @@ const filteredImageUrls = imageUrls.filter(url => url.startsWith(`/images/${titl
 console.log(filteredImageUrls, title);
 ---
 
-<div class="grid-element" id={title.replace(/\s/g, "")} style={`grid-area: ${title.replace(/\s/g, "")}`}>
+<div class="carousel-element" id={title.replace(/\s/g, "")}>
     <div class="inset">
         <Image src={filteredImageUrls[0]} alt={title} class={'hidden'} id={`button-img-${title}`} width="600" height="400" />
         <span>
@@ -29,8 +29,8 @@ console.log(filteredImageUrls, title);
     </a>
 </div>
 <dialog id={`dialog-${title.replace(/\s/g, "")}`} class="dialog" data-current-index="0">
-    <div>
-        <button class="closeIcon" aria-label="Close dialog" onclick="() => handleDialogClose">✕</button>
+    <div class="dialog-surface">
+        <button class="closeIcon" aria-label="Close dialog" onclick="() => handleDialogClose">X</button>
         <div class="images">
             <button class="prev-button">
                 <img src="/images/Icons/arrow_modal.svg" alt="arrow" width="22px" height="22px" loading="lazy" />
@@ -43,9 +43,10 @@ console.log(filteredImageUrls, title);
             </button>
         </div>
 
-        <h1>{title}</h1>
-        <p>{description}</p>
-        <br>
+        <div class="dialog-copy">
+            <h1>{title}</h1>
+            <p>{description}</p>
+        </div>
         <div class="dialog-buttons">
             <a class="link" href={href} target="_blank">
                 View Production
@@ -57,8 +58,8 @@ console.log(filteredImageUrls, title);
 </dialog>
 
 <script>
-    const gridElements = document.querySelectorAll('.grid-element');
-    gridElements.forEach(element => {
+    const carouselElements = document.querySelectorAll('.carousel-horizontal > .carousel-element');
+    carouselElements.forEach(element => {
         element.addEventListener('click', (e) => {
             if(e.target instanceof HTMLAnchorElement) return;
 
@@ -147,11 +148,11 @@ console.log(filteredImageUrls, title);
 <style>
     @keyframes transformIn {
         from {
-            transform: translate3d(0, 100%, 0);
+            transform: translate3d(0, 24px, 0) scale(0.97);
             opacity: 0;
         }
         to {
-            transform: translate3d(0, 0, 0);
+            transform: translate3d(0, 0, 0) scale(1);
             opacity: 1;
         }
     }
@@ -178,25 +179,30 @@ console.log(filteredImageUrls, title);
     .images {
         position: relative;
         width: 100%;
-        height: 35vh;
+        height: min(44vh, 430px);
         object-fit: cover;
         display: flex;
         align-items: center;
         justify-content: center;
         flex-direction: row;
-        margin-top: 1vh;
+        margin-top: 0.5rem;
         & > img {
-            border-radius: 1rem;
+            border-radius: 1.25rem;
             display: none;
             max-width: 100%;
             max-height: 100%;
-            height: 35vh;
+            height: min(44vh, 430px);
             object-fit: cover;
-            box-shadow: 0 0 20px 8px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            box-shadow: 0 24px 50px rgba(0, 0, 0, 0.4);
         }
         @media screen and (max-width: 600px) {
-            margin-bottom: 3vh;
-            padding: 7vh 0;
+            height: 34vh;
+            margin-bottom: 0;
+            padding: 3.5rem 0 3rem;
+            & > img {
+                height: 34vh;
+            }
         }
     }
     .link {
@@ -237,33 +243,53 @@ console.log(filteredImageUrls, title);
         overflow: hidden;
         & h1 {
             margin: 0.5rem;
-            font-size: 64px;
+            font-size: clamp(2.2rem, 4.6vw, 4.2rem);
+            line-height: 0.95;
+            letter-spacing: 0.02em;
             @media (max-width: 600px) {
-                font-size: 44px;
-            }
-            @media (min-width: 1000px) and (max-width: 1920px) {
-                font-size: 48px;
+                font-size: 2.3rem;
             }
         }
         & p {
-            max-width: 90%;
-            margin-bottom: 6vh;
+            max-width: 70ch;
+            margin: 0;
         }
-        & > div {
+        & > .dialog-surface {
             margin-inline: auto;
-            width: 80%;
-            max-width: 1100px;
-            background-color: rgba(0, 0, 0, 0.8);
-            border: 3px solid rgba(20, 20, 20, 0.5);
-            padding: 1.5rem;
-            border-radius: 1.5rem;
+            width: min(88%, 1120px);
+            min-height: min(90vh, 860px);
+            background:
+                radial-gradient(circle at 20% 0%, rgba(63, 188, 255, 0.14), transparent 42%),
+                radial-gradient(circle at 80% 100%, rgba(255, 157, 83, 0.17), transparent 45%),
+                rgba(10, 13, 17, 0.88);
+            border: 1px solid rgba(255, 255, 255, 0.14);
+            box-shadow: 0 30px 90px rgba(0, 0, 0, 0.5);
+            padding: 1.75rem;
+            border-radius: 1.8rem;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 1rem;
+            justify-content: space-between;
+            gap: 1.2rem;
             position: relative;
             & > .closeIcon {
-                display: none;
+                position: absolute;
+                top: 0.9rem;
+                right: 0.9rem;
+                border: 1px solid rgba(255, 255, 255, 0.3);
+                width: 2.6rem;
+                height: 2.6rem;
+                border-radius: 999px;
+                font-size: 1.15rem;
+                color: white;
+                background: rgba(0, 0, 0, 0.35);
+                cursor: pointer;
+                z-index: 20;
+                transition: background-color 0.2s ease, transform 0.2s ease;
+                &:hover {
+                    background: rgba(255, 255, 255, 0.12);
+                    transform: scale(1.05);
+                }
             }
             &::before {
                 content: "";
@@ -273,37 +299,35 @@ console.log(filteredImageUrls, title);
                 right: 0;
                 bottom: 0;
                 left: 0;
-                opacity: 0.4;
-                background: linear-gradient(45deg, #e81cff 0%, #40c9ff 100%);
-                transform: scale(1.01);
-                filter: blur(20px);
+                opacity: 0.9;
+                background: linear-gradient(125deg, rgba(73, 183, 255, 0.24) 0%, rgba(255, 170, 88, 0.24) 100%);
+                transform: scale(1.012);
+                filter: blur(26px);
                 transition: opacity 0.3s;
                 border-radius: inherit;
             }
             @media (max-width: 600px) {
-                width: calc(100% - 2rem - 6px);
-                height: calc(100% - 2rem - 6px);
-                border-radius: 0;
-                padding: 1rem;
-                gap: 0;
+                width: calc(100% - 1.3rem);
+                height: calc(100% - 1.3rem);
+                min-height: unset;
+                border-radius: 1.25rem;
+                padding: 1rem 0.8rem 1rem;
+                gap: 0.75rem;
                 & > .closeIcon {
-                    display: block;
-                    position: absolute;
-                    border: none;
-                    top: 1rem;
-                    right: 1rem;
-                    font-size: 2rem;
-                    color: white;
-                    background-color: transparent;
-                    cursor: pointer;
-                    z-index: 10;
+                    width: 2.2rem;
+                    height: 2.2rem;
+                    top: 0.7rem;
+                    right: 0.7rem;
                 }
             }
         }
         &::backdrop {
-            background-color: rgba(0, 0, 0, 0.75);
-            -webkit-backdrop-filter: blur(7px);
-            backdrop-filter: blur(10px);
+            background:
+                radial-gradient(circle at 10% 20%, rgba(69, 166, 255, 0.18), transparent 40%),
+                radial-gradient(circle at 85% 80%, rgba(255, 150, 73, 0.16), transparent 40%),
+                rgba(1, 5, 10, 0.74);
+            -webkit-backdrop-filter: blur(10px) saturate(130%);
+            backdrop-filter: blur(10px) saturate(130%);
             animation: backdropAppear 0.3s;
         }
     }
@@ -320,14 +344,41 @@ console.log(filteredImageUrls, title);
     .dialog-buttons {
         display: flex;
         flex-direction: row;
-        gap: 1rem;
-        position: absolute;
-        bottom: 2rem;
-        width: 95%;
+        gap: 0.9rem;
+        width: 100%;
+        margin-top: 8vh;
+        & > .link {
+            font-size: clamp(1.1rem, 2vw, 1.5rem);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.45rem;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 0.95rem;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0.06));
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            transition: transform 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
+            &:hover {
+                transform: translateY(-2px);
+                border-color: rgba(124, 214, 255, 0.5);
+                background: linear-gradient(180deg, rgba(68, 183, 255, 0.3), rgba(255, 160, 91, 0.2));
+            }
+        }
         @media (max-width: 600px) {
             gap: 0.5rem;
             flex-direction: column;
-            width: 90%;
+            width: 96%;
+        }
+    }
+    .dialog-copy {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.5rem;
+        width: 100%;
+        padding-bottom: 0.15rem;
+        & > p {
+            max-width: 90%;
         }
     }
     .next-button, .prev-button {
@@ -339,22 +390,27 @@ console.log(filteredImageUrls, title);
         color: white;
         text-decoration: none;
         text-align: center;
-        width: 50px;
-        height: 50px;
+        width: 52px;
+        height: 52px;
         padding: 0;
         cursor: pointer;
-        border: none;
-        background-color: rgba(32, 32, 32, 0.6);
-        box-shadow: inset 0 0 6px 0 rgba(72, 72, 72, 0.5);
-        -webkit-backdrop-filter: blur(7px);
-        backdrop-filter: blur(7px);
+        border: 1px solid rgba(255, 255, 255, 0.25);
+        background-color: rgba(13, 19, 28, 0.7);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.35);
+        -webkit-backdrop-filter: blur(8px) saturate(120%);
+        backdrop-filter: blur(8px) saturate(120%);
         z-index: 10;
+        transition: transform 0.2s ease, background-color 0.2s ease;
+        &:hover {
+            transform: scale(1.06);
+            background-color: rgba(48, 137, 191, 0.5);
+        }
         & > img {
             padding: 14px;
         }
         @media (max-width: 600px) {
             font-size: x-large;
-            width: 40%;
+            width: 42%;
             bottom: 0;
         }
     }
@@ -419,12 +475,12 @@ console.log(filteredImageUrls, title);
             text-align: right;
         }
         & > p {
-            font-family: "Bricolage Grotesque",serif;
+            font-family: "FugazOne",serif;
             line-height: 1;
         }
     }
 
-    .grid-element {
+    /* .grid-element {
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -460,8 +516,49 @@ console.log(filteredImageUrls, title);
         @media (max-width: 600px) {
             padding: 0.5rem;
         }
-    }
+    } */
     /* .grid-element:hover {
         background: linear-gradient(-45deg, rgba(232, 28, 255, 0.2) 0%, rgba(64, 201, 255, 0.2) 100%);
     } */
+
+    .carousel-element {
+        /* height: 50vh; */
+        flex: 0 0 20vw;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        border: 3px solid rgba(20, 20, 20, 0.5);
+        border-radius: 1.5rem;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        padding: 0.7rem;
+        gap: 1vh;
+        scroll-snap-align: start;
+        font-family: inherit;
+        background: transparent;
+        -webkit-backdrop-filter: blur(7px);
+        backdrop-filter: blur(7px);
+        cursor: pointer;
+        &::before {
+            content: "";
+            z-index: -10;
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            opacity: 0;
+            background: linear-gradient(45deg, #e81cff 0%, #40c9ff 100%);
+            transform: scale(1.01);
+            filter: blur(20px);
+            transition: opacity 0.3s;
+            border-radius: inherit;
+        }
+        &:hover::before {
+            opacity: 0.4;
+        }
+        @media (max-width: 600px) {
+            padding: 0.5rem;
+        }
+    }
 </style>

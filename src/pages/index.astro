@@ -1,76 +1,146 @@
 ---
-import Layout from '../layouts/Layout.astro';
-import Project from '../components/Project.astro';
-import NavBar from '../components/NavBar.astro';
-import MySkills from '../components/MySkills.astro';
+import Layout from "../layouts/Layout.astro";
+import Project from "../components/Project.astro";
+import NavBar from "../components/NavBar.astro";
+import MySkills from "../components/MySkills.astro";
+import FooterSection from "../components/FooterSection.astro";
 ---
 
 <script>
 	const observer = new IntersectionObserver((entries) => {
 		entries.forEach((entry) => {
-			if (entry.isIntersecting && !entry.target.classList.contains('animated')) {
-				if (entry.target.tagName.toLowerCase() === 'mark') {
-					entry.target.classList.add('animate-mark');
+			if (
+				entry.isIntersecting &&
+				!entry.target.classList.contains("animated")
+			) {
+				if (entry.target.tagName.toLowerCase() === "mark") {
+					entry.target.classList.add("animate-mark");
 				} else {
-					entry.target.animate([
-						{ opacity: 0, transform: 'translateY(100px)' },
-						{ opacity: 1, transform: 'translateY(0)' }
-					], {
-						duration: 500,
-						easing: 'ease-out',
-						fill: 'forwards'
-					}).finished.then(() => {
-						entry.target.classList.add('animated');
-					});
+					entry.target
+						.animate(
+							[
+								{ opacity: 0, transform: "translateY(100px)" },
+								{ opacity: 1, transform: "translateY(0)" },
+							],
+							{
+								duration: 500,
+								easing: "ease-out",
+								fill: "forwards",
+							},
+						)
+						.finished.then(() => {
+							entry.target.classList.add("animated");
+						});
 				}
 			}
 		});
 	});
 
-	const images = document.querySelectorAll('.hidden');
-    images.forEach((img) => {
-        img.addEventListener('load', () => {
-            img.animate([
-                { opacity: 0, filter: 'blur(10px)' },
-                { opacity: 1, filter: 'blur(1px)' }
-            ], 500).finished.then(() => {
-                img.classList.remove('hidden');
-            });
-        });
-    });
+	const images = document.querySelectorAll(".hidden");
+	images.forEach((img) => {
+		img.addEventListener("load", () => {
+			img
+				.animate(
+					[
+						{ opacity: 0, filter: "blur(10px)" },
+						{ opacity: 1, filter: "blur(1px)" },
+					],
+					500,
+				)
+				.finished.then(() => {
+					img.classList.remove("hidden");
+				});
+		});
+	});
 
-	const gridElements = document.querySelectorAll('.grid-element') as NodeListOf<HTMLElement>;
-	gridElements.forEach((element) => {
+	const carouselElements = document.querySelectorAll(
+		".carousel-element",
+	) as NodeListOf<HTMLElement>;
+	carouselElements.forEach((element) => {
 		observer.observe(element);
 	});
 
-	const animateElements = document.querySelectorAll('.animate') as NodeListOf<HTMLElement>;
+	const animateElements = document.querySelectorAll(
+		".animate",
+	) as NodeListOf<HTMLElement>;
 	animateElements.forEach((element) => {
 		observer.observe(element);
 	});
 
-	const marks = document.querySelectorAll('mark');
+	const marks = document.querySelectorAll("mark");
 	marks.forEach((mark) => {
 		observer.observe(mark);
 	});
 
-	const light = document.querySelector('.light') as HTMLElement;
-	document.addEventListener('mousemove', (e) => {
+	const light = document.querySelector(".light") as HTMLElement;
+	document.addEventListener("mousemove", (e) => {
 		const x = e.clientX / window.innerWidth;
 		const y = e.clientY / window.innerHeight;
-		light.style.background = `radial-gradient(circle at ${x * 100}% ${y * 100}%, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.8) 20%)`;
+		light.style.background = `radial-gradient(circle at ${x * 100}% ${y * 100}%, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.7) 20%)`;
 	});
 
-	const parallax = document.querySelector('.parallax') as HTMLElement;
-	document.addEventListener('scroll', () => {
-        const scrollPosition = window.scrollY;
-        const yPos = scrollPosition * 0.3;
-        parallax.style.backgroundPosition = `center ${-yPos}px`;
-    });
+	const parallax = document.querySelector(".parallax") as HTMLElement;
+	document.addEventListener("scroll", () => {
+		const scrollPosition = window.scrollY;
+		const yPos = scrollPosition * 0.3;
+		parallax.style.backgroundPosition = `center ${-yPos}px`;
+	});
 
-	document.addEventListener('DOMContentLoaded', () => {
-        (document.querySelector('footer') as HTMLElement).textContent = new Date().getFullYear().toString() + ' © Borys Gajewski';
-    });
+	const initHorizontalScroll = () => {
+		const section = document.querySelector(".horizontal-scroll-section") as HTMLElement | null;
+		const sticky = document.querySelector(".horizontal-scroll-sticky") as HTMLElement | null;
+		const track = document.querySelector(".carousel-horizontal") as HTMLElement | null;
+
+		if (!section || !sticky || !track) {
+			return;
+		}
+
+		let distance = 0;
+		let startX = 0;
+		let endX = 0;
+
+		const update = () => {
+			if (distance === 0) {
+				track.style.transform = "translateX(0)";
+				return;
+			}
+			const progress = Math.min(
+				Math.max(-section.getBoundingClientRect().top / distance, 0),
+				1,
+			);
+
+			const x = startX - progress * distance;
+			track.style.transform = `translateX(${x}px)`;
+		};
+
+		const measure = () => {
+			const viewportWidth = sticky.clientWidth;
+			const trackWidth = track.scrollWidth;
+
+			if (trackWidth === 0) {
+				startX = 0;
+				endX = 0;
+				distance = 0;
+			} else {
+				// Move from fully off-screen on the right to fully off-screen on the left.
+				startX = viewportWidth;
+				endX = -trackWidth;
+				distance = startX - endX;
+			}
+
+			section.style.height = `${window.innerHeight + distance}px`;
+			update();
+		};
+
+		window.addEventListener("resize", measure);
+		window.addEventListener("scroll", update, { passive: true });
+
+		measure();
+	};
+
+	document.addEventListener("DOMContentLoaded", () => {
+		initHorizontalScroll();
+	});
 </script>
 
 <Layout title="Borys Gajewski">
@@ -78,123 +148,134 @@ import MySkills from '../components/MySkills.astro';
 		<div class="parallax"></div>
 		<div class="overlay"></div>
 		<div class="light"></div>
+		<div class="blob blob-one" aria-hidden="true"></div>
+		<div class="blob blob-two" aria-hidden="true"></div>
 		<NavBar />
 		<div class="space">
-			<h1 class="animate">About me</h1>
-			<p class="animate">My name is <b>Borys Gajewski</b>, and I’m a <mark>developer</mark> from Poland. I create websites, small games, and other programs.</p>
+			<h1 class="animate">ABOUT ME</h1>
+			<p class="animate">
+				My name is <b>Borys Gajewski</b>, and I’m a <mark>developer</mark> from Poland.
+				I create websites, small games, and other programs.
+			</p>
 		</div>
-		<h1 class="animate">My Skills</h1>
+		<h1 class="animate">MY SKILLS</h1>
 		<MySkills
 			skills={[
-				{ logo: '/images/Logos/HTML5.svg', alt: "HTML5", level: 100 },
-				{ logo: '/images/Logos/CSS.svg', alt: "CSS", level: 95 },
-				{ logo: '/images/Logos/FramerMotion.svg', alt: "Framer Motion", level: 60 },
-				{ logo: '/images/Logos/JS.svg', alt: "JS", level: 95 },
-				{ logo: '/images/Logos/TS.svg', alt: "TS", level: 85 },
-				{ logo: '/images/Logos/React.svg', alt: "React", level: 80 },
-				{ logo: '/images/Logos/Vue.svg', alt: "Vue", level: 50 },
-				{ logo: '/images/Logos/Astro.svg', alt: "Astro", level: 75 },
-				{ logo: '/images/Logos/Nodejs.svg', alt: "Node", level: 60 },
-				{ logo: '/images/Logos/Nextjs.svg', alt: "Next.js", level: 40 },
-				{ logo: '/images/Logos/Firebase.svg', alt: "Firebase", level: 65 },
-				{ logo: '/images/Logos/Python.svg', alt: "Python", level: 60 },
-				{ logo: '/images/Logos/CPP.svg', alt: "CPP", level: 15 },
-				{ logo: '/images/Logos/Csharp.svg', alt: "Csharp", level: 20 },
-				{ logo: '/images/Logos/Java.svg', alt: "Java", level: 5 },
-				{ logo: '/images/Logos/Unity.svg', alt: "Unity", level: 30 },
-				{ logo: '/images/Logos/Unreal.svg', alt: "Unreal", level: 1 },
-				{ logo: '/images/Logos/Figma.svg', alt: "Figma", level: 75 }
+				{ logo: "/images/Logos/HTML5.svg", alt: "HTML5", level: 100 },
+				{ logo: "/images/Logos/CSS.svg", alt: "CSS", level: 95 },
+				{
+					logo: "/images/Logos/FramerMotion.svg",
+					alt: "Framer Motion",
+					level: 60,
+				},
+				{ logo: "/images/Logos/JS.svg", alt: "JS", level: 95 },
+				{ logo: "/images/Logos/TS.svg", alt: "TS", level: 85 },
+				{ logo: "/images/Logos/React.svg", alt: "React", level: 80 },
+				{ logo: "/images/Logos/Vue.svg", alt: "Vue", level: 50 },
+				{ logo: "/images/Logos/Astro.svg", alt: "Astro", level: 75 },
+				{ logo: "/images/Logos/Nodejs.svg", alt: "Node", level: 60 },
+				{ logo: "/images/Logos/Nextjs.svg", alt: "Next.js", level: 40 },
+				{ logo: "/images/Logos/Firebase.svg", alt: "Firebase", level: 65 },
+				{ logo: "/images/Logos/Python.svg", alt: "Python", level: 60 },
+				{ logo: "/images/Logos/CPP.svg", alt: "CPP", level: 15 },
+				{ logo: "/images/Logos/Csharp.svg", alt: "Csharp", level: 20 },
+				{ logo: "/images/Logos/Java.svg", alt: "Java", level: 5 },
+				{ logo: "/images/Logos/Unity.svg", alt: "Unity", level: 30 },
+				{ logo: "/images/Logos/Unreal.svg", alt: "Unreal", level: 1 },
+				{ logo: "/images/Logos/Figma.svg", alt: "Figma", level: 75 },
 			]}
 		/>
 		<div id="projects">
-			<h1>My projects</h1>
-			<div class="grid">
-				<Project
-				title="Borufi"
-					description='It is my own music library (AKA Spotify). Made using Astro, TS and Firebase.'
-					date="January 2024"
-					href="https://github.com/lis531/borufi"
-					hrefTryOut=""
-				/>
-				<Project
-					title="School Projects"
-					description='Contains some of my smaller school projects yet when combined it is big enough to upload here. All made using JS.'
-					date="2022 - 2024"
-					href="https://github.com/lis531/schoolProjects"
-					hrefTryOut='https://lis531.github.io/schoolProjects'
-				/>
-				<Project
-					title="TicTacToe"
-					description='Simple tic-tac-toe game built with Vue and Vite.'
-					date="November 2024"
-					href="https://github.com/lis531/Tic-tac-toe"
-					hrefTryOut='https://lis531-tic-tac-toe.vercel.app'
-				/>
-				<Project
-					title="TechNews"
-					description='It is website created in js that fetches news from www.wired.com and lets you order them or select certain categories. Made as a school project using plain JS.'
-					date="June 2023"
-					href="https://github.com/lis531/TechNews"
-					hrefTryOut='https://lis531.github.io/TechNews'
-				/>
-				<Project
-					title="Image Comparison"
-					description='Website for quick image comparison built with Vue and Vite.'
-					date="December 2024"
-					href="https://github.com/lis531/image-compare"
-					hrefTryOut='https://lis531-image-compare.vercel.app/'
-				/>
-				<Project
-					title="Discord Bot"
-					description='Discord bot that can play music, queue songs, and more build with Python.'
-					date="January 2025"
-					href="https://github.com/lis531/DiscordBot"
-					hrefTryOut=''
-					/>
-				<Project
-					title="Bargebo Guesser"
-					description='A game where you guess the song that is currently playing built with React, Vite and Firebase.'
-					date="Mar - Apr 2025"
-					href="https://github.com/lis531/bargebo-guesser"
-					hrefTryOut='https://bargebo-guesser.vercel.app/'
-					/>
-				<Project
-					title="Spotify Like Script"
-					description='Script to like currently playing song with ease. Made with Python.'
-					date="July 2025"
-					href="https://github.com/lis531/spotify-liked-toggle"
-					hrefTryOut=''
-					/>
-				<!-- add photos -->
-				<Project
-					title="Spotilyzer"
-					description='A tool to analyze your Spotify data and generate insights about your music preferences.'
-					date="August 2025"
-					href="https://github.com/lis531/Spotilyzer"
-					hrefTryOut='https://spotilyzer.vercel.app/'
-				/>
-				<!-- add photos -->
-				<!-- <Project
-					title="Borufi Remake"
-					description='A remake of my music library (AKA Spotify) with new design and features. Made using Astro, TS and Firebase.'
-					date="Jun - Sep 2025"
-					href="https://github.com/lis531/borufi-remake"
-					hrefTryOut="https://borufi.netlify.app"
-				/> -->
-				<!-- add photos -->
+			<div class="horizontal-scroll-section">
+				<div class="horizontal-scroll-sticky">
+					<h1>MY PROJECTS</h1>
+					<div class="carousel-horizontal">
+						<Project
+							title="Borufi"
+							description="It is my own music library (AKA Spotify). Made using Astro, TS and Firebase."
+							date="January 2024"
+							href="https://github.com/lis531/borufi"
+							hrefTryOut=""
+						/>
+						<Project
+							title="School Projects"
+							description="Contains some of my smaller school projects yet when combined it is big enough to upload here. All made using JS."
+							date="2022 - 2024"
+							href="https://github.com/lis531/schoolProjects"
+							hrefTryOut="https://lis531.github.io/schoolProjects"
+						/>
+						<Project
+							title="TicTacToe"
+							description="Simple tic-tac-toe game built with Vue and Vite."
+							date="November 2024"
+							href="https://github.com/lis531/Tic-tac-toe"
+							hrefTryOut="https://lis531-tic-tac-toe.vercel.app"
+						/>
+						<Project
+							title="TechNews"
+							description="It is website created in js that fetches news from www.wired.com and lets you order them or select certain categories. Made as a school project using plain JS."
+							date="June 2023"
+							href="https://github.com/lis531/TechNews"
+							hrefTryOut="https://lis531.github.io/TechNews"
+						/>
+						<Project
+							title="Image Comparison"
+							description="Website for quick image comparison built with Vue and Vite."
+							date="December 2024"
+							href="https://github.com/lis531/image-compare"
+							hrefTryOut="https://lis531-image-compare.vercel.app/"
+						/>
+						<Project
+							title="Discord Bot"
+							description="Discord bot that can play music, queue songs, and more build with Python."
+							date="January 2025"
+							href="https://github.com/lis531/DiscordBot"
+							hrefTryOut=""
+						/>
+						<Project
+							title="Bargebo Guesser"
+							description="A game where you guess the song that is currently playing built with React, Vite and Firebase."
+							date="Mar - Apr 2025"
+							href="https://github.com/lis531/bargebo-guesser"
+							hrefTryOut="https://bargebo-guesser.vercel.app/"
+						/>
+						<Project
+							title="Spotify Like Script"
+							description="Script to like currently playing song with ease. Made with Python."
+							date="July 2025"
+							href="https://github.com/lis531/spotify-liked-toggle"
+							hrefTryOut=""
+						/>
+						<!-- add photos -->
+						<Project
+							title="Spotilyzer"
+							description="A tool to analyze your Spotify data and generate insights about your music preferences."
+							date="August 2025"
+							href="https://github.com/lis531/Spotilyzer"
+							hrefTryOut="https://spotilyzer.vercel.app/"
+						/>
+						<!-- add photos -->
+						<!-- <Project
+							title="Borufi Remake"
+							description='A remake of my music library (AKA Spotify) with new design and features. Made using Astro, TS and Firebase.'
+							date="Jun - Sep 2025"
+							href="https://github.com/lis531/borufi-remake"
+							hrefTryOut="https://borufi.netlify.app"
+						/> -->
+						<!-- add photos -->
+					</div>
+				</div>
 			</div>
 		</div>
 		<div class="space">
-			<h1 class="animate">Contact</h1>
-			<div class="contact" id="contact">
+			<h1 class="animate" id="contact">CONTACT</h1>
+			<div class="contact">
 				<a class="animate" href="https://x.com/Lisu22361857">Twitter</a>
 				<a class="animate" href="mailto:borys.gajewski7@gmail.com">Email</a>
 				<a class="animate" href="https://github.com/lis531/">Github</a>
 			</div>
 		</div>
-		<footer>
-			{new Date().getFullYear()} &copy; Borys Gajewski
-		</footer>
+		<FooterSection />
 	</main>
 </Layout>
 
@@ -217,30 +298,45 @@ import MySkills from '../components/MySkills.astro';
 	}
 	.parallax {
 		position: fixed;
-    	top: 0;
-    	left: 0;
-    	width: 100%;
-    	height: 100%;
-	    background-image: url('/images/Background/background.avif');
-		background-size: cover;
-		filter: brightness(0.3);
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		/* background-image: url("/images/Background/background.avif"); */
+		--pattern-foreground: rgba(255, 255, 255, 0.2);
+		--pattern-foreground: color-mix(in oklab, white 20%, transparent);
+		background-image: radial-gradient(var(--pattern-foreground) 1px, transparent 1px);
+		background-size: 14px 14px;
+		background-repeat: repeat;
+		background-position: 0 0;
+		filter: none;
 		z-index: -102;
 		@media (max-width: 1200px) {
-			filter: brightness(0.2);
+			filter: none;
 			background-position: 0 !important;
 		}
 	}
 	.overlay {
-	    position: fixed;
-	    top: 0;
-	    left: 0;
-	    width: 100%;
-	    height: 100%;
-	    pointer-events: none;
-		background: linear-gradient(to right, rgba(0, 0, 0, 1), rgba(0, 0, 0, 0.2) 50%, rgba(0, 0, 0, 1));
+		position: fixed;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		pointer-events: none;
+		background: linear-gradient(
+			to right,
+			rgba(0, 0, 0, 0.7),
+			rgba(0, 0, 0, 0.3) 50%,
+			rgba(0, 0, 0, 0.7)
+		);
 		z-index: -101;
 		@media (max-width: 1200px) {
-			background: linear-gradient(to right, rgba(0, 0, 0, 1), rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 1));
+			background: linear-gradient(
+				to right,
+				rgba(0, 0, 0, 0.7),
+				rgba(0, 0, 0, 0) 50%,
+				rgba(0, 0, 0, 0.7)
+			);
 		}
 	}
 	.light {
@@ -251,25 +347,86 @@ import MySkills from '../components/MySkills.astro';
 		height: 100%;
 		pointer-events: none;
 		z-index: -100;
-		background: rgba(0, 0, 0, 0.8);
 		@media (max-width: 1200px) {
 			display: none;
 		}
 	}
 	h1 {
-		line-height: 1;
+		position: relative;
+		display: inline-block;
+		width: fit-content;
+		margin-inline: auto;
+		line-height: 2;
+		padding: 0 0.1em;
 		text-align: center;
-		margin-bottom: 1em;
 		background-image: linear-gradient(45deg, #2e99f0, #9b27b0);
 		background-clip: text;
 		color: transparent;
+		&::before {
+			content: "";
+			position: absolute;
+			left: 50%;
+			bottom: 0.3em;
+			transform: translateX(-50%);
+			width: 74%;
+			height: 12px;
+			background: linear-gradient(90deg, rgba(46, 153, 240, 0.3), rgba(155, 39, 176, 0.3));
+			filter: blur(10px);
+			border-radius: 999px;
+			pointer-events: none;
+		}
+		&::after {
+			content: "";
+			position: absolute;
+			left: 50%;
+			bottom: 0.45em;
+			transform: translateX(-50%);
+			width: 66%;
+			height: 4px;
+			background: linear-gradient(90deg, #2e99f0 0%, #8a5dff 50%, #9b27b0 100%);
+			border-radius: 999px;
+			box-shadow: 0 0 12px rgba(138, 93, 255, 0.7);
+			pointer-events: none;
+		}
+	}
+	.blob {
+		position: fixed;
+		border-radius: 999px;
+		filter: blur(44px);
+		opacity: 0.35;
+		pointer-events: none;
+		z-index: -99;
+		animation: blobFloat 14s ease-in-out infinite alternate;
+	}
+	.blob-one {
+		top: 12vh;
+		right: 5vw;
+		width: clamp(180px, 24vw, 400px);
+		height: clamp(180px, 24vw, 400px);
+		background: radial-gradient(circle at 30% 30%, rgba(46, 153, 240, 0.9), rgba(46, 153, 240, 0));
+	}
+	.blob-two {
+		bottom: 12vh;
+		left: 4vw;
+		width: clamp(200px, 28vw, 420px);
+		height: clamp(200px, 28vw, 420px);
+		background: radial-gradient(circle at 65% 35%, rgba(155, 39, 176, 0.9), rgba(155, 39, 176, 0));
+		animation-duration: 18s;
+	}
+	@keyframes blobFloat {
+		from {
+			transform: translate3d(0, 0, 0) scale(1);
+		}
+		to {
+			transform: translate3d(0, -24px, 0) scale(1.08);
+		}
 	}
 	mark {
 		position: relative;
 		background-color: transparent;
 	}
 	mark::after {
-		content: '';
+		content: "";
 		position: absolute;
 		top: 0;
 		left: 0;
@@ -279,7 +436,7 @@ import MySkills from '../components/MySkills.astro';
 		z-index: -1;
 	}
 	mark.animate-mark::after {
-		animation: animateMarkBefore 1s .5s forwards;
+		animation: animateMarkBefore 1s 0.5s forwards;
 	}
 	@keyframes animateMarkBefore {
 		from {
@@ -295,49 +452,85 @@ import MySkills from '../components/MySkills.astro';
 		display: flex;
 		flex-direction: column;
 		align-items: center;
+		width: 100%;
 		@media screen and (max-width: 600px) {
 			width: 100%;
 		}
-    }
-	.grid {
-	    display: grid;
-	    grid-template-columns: repeat(5, 220px);
+	}
+	.horizontal-scroll-section {
+		position: relative;
+		width: 100%;
+	}
+	.horizontal-scroll-sticky {
+		position: sticky;
+		top: 0;
+		height: 100vh;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+		overflow: hidden;
+		padding-inline: 1rem;
+		box-sizing: border-box;
+	}
+	/* .grid {
+		display: grid;
+		grid-template-columns: repeat(5, 220px);
 		grid-template-rows: repeat(12, 220px);
-	    max-width: 1250px;
-	    gap: 0.7em 0.7em;
-	    grid-template-areas: 
-	        "Borufi Borufi Borufi SchoolProjects SchoolProjects"
-	        "Borufi Borufi Borufi SchoolProjects SchoolProjects"
-	        "TicTacToe TicTacToe TechNews TechNews TechNews"
-	        "TicTacToe TicTacToe TechNews TechNews TechNews"
-	        "TicTacToe TicTacToe ImageComparison ImageComparison ImageComparison"
-	        "DiscordBot DiscordBot ImageComparison ImageComparison ImageComparison"
+		max-width: 1250px;
+		gap: 0.7em 0.7em;
+		grid-template-areas:
+			"Borufi Borufi Borufi SchoolProjects SchoolProjects"
+			"Borufi Borufi Borufi SchoolProjects SchoolProjects"
+			"TicTacToe TicTacToe TechNews TechNews TechNews"
+			"TicTacToe TicTacToe TechNews TechNews TechNews"
+			"TicTacToe TicTacToe ImageComparison ImageComparison ImageComparison"
+			"DiscordBot DiscordBot ImageComparison ImageComparison ImageComparison"
 			"DiscordBot DiscordBot BargeboGuesser BargeboGuesser BargeboGuesser"
 			"DiscordBot DiscordBot BargeboGuesser BargeboGuesser BargeboGuesser"
 			"Spotilyzer Spotilyzer Spotilyzer SpotifyLikeScript SpotifyLikeScript"
 			"Spotilyzer Spotilyzer Spotilyzer SpotifyLikeScript SpotifyLikeScript"
 			". . . SpotifyLikeScript SpotifyLikeScript";
-	    @media (max-width: 900px) {
-	        grid-template-areas: 
-	            "Borufi"
-	            "SchoolProjects"
-	            "TechNews"
-	            "TicTacToe"
-	            "ImageComparison"
+		@media (max-width: 900px) {
+			grid-template-areas:
+				"Borufi"
+				"SchoolProjects"
+				"TechNews"
+				"TicTacToe"
+				"ImageComparison"
 				"DiscordBot"
 				"BargeboGuesser"
 				"SpotifyLikeScript"
 				"Spotilyzer";
-	        grid-template-rows: repeat(5, 440px);
+			grid-template-rows: repeat(5, 440px);
 			grid-template-columns: 1fr;
-	        margin: 0 3px;
-	    }
+			margin: 0 3px;
+		}
 		@media screen and (max-width: 600px) {
 			grid-template-rows: auto;
 		}
 		@media (min-width: 1000px) and (max-width: 1920px) {
 			grid-template-columns: repeat(5, 190px);
 			grid-template-rows: repeat(12, 190px);
+		}
+	} */
+	.carousel-horizontal {
+		height: 50vh;
+		display: flex;
+		gap: 0.7rem;
+		width: max-content;
+		align-self: flex-start;
+		will-change: transform;
+	}
+	.carousel-horizontal::-webkit-scrollbar {
+		display: none;
+	}
+	@keyframes spin {
+		from {
+			translate: 0;
+		}
+		to {
+			translate: -100%;
 		}
 	}
 	.contact {
@@ -360,7 +553,27 @@ import MySkills from '../components/MySkills.astro';
 		padding: 0.5rem 5rem;
 		text-align: center;
 		width: 120px;
-		box-shadow: inset 0 0 15px 0 rgba(72, 72, 72, 0.5), 0 0 15px 0 rgba(72, 72, 72, 0.5);
+		overflow: hidden;
+		box-shadow:
+			inset 0 0 15px 0 rgba(72, 72, 72, 0.5),
+			0 0 15px 0 rgba(72, 72, 72, 0.5);
+		transition: box-shadow 0.3s;
+		&::before {
+			position: absolute;
+			content: "";
+			bottom: -60%;
+			left: 20%;
+			height: 70%;
+			border-radius: 100%;
+			width: 60%;
+			background-color: rgba(255, 255, 255, 0.4);
+			filter: blur(10px);
+		}
+		&:hover {
+			box-shadow:
+				inset 0 0 20px 0px rgba(72, 72, 72, 0.8),
+				0 0 20px 5px rgba(72, 72, 72, 0.8);
+		}
 		@media screen and (max-width: 1000px) {
 			width: auto;
 			margin: 0 2rem;
@@ -389,16 +602,6 @@ import MySkills from '../components/MySkills.astro';
 			& > p {
 				width: 80vw;
 			}
-		}
-	}
-	footer {
-		text-align: center;
-		color: white;
-		font-size: 24px;
-		font-family: Alata, sans-serif;
-		margin-bottom: 1rem;
-		@media (max-width: 600px) {
-			font-size: 16px;
 		}
 	}
 </style>
