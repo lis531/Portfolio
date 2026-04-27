@@ -26,9 +26,9 @@ const links = [
 		const activeLink = document.querySelector(
 			`nav a[href="#${activeSection}"]`,
 		);
-		const highlight = document.querySelector(".highlight");
+		const highlight = document.querySelector(".highlight") as HTMLElement;
 		if (activeLink && highlight) {
-			const { offsetLeft, offsetWidth } = activeLink;
+			const { offsetLeft, offsetWidth } = activeLink as HTMLElement;
 			highlight.style.transform = `translateX(${offsetLeft}px)`;
 			highlight.style.width = `${offsetWidth}px`;
 		}
@@ -40,8 +40,8 @@ const links = [
 	// move highlight to hovered link
 	sections.forEach((link) => {
 		link.addEventListener("mouseenter", () => {
-			const { offsetLeft, offsetWidth } = link;
-			const highlight = document.querySelector(".highlight");
+			const { offsetLeft, offsetWidth } = link as HTMLElement;
+			const highlight = document.querySelector(".highlight") as HTMLElement;
 			if (highlight) {
 				highlight.style.transform = `translateX(${offsetLeft}px)`;
 				highlight.style.width = `${offsetWidth}px`;
@@ -74,7 +74,9 @@ const links = [
 	// move highlight on click
 	sections.forEach((link) => {
 		link.addEventListener("click", () => {
-			activeSection = link.getAttribute("href").substring(1);
+			const href = link.getAttribute("href");
+			if (!href) return;
+			activeSection = href.substring(1);
 			moveHighlight();
 		});
 	});
