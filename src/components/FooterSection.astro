@@ -3,32 +3,31 @@ const currentYear = new Date().getFullYear();
 ---
 
 <footer class="footer-section" id="footer">
-	<div class="footer-content">
-		<p class="copyright">{currentYear} &copy; Borys Gajewski</p>
-		<nav class="footer-links" aria-label="Footer links">
-			<a href="mailto:borys.gajewski7@gmail.com">Email</a>
-			<a href="https://github.com/lis531/">GitHub</a>
-			<a href="https://x.com/Lisu22361857">Twitter</a>
-		</nav>
+	<p class="copyright">{currentYear} &copy; Borys Gajewski</p>
+	<div class="footer-links" aria-label="Footer links">
+		<!-- <a class="cv-link" href="/Borys_Gajewski_CV.pdf.pdf" download>
+			<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+				<path d="M12 3a1 1 0 0 1 1 1v8.59l2.3-2.3a1 1 0 1 1 1.4 1.42l-4 4a1 1 0 0 1-1.4 0l-4-4a1 1 0 0 1 1.4-1.42l2.3 2.3V4a1 1 0 0 1 1-1Zm-6 14a1 1 0 0 1 1 1v1h10v-1a1 1 0 1 1 2 0v2a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1v-2a1 1 0 0 1 1-1Z" />
+			</svg>
+			<span>CV</span>
+		</a> -->
+		<a href="mailto:borys.gajewski7@gmail.com">Email</a>
+		<a href="https://github.com/lis531/">GitHub</a>
+		<a href="https://x.com/Lisu22361857">Twitter</a>
 	</div>
 </footer>
 
 <style>
 	.footer-section {
-        background-color: rgba(0, 0, 0, 0.7);
+		background-color: rgba(0, 0, 0, 0.7);
 		width: 100%;
-		margin-top: 3rem;
-		padding: 1rem 1.5rem;
+		height: 5vh;
+		align-items: center;
+		display: flex;
+		justify-content: center;
 		box-sizing: border-box;
 		border-top: 1px solid rgba(255, 255, 255, 0.2);
-	}
-
-	.footer-content {
-		display: flex;
-		justify-content: space-between;
-		align-items: center;
-		gap: 1rem;
-		flex-wrap: wrap;
+		justify-content: space-evenly;
 	}
 
 	.footer-links {
@@ -51,11 +50,13 @@ const currentYear = new Date().getFullYear();
 		color: rgba(255, 255, 255, 0.88);
 	}
 
-	@media (max-width: 700px) {
-		.footer-section {
-			padding: 1rem;
-		}
+	.cv-link svg {
+		width: 12px;
+		height: 12px;
+		fill: currentColor;
+	}
 
+	@media (max-width: 700px) {
 		.footer-content {
 			justify-content: center;
 		}

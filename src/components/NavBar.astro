@@ -20,6 +20,22 @@ const links = [
 		return el instanceof HTMLElement ? el.offsetTop + el.offsetHeight : 0;
 	};
 
+	const getPageTop = (selector: string) => {
+		const el = document.querySelector(selector);
+		return el instanceof HTMLElement ? el.getBoundingClientRect().top + window.scrollY : null;
+	};
+
+	const scrollToSection = (selector: string) => {
+		const sectionTop = getPageTop(selector);
+		if (sectionTop === null) return;
+
+		const extraOffset = selector === "#projects" ? (window.innerWidth < 1000 ? window.innerWidth / 2 + 300 : window.innerWidth / 2) : 0;
+		window.scrollTo({
+			top: sectionTop + extraOffset,
+			behavior: "smooth",
+		});
+	};
+
 	// move .highlight to the clicked link and on scroll to the section in view
 	function moveHighlight() {
 		// isScrolling = true;
@@ -73,11 +89,14 @@ const links = [
 
 	// move highlight on click
 	sections.forEach((link) => {
-		link.addEventListener("click", () => {
+		link.addEventListener("click", (event) => {
 			const href = link.getAttribute("href");
-			if (!href) return;
+			if (!href || !href.startsWith("#")) return;
+
+			event.preventDefault();
 			activeSection = href.substring(1);
 			moveHighlight();
+			scrollToSection(href);
 		});
 	});
 	// initial highlight position
@@ -122,11 +141,10 @@ const links = [
 	a {
 		color: rgb(216, 216, 216);
 		text-decoration: none;
-		padding: 0.7vh 1vw;
+		padding: 0.7rem 1.2rem;
 		position: relative;
 		@media (min-width: 1000px) and (max-width: 1920px) {
 			font-size: 28px;
-			padding: 0.3vh 0.8vw;
 		}
 	}
 	.nav-inner {

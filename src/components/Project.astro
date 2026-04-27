@@ -455,9 +455,6 @@ console.log(filteredImageUrls, title);
             clip-path: border-box;
             z-index: -1;
         }
-        @media (max-width: 600px) {
-            height: 224px;
-        }
     }
     span {
         display: flex;
@@ -557,8 +554,19 @@ console.log(filteredImageUrls, title);
         &:hover::before {
             opacity: 0.4;
         }
-        @media (max-width: 600px) {
-            padding: 0.5rem;
+        @media screen and (max-width: 1000px) {
+            flex: initial;
+            width: 100%;
+            min-height: 0;
+            transition: transform 0.25s ease;
+            &:nth-of-type(odd) {
+                grid-row: 1;
+                transform: translateX(0);
+            }
+            &:nth-of-type(even) {
+                grid-row: 2;
+                transform: translateX(50%) !important;
+            }
         }
     }
 </style>
