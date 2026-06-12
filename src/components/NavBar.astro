@@ -133,11 +133,13 @@ const links = [
 			padding: 0.25rem 0.5rem;
 		}
 	}
-	div {
+	.nav-inner {
+		position: relative;
 		display: flex;
 		justify-content: space-around;
 		align-items: center;
 	}
+
 	a {
 		color: rgb(216, 216, 216);
 		text-decoration: none;
@@ -146,10 +148,6 @@ const links = [
 		@media (min-width: 1000px) and (max-width: 1920px) {
 			font-size: 28px;
 		}
-	}
-	.nav-inner {
-		position: relative;
-		display: flex;
 	}
 
 	nav a {
@@ -162,8 +160,6 @@ const links = [
 
 	nav a.active {
 		color: white;
-	}
-	.nav-inner {
 	}
 	.highlight {
 		position: absolute;

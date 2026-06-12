@@ -1,0 +1,280 @@
+---
+interface TimelineEvent {
+	title: string;
+	organization: string;
+	period: string;
+	location?: string;
+	description: string[];
+}
+
+const events: TimelineEvent[] = [
+	{
+		title: "Programming Intern",
+		organization: "DTP Sp. z o.o.",
+		period: "2026-03 - 2026-03",
+		location: "Cieszyn, Poland",
+		description:
+			[
+				"Worked with AI/LLM technologies: vision models, LangChain, MCP, embeddings, prompt engineering, and Docker.",
+				"Built AI prototypes and evaluated models.",
+				"Developed backend-integrated software solutions.",
+			],
+	},
+	{
+		title: "Programming Intern",
+		organization: "ELEKTROMETAL SPÓŁKA AKCYJNA",
+		period: "2025-04 - 2025-04",
+		location: "Cieszyn",
+		description:
+			[
+				"Developed a Python and C# application for processing mining gas detector data.",
+				"Gained experience in industrial software development and practical programming.",
+			],
+	},
+	{
+		title: "Foreign Programming Internship",
+		organization: "VITALIS Betreuungsgesellschaft",
+		period: "2025-03 - 2025-03",
+		location: "Schkeuditz",
+		description:
+			[
+				"Built websites and worked with smart devices.",
+				"Gained hands-on experience in networking and international teamwork.",
+				"Learned German workplace practices and collaboration standards.",
+			],
+	},
+];
+---
+
+<script>
+	import { gsap } from "gsap";
+	import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+	gsap.registerPlugin(ScrollTrigger);
+
+	const timelineSections = document.querySelectorAll(".about-timeline");
+
+	timelineSections.forEach((section) => {
+		const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+		if (reduceMotion) {
+			return;
+		}
+
+		const shell = section.querySelector(".timeline-shell");
+		const heading = section.querySelector("#timeline-title");
+		const items = section.querySelectorAll(".timeline-item");
+		const dots = section.querySelectorAll(".dot");
+		const progressLine = section.querySelector(".timeline-progress");
+		const rail = section.querySelector(".timeline-rail") as HTMLElement | null;
+
+		if (!shell || !heading || items.length === 0 || !progressLine || !rail) {
+			return;
+		}
+
+		const measureRail = () => {
+			const shellRect = shell.getBoundingClientRect();
+			const dotCenters = Array.from(dots).map((dot) => {
+				const rect = dot.getBoundingClientRect();
+				return rect.top - shellRect.top + rect.height / 2;
+			});
+
+			const firstCenter = dotCenters[0] || 0;
+			const lastCenter = dotCenters[dotCenters.length - 1] || firstCenter;
+			rail.style.setProperty("--rail-top", `${firstCenter}px`);
+			rail.style.setProperty("--rail-bottom", `${Math.max(shellRect.height - lastCenter, 0)}px`);
+		};
+
+		measureRail();
+		window.addEventListener("resize", measureRail);
+
+		const updateFilledDots = (progress: number) => {
+			if (dots.length === 1) {
+				dots[0].classList.toggle("dot--filled", progress >= 1);
+				return;
+			}
+
+			dots.forEach((dot, index) => {
+				const threshold = index / (dots.length - 1);
+				dot.classList.toggle("dot--filled", progress + 0.01 >= threshold);
+			});
+		};
+	});
+</script>
+
+<section class="about-timeline" aria-labelledby="timeline-title">
+	<h1 id="timeline-title">ABOUT ME</h1>
+	<div class="timeline-shell">
+		<div class="timeline-rail" aria-hidden="true">
+			<div class="timeline-progress"></div>
+		</div>
+		<ol class="timeline-list">
+			{events.map((event) => (
+				<li class="timeline-item">
+					<div class="dot" aria-hidden="true"></div>
+					<div class="content">
+						<h3>{event.title}</h3>
+						<p class="meta">
+							{event.organization}
+							<br />
+							{event.period}
+							{event.location ? `, ${event.location}` : ""}
+						</p>
+						<ul class="description">
+							{event.description.map((item) => (
+								<li>{item}</li>
+							))}
+						</ul>
+					</div>
+				</li>
+			))}
+		</ol>
+	</div>
+</section>
+
+<style>
+	.about-timeline {
+		--rail-column: 2.4rem;
+		--dot-size: 1.2rem;
+		--dot-radius: 0.6rem;
+		--heading-center-offset: clamp(0.66rem, 1.265vw, 1.045rem);
+		--timeline-gutter: 0.4rem;
+		width: min(96vw, 1100px);
+		padding: 0 0 8rem;
+		display: flex;
+    	flex-direction: column;
+    	align-items: center;
+	}
+
+	.timeline-shell {
+		position: relative;
+	}
+
+	.timeline-rail {
+		position: absolute;
+		left: calc(var(--timeline-gutter) + (var(--rail-column) / 2));
+		top: var(--rail-top, 0.65rem);
+		bottom: var(--rail-bottom, 0.7rem);
+		width: 2px;
+		transform: translateX(-50%);
+		background: linear-gradient(
+			180deg,
+			rgba(255, 255, 255, 0.14),
+			rgba(255, 255, 255, 0.3)
+		);
+		border-radius: 999px;
+	}
+
+	.timeline-progress {
+		width: 100%;
+		height: 100%;
+		transform-origin: top center;
+		background: linear-gradient(
+			180deg,
+			rgba(95, 209, 255, 0.95),
+			rgba(199, 86, 255, 0.8)
+		);
+		box-shadow: none;
+		border-radius: inherit;
+	}
+
+	.timeline-list {
+		list-style: none;
+		margin: 0;
+		padding: 0.6rem var(--timeline-gutter) 0.4rem;
+		display: flex;
+		flex-direction: column;
+		gap: 1.2rem;
+	}
+
+	.timeline-item {
+		--content-pad-y: 1rem;
+		position: relative;
+		display: grid;
+		grid-template-columns: var(--rail-column) 1fr;
+		gap: 0.8rem;
+		align-items: start;
+	}
+
+	.dot {
+		width: var(--dot-size);
+		height: var(--dot-size);
+		justify-self: center;
+		border-radius: 50%;
+		background: transparent;
+		border: 2px solid #8ce6ff;
+		box-shadow:
+			0 0 0 8px #000,
+			0 0 10px rgba(140, 230, 255, 0.35);
+		z-index: 1;
+		transition: background-color 0.25s ease, box-shadow 0.25s ease;
+		align-self: start;
+		margin-top: calc(var(--content-pad-y) + var(--heading-center-offset) - var(--dot-radius));
+	}
+
+	.dot--filled {
+		background-color: #8ce6ff;
+		box-shadow:
+			0 0 0 8px #000,
+			0 0 14px rgba(140, 230, 255, 0.6);
+	}
+
+	.content {
+		padding: var(--content-pad-y) 1.2rem;
+		border-radius: 1rem;
+		background: linear-gradient(
+			140deg,
+			rgba(255, 255, 255, 0.08),
+			rgba(255, 255, 255, 0.03)
+		);
+		border: 1px solid rgba(255, 255, 255, 0.2);
+		backdrop-filter: blur(7px);
+		-webkit-backdrop-filter: blur(7px);
+		box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+	}
+
+	h3 {
+		margin: 0;
+		font-family: "FugazOne";
+		font-size: clamp(1.2rem, 2.3vw, 1.9rem);
+		text-transform: uppercase;
+	}
+
+	.meta {
+		margin: 0.35rem 0 0;
+		text-align: left;
+		font-size: clamp(0.95rem, 1.7vw, 1.15rem);
+		opacity: 0.85;
+		line-height: 1.4;
+	}
+
+	.description {
+		margin: 0.8rem 0 0;
+		padding-left: 1.2rem;
+		text-align: left;
+		font-size: clamp(1rem, 1.9vw, 1.3rem);
+		line-height: 1.45;
+		width: auto;
+	}
+
+	.description > li {
+		margin: 0.35rem 0;
+	}
+
+	@media (max-width: 700px) {
+		.about-timeline {
+			--rail-column: 1.7rem;
+			--dot-size: 0.95rem;
+			--dot-radius: 0.475rem;
+			--timeline-gutter: 0.25rem;
+			padding-bottom: 5rem;
+		}
+
+		.timeline-item {
+			--content-pad-y: 0.85rem;
+		}
+
+		.content {
+			padding: 0.85rem 0.9rem;
+		}
+	}
+</style>

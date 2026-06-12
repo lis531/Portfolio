@@ -4,6 +4,8 @@ import Project from "../components/Project.astro";
 import NavBar from "../components/NavBar.astro";
 import MySkills from "../components/MySkills.astro";
 import FooterSection from "../components/FooterSection.astro";
+import HeroLanding from "../components/HeroLanding.astro";
+import AboutTimeline from "../components/AboutTimeline.astro";
 ---
 
 <script>
@@ -148,16 +150,15 @@ import FooterSection from "../components/FooterSection.astro";
 		<div class="parallax"></div>
 		<div class="overlay"></div>
 		<div class="light"></div>
-		<div class="blob blob-one" aria-hidden="true"></div>
-		<div class="blob blob-two" aria-hidden="true"></div>
+		<div class="blob blob-one" data-speed="0.05" data-drift="18" aria-hidden="true"></div>
+		<div class="blob blob-two" data-speed="-0.04" data-drift="24" aria-hidden="true"></div>
+		<div class="blob blob-three" data-speed="0.09" data-drift="16" aria-hidden="true"></div>
+		<div class="blob blob-four" data-speed="-0.07" data-drift="20" aria-hidden="true"></div>
+		<div class="blob blob-five" data-speed="0.12" data-drift="12" aria-hidden="true"></div>
+		<div class="blob blob-six" data-speed="-0.1" data-drift="15" aria-hidden="true"></div>
 		<NavBar />
-		<div class="space">
-			<h1 class="animate">ABOUT ME</h1>
-			<p class="animate">
-				My name is <b>Borys Gajewski</b>, and I’m a <mark>developer</mark> from Poland.
-				I create websites, small games, and other programs.
-			</p>
-		</div>
+		<HeroLanding />
+		<AboutTimeline />
 		<h1 class="animate">MY SKILLS</h1>
 		<MySkills
 			skills={[
@@ -186,9 +187,10 @@ import FooterSection from "../components/FooterSection.astro";
 			]}
 		/>
 		<div id="projects">
-			<div class="horizontal-scroll-section">
-				<div class="horizontal-scroll-sticky">
-					<h1>MY PROJECTS</h1>
+			<section class="projects-carousel-section" aria-labelledby="projects-title">
+				<h1 id="projects-title">MY PROJECTS</h1>
+				<div class="projects-carousel-shell">
+					<div class="projects-carousel-viewport" tabindex="0">
 					<div class="carousel-horizontal">
 						<Project
 							title="Borufi"
@@ -265,7 +267,8 @@ import FooterSection from "../components/FooterSection.astro";
 						<!-- add photos -->
 					</div>
 				</div>
-			</div>
+				</div>
+			</section>
 		</div>
 		<div class="space">
 			<h1 class="animate" id="contact">CONTACT</h1>
@@ -280,22 +283,6 @@ import FooterSection from "../components/FooterSection.astro";
 </Layout>
 
 <style>
-	html {
-		scroll-behavior: smooth;
-		scrollbar-width: thin;
-		scrollbar-color: rgb(255, 255, 255) rgba(0, 0, 0, 0);
-	}
-	body {
-		margin: 0;
-		padding: 0;
-	}
-	main {
-		color: white;
-		font-size: 20px;
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-	}
 	.parallax {
 		position: fixed;
 		top: 0;
@@ -303,16 +290,14 @@ import FooterSection from "../components/FooterSection.astro";
 		width: 100%;
 		height: 100%;
 		/* background-image: url("/images/Background/background.avif"); */
-		--pattern-foreground: rgba(255, 255, 255, 0.2);
-		--pattern-foreground: color-mix(in oklab, white 20%, transparent);
-		background-image: radial-gradient(var(--pattern-foreground) 1px, transparent 1px);
-		background-size: 14px 14px;
+		--pattern-foreground: color-mix(in oklab, white 32%, transparent);
+		background-image: radial-gradient(var(--pattern-foreground) 1.5px, transparent 1.5px);
+		background-size: 12px 12px;
 		background-repeat: repeat;
 		background-position: 0 0;
 		filter: none;
 		z-index: -102;
 		@media (max-width: 1200px) {
-			filter: none;
 			background-position: 0 !important;
 		}
 	}
@@ -346,79 +331,87 @@ import FooterSection from "../components/FooterSection.astro";
 		width: 100%;
 		height: 100%;
 		pointer-events: none;
+		background: radial-gradient(circle at 50% 45%, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.7) 20%);
 		z-index: -100;
 		@media (max-width: 1200px) {
 			display: none;
 		}
 	}
-	h1 {
-		position: relative;
-		display: inline-block;
-		width: fit-content;
-		margin: 3vh 0;
-		line-height: 1;
-		padding: 0 0.1em;
-		text-align: center;
-		background-image: linear-gradient(45deg, #2e99f0, #9b27b0);
-		background-clip: text;
-		color: transparent;
-		&::before {
-			content: "";
-			position: absolute;
-			left: 50%;
-			bottom: -0.2em;
-			transform: translateX(-50%);
-			width: 74%;
-			height: 12px;
-			background: linear-gradient(90deg, rgba(46, 153, 240, 0.3), rgba(155, 39, 176, 0.3));
-			filter: blur(10px);
-			border-radius: 999px;
-			pointer-events: none;
-		}
-		&::after {
-			content: "";
-			position: absolute;
-			left: 50%;
-			bottom: -0.05em;
-			transform: translateX(-50%);
-			width: 66%;
-			height: 4px;
-			background: linear-gradient(90deg, #2e99f0 0%, #8a5dff 50%, #9b27b0 100%);
-			border-radius: 999px;
-			box-shadow: 0 0 12px rgba(138, 93, 255, 0.7);
-			pointer-events: none;
-		}
-	}
 	.blob {
-		position: fixed;
+		position: absolute;
 		border-radius: 999px;
-		filter: blur(44px);
-		opacity: 0.35;
+		filter: blur(48px) saturate(135%);
+		opacity: 0.28;
 		pointer-events: none;
 		z-index: -99;
 		animation: blobFloat 14s ease-in-out infinite alternate;
+		transform: translate3d(
+			var(--blob-mouse-x, 0px),
+			calc(var(--blob-scroll, 0px) + var(--blob-mouse-y, 0px)),
+			0
+		) scale(1);
 	}
 	.blob-one {
-		top: 12vh;
+		top: 11vh;
 		right: 5vw;
 		width: clamp(180px, 24vw, 400px);
 		height: clamp(180px, 24vw, 400px);
 		background: radial-gradient(circle at 30% 30%, rgba(46, 153, 240, 0.9), rgba(46, 153, 240, 0));
 	}
 	.blob-two {
-		bottom: 12vh;
+		top: 72vh;
 		left: 4vw;
 		width: clamp(200px, 28vw, 420px);
 		height: clamp(200px, 28vw, 420px);
 		background: radial-gradient(circle at 65% 35%, rgba(155, 39, 176, 0.9), rgba(155, 39, 176, 0));
 		animation-duration: 18s;
 	}
+	.blob-three {
+		top: 45vh;
+		left: 18vw;
+		width: clamp(140px, 18vw, 310px);
+		height: clamp(140px, 18vw, 310px);
+		background: radial-gradient(circle at 45% 40%, rgba(255, 170, 88, 0.8), rgba(255, 170, 88, 0));
+		animation-duration: 16s;
+	}
+	.blob-four {
+		top: 103vh;
+		right: 13vw;
+		width: clamp(170px, 22vw, 360px);
+		height: clamp(170px, 22vw, 360px);
+		background: radial-gradient(circle at 50% 35%, rgba(95, 209, 255, 0.72), rgba(95, 209, 255, 0));
+		animation-duration: 20s;
+	}
+	.blob-five {
+		top: 172vh;
+		left: 8vw;
+		width: clamp(190px, 25vw, 390px);
+		height: clamp(190px, 25vw, 390px);
+		background: radial-gradient(circle at 40% 30%, rgba(232, 28, 255, 0.62), rgba(232, 28, 255, 0));
+		animation-duration: 22s;
+	}
+	.blob-six {
+		top: 252vh;
+		right: 2vw;
+		width: clamp(180px, 24vw, 380px);
+		height: clamp(180px, 24vw, 380px);
+		background: radial-gradient(circle at 35% 35%, rgba(0, 182, 121, 0.64), rgba(0, 182, 121, 0));
+		animation-duration: 17s;
+	}
 	@keyframes blobFloat {
 		from {
-			transform: translate3d(0, 0, 0) scale(1);
+			transform: translate3d(
+				var(--blob-mouse-x, 0px),
+				calc(var(--blob-scroll, 0px) + var(--blob-mouse-y, 0px)),
+				0
+			) scale(1);
 		}
 		to {
-			transform: translate3d(0, -24px, 0) scale(1.08);
+			transform: translate3d(
+				var(--blob-mouse-x, 0px),
+				calc(var(--blob-scroll, 0px) + var(--blob-mouse-y, 0px) - 24px),
+				0
+			) scale(1.08);
 		}
 	}
 	mark {
@@ -446,7 +439,7 @@ import FooterSection from "../components/FooterSection.astro";
 			width: 100%;
 		}
 	}
-	#projects[data-astro-cid-j7pv25f6] {
+	#projects {
 		padding-top: 15vh;
 		margin-top: 20vh;
 		display: flex;
@@ -457,21 +450,31 @@ import FooterSection from "../components/FooterSection.astro";
 			width: 100%;
 		}
 	}
-	.horizontal-scroll-section {
-		position: relative;
+	.projects-carousel-section {
 		width: 100%;
-	}
-	.horizontal-scroll-sticky {
-		position: sticky;
-		top: 0;
-		height: 100vh;
+		min-height: 100vh;
 		display: flex;
 		flex-direction: column;
 		justify-content: center;
 		align-items: center;
-		overflow: hidden;
-		padding-inline: 1rem;
+		gap: 1.8rem;
 		box-sizing: border-box;
+	}
+	.projects-carousel-shell {
+		position: relative;
+		width: min(100vw, 1500px);
+	}
+	.projects-carousel-viewport {
+		width: 100%;
+		overflow: visible;
+		scrollbar-width: none;
+		padding: 1.5rem 1rem 6rem;
+		box-sizing: border-box;
+		perspective: 1500px;
+		perspective-origin: center 42%;
+	}
+	.projects-carousel-viewport::-webkit-scrollbar {
+		display: none;
 	}
 	/* .grid {
 		display: grid;
@@ -515,30 +518,25 @@ import FooterSection from "../components/FooterSection.astro";
 		}
 	} */
 	.carousel-horizontal {
-		height: 50vh;
-		display: flex;
-		gap: 0.7rem;
-		width: max-content;
-		align-self: flex-start;
-		will-change: transform;
-		@media screen and (max-width: 1000px) {
-			display: grid;
-			grid-template-rows: repeat(2, minmax(0, 1fr));
-			grid-auto-columns: min(78vw, 360px);
-			gap: 1rem 3rem;
-			height: 72vh;
-			padding-right: 40vw;
-		}
+		height: clamp(560px, 70vh, 740px);
+		position: relative;
+		width: min(100%, 1320px);
+		margin: 0 auto;
 	}
 	.carousel-horizontal::-webkit-scrollbar {
 		display: none;
 	}
-	@keyframes spin {
-		from {
-			translate: 0;
+	@media screen and (max-width: 700px) {
+		.projects-carousel-section {
+			gap: 0.8rem;
 		}
-		to {
-			translate: -100%;
+		.projects-carousel-viewport {
+			padding-block: 1.5rem 3rem;
+			padding-inline: max(0.8rem, calc((100vw - min(84vw, 360px)) / 2));
+		}
+		.carousel-horizontal {
+			height: 520px;
+			gap: 1rem;
 		}
 	}
 	.contact {
@@ -560,7 +558,6 @@ import FooterSection from "../components/FooterSection.astro";
 		border-radius: 90pt;
 		padding: 0.5rem 5rem;
 		text-align: center;
-		width: 120px;
 		overflow: hidden;
 		box-shadow:
 			inset 0 0 15px 0 rgba(72, 72, 72, 0.5),
