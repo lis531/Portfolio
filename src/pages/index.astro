@@ -184,90 +184,101 @@ import AboutTimeline from "../components/AboutTimeline.astro";
 				]}
 			/>
 		</div>
-		<div id="projects">
-			<section class="projects-carousel-section" aria-labelledby="projects-title">
-				<h1 id="projects-title">MY PROJECTS</h1>
-				<div class="projects-carousel-shell">
-					<div class="projects-carousel-viewport" tabindex="0">
-					<div class="carousel-horizontal">
-						<Project
-							title="Borufi"
-							description="It is my own music library (AKA Spotify). Made using Astro, TS and Firebase."
-							date="January 2024"
-							href="https://github.com/lis531/borufi"
-							hrefTryOut=""
-						/>
-						<Project
-							title="School Projects"
-							description="Contains some of my smaller school projects yet when combined it is big enough to upload here. All made using JS."
-							date="2022 - 2024"
-							href="https://github.com/lis531/schoolProjects"
-							hrefTryOut="https://lis531.github.io/schoolProjects"
-						/>
-						<Project
-							title="TicTacToe"
-							description="Simple tic-tac-toe game built with Vue and Vite."
-							date="November 2024"
-							href="https://github.com/lis531/Tic-tac-toe"
-							hrefTryOut="https://lis531-tic-tac-toe.vercel.app"
-						/>
-						<Project
-							title="TechNews"
-							description="It is website created in js that fetches news from www.wired.com and lets you order them or select certain categories. Made as a school project using plain JS."
-							date="June 2023"
-							href="https://github.com/lis531/TechNews"
-							hrefTryOut="https://lis531.github.io/TechNews"
-						/>
-						<Project
-							title="Image Comparison"
-							description="Website for quick image comparison built with Vue and Vite."
-							date="December 2024"
-							href="https://github.com/lis531/image-compare"
-							hrefTryOut="https://lis531-image-compare.vercel.app/"
-						/>
-						<Project
-							title="Discord Bot"
-							description="Discord bot that can play music, queue songs, and more build with Python."
-							date="January 2025"
-							href="https://github.com/lis531/DiscordBot"
-							hrefTryOut=""
-						/>
-						<Project
-							title="Bargebo Guesser"
-							description="A game where you guess the song that is currently playing built with React, Vite and Firebase."
-							date="Mar - Apr 2025"
-							href="https://github.com/lis531/bargebo-guesser"
-							hrefTryOut="https://bargebo-guesser.vercel.app/"
-						/>
-						<Project
-							title="Spotify Like Script"
-							description="Script to like currently playing song with ease. Made with Python."
-							date="July 2025"
-							href="https://github.com/lis531/spotify-liked-toggle"
-							hrefTryOut=""
-						/>
-						<!-- add photos -->
-						<Project
-							title="Spotilyzer"
-							description="A tool to analyze your Spotify data and generate insights about your music preferences."
-							date="August 2025"
-							href="https://github.com/lis531/Spotilyzer"
-							hrefTryOut="https://spotilyzer.vercel.app/"
-						/>
-						<!-- add photos -->
-						<!-- <Project
-							title="Borufi Remake"
-							description='A remake of my music library (AKA Spotify) with new design and features. Made using Astro, TS and Firebase.'
-							date="Jun - Sep 2025"
-							href="https://github.com/lis531/borufi-remake"
-							hrefTryOut="https://borufi.netlify.app"
-						/> -->
-						<!-- add photos -->
-					</div>
+		<section id="projects" class="projects-carousel-section horizontal-scroll-section" aria-labelledby="projects-title">
+			<div class="projects-sticky-header horizontal-scroll-sticky">
+				<p class="eyebrow marker-reveal">SELECTED WORK / SCROLL STORY</p>
+				<h1 id="projects-title" class="marker-reveal">MY PROJECTS</h1>
+			</div>
+			<div class="projects-carousel-viewport" tabindex="0">
+				<div class="carousel-horizontal">
+					<article class="project-primer no-marker">
+							<span>INDEX</span>
+							<h2>Scroll the work archive</h2>
+							<p>
+								A compact run through experiments, tools, games, and web projects.
+								Click any case to open its project view.
+							</p>
+							<div class="primer-stats">
+								<strong>09</strong>
+								<small>projects</small>
+							</div>
+					</article>
+					<Project
+						title="Borufi"
+						description="It is my own music library (AKA Spotify). Made using Astro, TS and Firebase."
+						date="January 2024"
+						href="https://github.com/lis531/borufi"
+						hrefTryOut=""
+					/>
+					<Project
+						title="School Projects"
+						description="Contains some of my smaller school projects yet when combined it is big enough to upload here. All made using JS."
+						date="2022 - 2024"
+						href="https://github.com/lis531/schoolProjects"
+						hrefTryOut="https://lis531.github.io/schoolProjects"
+					/>
+					<Project
+						title="TicTacToe"
+						description="Simple tic-tac-toe game built with Vue and Vite."
+						date="November 2024"
+						href="https://github.com/lis531/Tic-tac-toe"
+						hrefTryOut="https://lis531-tic-tac-toe.vercel.app"
+					/>
+					<Project
+						title="TechNews"
+						description="It is website created in js that fetches news from www.wired.com and lets you order them or select certain categories. Made as a school project using plain JS."
+						date="June 2023"
+						href="https://github.com/lis531/TechNews"
+						hrefTryOut="https://lis531.github.io/TechNews"
+					/>
+					<Project
+						title="Image Comparison"
+						description="Website for quick image comparison built with Vue and Vite."
+						date="December 2024"
+						href="https://github.com/lis531/image-compare"
+						hrefTryOut="https://lis531-image-compare.vercel.app/"
+					/>
+					<Project
+						title="Discord Bot"
+						description="Discord bot that can play music, queue songs, and more build with Python."
+						date="January 2025"
+						href="https://github.com/lis531/DiscordBot"
+						hrefTryOut=""
+					/>
+					<Project
+						title="Bargebo Guesser"
+						description="A game where you guess the song that is currently playing built with React, Vite and Firebase."
+						date="Mar - Apr 2025"
+						href="https://github.com/lis531/bargebo-guesser"
+						hrefTryOut="https://bargebo-guesser.vercel.app/"
+					/>
+					<Project
+						title="Spotify Like Script"
+						description="Script to like currently playing song with ease. Made with Python."
+						date="July 2025"
+						href="https://github.com/lis531/spotify-liked-toggle"
+						hrefTryOut=""
+					/>
+					<!-- add photos -->
+					<Project
+						title="Spotilyzer"
+						description="A tool to analyze your Spotify data and generate insights about your music preferences."
+						date="August 2025"
+						href="https://github.com/lis531/Spotilyzer"
+						hrefTryOut="https://spotilyzer.vercel.app/"
+					/>
+					<!-- add photos -->
+					<!-- <Project
+						title="Borufi Remake"
+						description='A remake of my music library (AKA Spotify) with new design and features. Made using Astro, TS and Firebase.'
+						date="Jun - Sep 2025"
+						href="https://github.com/lis531/borufi-remake"
+						hrefTryOut="https://borufi.netlify.app"
+					/> -->
+					<!-- add photos -->
 				</div>
-				</div>
-			</section>
-		</div>
+			</div>
+		</section>
 		<div class="space">
 			<h1 class="animate" id="contact">CONTACT</h1>
 			<div class="contact">
@@ -439,101 +450,132 @@ import AboutTimeline from "../components/AboutTimeline.astro";
 	}
 	#projects {
 		margin-top: 20vh;
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		width: 100%;
-		@media screen and (max-width: 600px) {
-			width: 100%;
-		}
-	}
-	.projects-carousel-section {
 		width: 100%;
 		min-height: 100vh;
 		display: flex;
 		flex-direction: column;
-		justify-content: center;
 		align-items: center;
-		gap: 1.8rem;
+		justify-content: flex-start;
+		gap: 0;
 		box-sizing: border-box;
-	}
-	.projects-carousel-shell {
 		position: relative;
-		width: min(100vw, 1500px);
-	}
-	.projects-carousel-viewport {
-		width: 100%;
-		overflow: visible;
-		scrollbar-width: none;
-		padding: 1.5rem 1rem 6rem;
-		box-sizing: border-box;
-		perspective: 1500px;
-		perspective-origin: center 42%;
-	}
-	.projects-carousel-viewport::-webkit-scrollbar {
-		display: none;
-	}
-	/* .grid {
-		display: grid;
-		grid-template-columns: repeat(5, 220px);
-		grid-template-rows: repeat(12, 220px);
-		max-width: 1250px;
-		gap: 0.7em 0.7em;
-		grid-template-areas:
-			"Borufi Borufi Borufi SchoolProjects SchoolProjects"
-			"Borufi Borufi Borufi SchoolProjects SchoolProjects"
-			"TicTacToe TicTacToe TechNews TechNews TechNews"
-			"TicTacToe TicTacToe TechNews TechNews TechNews"
-			"TicTacToe TicTacToe ImageComparison ImageComparison ImageComparison"
-			"DiscordBot DiscordBot ImageComparison ImageComparison ImageComparison"
-			"DiscordBot DiscordBot BargeboGuesser BargeboGuesser BargeboGuesser"
-			"DiscordBot DiscordBot BargeboGuesser BargeboGuesser BargeboGuesser"
-			"Spotilyzer Spotilyzer Spotilyzer SpotifyLikeScript SpotifyLikeScript"
-			"Spotilyzer Spotilyzer Spotilyzer SpotifyLikeScript SpotifyLikeScript"
-			". . . SpotifyLikeScript SpotifyLikeScript";
-		@media (max-width: 900px) {
-			grid-template-areas:
-				"Borufi"
-				"SchoolProjects"
-				"TechNews"
-				"TicTacToe"
-				"ImageComparison"
-				"DiscordBot"
-				"BargeboGuesser"
-				"SpotifyLikeScript"
-				"Spotilyzer";
-			grid-template-rows: repeat(5, 440px);
-			grid-template-columns: 1fr;
-			margin: 0 3px;
+
+		.projects-sticky-header {
+			width: min(92vw, 1320px);
+			position: absolute;
+			top: clamp(3.7rem, 8vh, 5.2rem);
+			left: 50%;
+			transform: translateX(-50%);
+			display: grid;
+			gap: clamp(0.8rem, 2vh, 1.2rem);
+			z-index: 5;
 		}
-		@media screen and (max-width: 600px) {
-			grid-template-rows: auto;
-		}
-		@media (min-width: 1000px) and (max-width: 1920px) {
-			grid-template-columns: repeat(5, 190px);
-			grid-template-rows: repeat(12, 190px);
-		}
-	} */
-	.carousel-horizontal {
-		height: clamp(560px, 70vh, 740px);
-		position: relative;
-		width: min(100%, 1320px);
-		margin: 0 auto;
-	}
-	.carousel-horizontal::-webkit-scrollbar {
-		display: none;
-	}
-	@media screen and (max-width: 700px) {
-		.projects-carousel-section {
-			gap: 0.8rem;
-		}
+
 		.projects-carousel-viewport {
-			padding-block: 1.5rem 3rem;
-			padding-inline: max(0.8rem, calc((100vw - min(84vw, 360px)) / 2));
+			width: 100%;
+			position: sticky;
+			top: 0;
+			height: 100vh;
+			display: flex;
+			align-items: center;
+			overflow: hidden;
+			padding: 1.5rem 1rem 6rem;
+			box-sizing: border-box;
+			perspective: 1500px;
+			perspective-origin: center 42%;
 		}
+
+		/* .grid {
+			display: grid;
+			grid-template-columns: repeat(5, 220px);
+			grid-template-rows: repeat(12, 220px);
+			max-width: 1250px;
+			gap: 0.7em 0.7em;
+			grid-template-areas:
+				"Borufi Borufi Borufi SchoolProjects SchoolProjects"
+				"Borufi Borufi Borufi SchoolProjects SchoolProjects"
+				"TicTacToe TicTacToe TechNews TechNews TechNews"
+				"TicTacToe TicTacToe TechNews TechNews TechNews"
+				"TicTacToe TicTacToe ImageComparison ImageComparison ImageComparison"
+				"DiscordBot DiscordBot ImageComparison ImageComparison ImageComparison"
+				"DiscordBot DiscordBot BargeboGuesser BargeboGuesser BargeboGuesser"
+				"DiscordBot DiscordBot BargeboGuesser BargeboGuesser BargeboGuesser"
+				"Spotilyzer Spotilyzer Spotilyzer SpotifyLikeScript SpotifyLikeScript"
+				"Spotilyzer Spotilyzer Spotilyzer SpotifyLikeScript SpotifyLikeScript"
+				". . . SpotifyLikeScript SpotifyLikeScript";
+			@media (max-width: 900px) {
+				grid-template-areas:
+					"Borufi"
+					"SchoolProjects"
+					"TechNews"
+					"TicTacToe"
+					"ImageComparison"
+					"DiscordBot"
+					"BargeboGuesser"
+					"SpotifyLikeScript"
+					"Spotilyzer";
+				grid-template-rows: repeat(5, 440px);
+				grid-template-columns: 1fr;
+				margin: 0 3px;
+			}
+			@media screen and (max-width: 600px) {
+				grid-template-rows: auto;
+			}
+			@media (min-width: 1000px) and (max-width: 1920px) {
+				grid-template-columns: repeat(5, 190px);
+				grid-template-rows: repeat(12, 190px);
+			}
+		} */
+
 		.carousel-horizontal {
-			height: 520px;
-			gap: 1rem;
+			height: clamp(540px, 68vh, 720px);
+			position: relative;
+			display: flex;
+			align-items: center;
+			width: max-content;
+			will-change: transform;
+		}
+
+		.carousel-horizontal > .carousel-element {
+			border-right: 2px solid rgba(236, 238, 226, 0.16);
+		}
+
+		.carousel-horizontal > .carousel-element:nth-last-child(1 of .carousel-element) {
+			border-radius: 0 8px 8px 0;
+		}
+
+		.project-primer {
+			height: 100%;
+			flex: 0 0 clamp(300px, 28vw, 440px);
+			align-self: stretch;
+			display: flex;
+			flex-direction: column;
+			justify-content: space-between;
+			padding: clamp(1rem, 2vw, 1.4rem);
+			border: 1px solid rgba(236, 238, 226, 0.16);
+			border-radius: 8px 0 0 8px;
+			background:
+				linear-gradient(90deg, rgba(236, 238, 226, 0.055) 1px, transparent 1px),
+				linear-gradient(0deg, rgba(236, 238, 226, 0.055) 1px, transparent 1px),
+				rgba(12, 15, 10, 0.9);
+			background-size: 42px 42px;
+			box-sizing: border-box;
+		}
+
+		@media screen and (max-width: 700px) {
+			.projects-carousel-section {
+				gap: 0.8rem;
+			}
+
+			.projects-carousel-viewport {
+				padding-block: 1.5rem 3rem;
+				padding-inline: max(0.8rem, calc((100vw - min(84vw, 360px)) / 2));
+			}
+
+			.carousel-horizontal {
+				height: 520px;
+				gap: 1rem;
+			}
 		}
 	}
 	.contact {

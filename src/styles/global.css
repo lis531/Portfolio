@@ -90,10 +90,10 @@ h1 {
 	position: relative;
 	display: inline-block;
 	width: fit-content;
-	margin: 3vh 0;
+	padding: 3vh 0.1em;
+    margin: 0;
 	font-size: clamp(3.8rem, 10.5vw, 9.6rem);
 	line-height: 0.78;
-	padding: 0 0.1em;
 	text-align: center;
 	background-image: var(--heading-gradient);
 	background-clip: text;
