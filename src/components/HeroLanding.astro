@@ -3,8 +3,11 @@
 
 <section class="hero" aria-labelledby="hero-title">
 	<div class="hero-content">
-		<p class="hero-kicker animate">PORTFOLIO</p>
-		<h1 id="hero-title" class="animate hero-title">BORYS GAJEWSKI</h1>
+		<p class="hero-kicker animate">PORTFOLIO / FRONTEND / SOFTWARE</p>
+		<h1 id="hero-title" class="animate hero-title">
+			<span class="hero-title-first">BORYS</span>
+			<span class="hero-title-last">GAJEWSKI</span>
+		</h1>
 		<p class="hero-lead animate">
 			I am a <mark>developer</mark> from Poland focused on building websites,
 			small games, and practical software.
@@ -35,6 +38,16 @@
 
 	.hero-title {
 		margin: 0 0 3vh 0;
+		display: flex;
+		flex-direction: column;
+		.hero-title-first {
+			color: white;
+		}
+		.hero-title-last {
+			font-weight: bold;
+			font-style: normal;
+			font-family: "Alata";
+		}
 	}
 
 	.hero-content {
@@ -46,10 +59,11 @@
 
 	.hero-kicker {
 		font-family: "Alata";
-		font-size: clamp(1rem, 1.8vw, 1.4rem);
-		letter-spacing: 0.3em;
+		font-size: clamp(0.82rem, 1.4vw, 1rem);
+		letter-spacing: 0.16em;
 		margin: 0;
 		opacity: 0.8;
+		color: var(--color-muted);
 	}
 
 	.hero-lead {
@@ -79,7 +93,9 @@
 			transform 0.2s ease,
 			box-shadow 0.2s ease,
 			background-color 0.2s ease;
-		background: rgba(255, 255, 255, 0.04);
+    	background: rgba(236, 238, 226, 0.06);
+		-webkit-backdrop-filter: blur(7px);
+		backdrop-filter: blur(7px);
 	}
 
 	.hero-actions > a:hover {

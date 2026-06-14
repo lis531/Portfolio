@@ -16,6 +16,12 @@
 	font-display: swap;
 }
 
+@font-face {
+	font-family: "Dancing Script";
+	src: url("/fonts/DancingScript.woff2") format("truetype");
+	font-display: swap;
+}
+
 :root {
 	--accent: 136, 58, 234;
 	--accent-light: 224, 204, 250;
@@ -28,6 +34,7 @@
 	);
 	--color-bg: #000000;
 	--color-text: #ffffff;
+	--color-muted: rgba(255, 255, 255, 0.6);
 	--heading-gradient: linear-gradient(45deg, #2e99f0, #9b27b0);
 	--heading-glow: linear-gradient(
 		90deg,
@@ -84,8 +91,8 @@ h1 {
 	display: inline-block;
 	width: fit-content;
 	margin: 3vh 0;
-	font-size: 96px;
-	line-height: 1;
+	font-size: clamp(3.8rem, 10.5vw, 9.6rem);
+	line-height: 0.78;
 	padding: 0 0.1em;
 	text-align: center;
 	background-image: var(--heading-gradient);
@@ -94,7 +101,8 @@ h1 {
 	text-transform: uppercase;
 }
 
-h1::before {
+/* h1 highlight */
+/* h1::before {
 	content: "";
 	position: absolute;
 	left: 50%;
@@ -106,9 +114,9 @@ h1::before {
 	filter: blur(10px);
 	border-radius: 999px;
 	pointer-events: none;
-}
+} */
 
-h1::after {
+/* h1::after {
 	content: "";
 	position: absolute;
 	left: 50%;
@@ -120,7 +128,7 @@ h1::after {
 	border-radius: 999px;
 	box-shadow: 0 0 12px rgba(138, 93, 255, 0.7);
 	pointer-events: none;
-}
+} */
 
 @media (max-width: 600px) {
 	h1 {
@@ -140,6 +148,32 @@ p {
 	font-style: normal;
 	font-size: 40px;
 	text-align: center;
+}
+
+.space {
+	&:has(#contact) {
+		height: 95lvh;
+	}
+	height: 100lvh;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	& > p {
+		margin: 0;
+		width: 55vw;
+	}
+	@media (max-width: 600px) {
+		& > p {
+			width: 90vw;
+		}
+		width: 90%;
+	}
+	@media (max-width: 1200px) {
+		& > p {
+			width: 80vw;
+		}
+	}
 }
 
 @media (max-width: 600px) {
