@@ -8,99 +8,146 @@ const links = [
 
 <script>
 	let activeSection = "home";
-	const sections = document.querySelectorAll("nav a");
-	// let isScrolling = false;
+	const nav = document.querySelector("nav");
+	const highlight = document.querySelector(".highlight") as HTMLElement | null;
+	const links = document.querySelectorAll("nav a") as NodeListOf<HTMLAnchorElement>;
 
-	const getOffsetTop = (selector: string) => {
-		const el = document.querySelector(selector);
-		return el instanceof HTMLElement ? el.offsetTop : 0;
-	};
-	const getOffsetBottom = (selector: string) => {
-		const el = document.querySelector(selector);
-		return el instanceof HTMLElement ? el.offsetTop + el.offsetHeight : 0;
+	const linkMetrics = new Map<string, { offsetLeft: number; offsetWidth: number }>();
+	let projectsTop = 0;
+	let projectsBottom = 0;
+
+	const measureAll = () => {
+		links.forEach((link) => {
+			const href = link.getAttribute("href") || "";
+			const sectionId = href.startsWith("#") ? href.substring(1) : href;
+			linkMetrics.set(sectionId, {
+				offsetLeft: link.offsetLeft,
+				offsetWidth: link.offsetWidth,
+			});
+		});
+
+		const projectsEl = document.querySelector("#projects") as HTMLElement | null;
+		if (projectsEl) {
+			const rect = projectsEl.getBoundingClientRect();
+			const top = rect.top + window.scrollY;
+			projectsTop = top;
+			projectsBottom = top + projectsEl.offsetHeight;
+		}
 	};
 
-	const getPageTop = (selector: string) => {
-		const el = document.querySelector(selector);
-		return el instanceof HTMLElement ? el.getBoundingClientRect().top + window.scrollY : null;
+	const applyHighlight = (sectionId: string) => {
+		if (!highlight) return;
+		const metrics = linkMetrics.get(sectionId);
+		if (metrics) {
+			highlight.style.transform = `translateX(${metrics.offsetLeft}px)`;
+			highlight.style.width = `${metrics.offsetWidth}px`;
+		}
 	};
 
 	const scrollToSection = (selector: string) => {
-		const sectionTop = getPageTop(selector);
-		if (sectionTop === null) return;
+		if (selector === "#home") {
+			window.scrollTo({
+				top: 0,
+				behavior: "smooth",
+			});
+			return;
+		}
 
-		const extraOffset = selector === "#projects" ? (window.innerWidth < 1000 ? window.innerWidth / 2 + 300 : window.innerWidth / 2) : 0;
+		const target = document.querySelector(selector);
+		if (!(target instanceof HTMLElement)) return;
+
+		const navOffset = nav instanceof HTMLElement ? nav.getBoundingClientRect().bottom + 16 : 80;
+		const targetTop = target.getBoundingClientRect().top + window.scrollY;
+
 		window.scrollTo({
-			top: sectionTop + extraOffset,
+			top: Math.max(0, targetTop - navOffset),
 			behavior: "smooth",
 		});
 	};
 
-	// move .highlight to the clicked link and on scroll to the section in view
-	function moveHighlight() {
-		// isScrolling = true;
-		const activeLink = document.querySelector(
-			`nav a[href="#${activeSection}"]`,
-		);
-		const highlight = document.querySelector(".highlight") as HTMLElement;
-		if (activeLink && highlight) {
-			const { offsetLeft, offsetWidth } = activeLink as HTMLElement;
-			highlight.style.transform = `translateX(${offsetLeft}px)`;
-			highlight.style.width = `${offsetWidth}px`;
+	const getSectionForScroll = () => {
+		const scrollPosition = window.scrollY + window.innerHeight * 0.45;
+		if (projectsBottom > 0 && scrollPosition >= projectsBottom) {
+			return "contact";
 		}
-		// setTimeout(() => {
-		// 	isScrolling = false;
-		// }, 1500);
-	}
+		if (projectsTop > 0 && scrollPosition >= projectsTop) {
+			return "projects";
+		}
+		return "home";
+	};
 
-	// move highlight to hovered link
-	sections.forEach((link) => {
+	let isMeasured = false;
+	const initNav = () => {
+		measureAll();
+		activeSection = getSectionForScroll();
+		applyHighlight(activeSection);
+		isMeasured = true;
+		if (highlight && !highlight.classList.contains("ready")) {
+			void highlight.offsetWidth;
+			highlight.classList.add("ready");
+		}
+	};
+
+	const ensureMeasured = () => {
+		if (!isMeasured) {
+			initNav();
+		}
+	};
+
+	initNav();
+	document.fonts?.ready.then(() => {
+		measureAll();
+		applyHighlight(activeSection);
+	});
+	window.addEventListener("load", initNav, { once: true });
+
+	window.addEventListener("resize", () => {
+		measureAll();
+		applyHighlight(activeSection);
+	}, { passive: true });
+
+	// Hover interactions
+	links.forEach((link) => {
 		link.addEventListener("mouseenter", () => {
-			const { offsetLeft, offsetWidth } = link as HTMLElement;
-			const highlight = document.querySelector(".highlight") as HTMLElement;
-			if (highlight) {
-				highlight.style.transform = `translateX(${offsetLeft}px)`;
-				highlight.style.width = `${offsetWidth}px`;
-			}
+			ensureMeasured();
+			const href = link.getAttribute("href") || "";
+			const sectionId = href.startsWith("#") ? href.substring(1) : href;
+			applyHighlight(sectionId);
 		});
 		link.addEventListener("mouseleave", () => {
-			moveHighlight();
+			ensureMeasured();
+			applyHighlight(activeSection);
 		});
-	});
-
-	// move highlight on scroll to the section in view
-	window.addEventListener("scroll", () => {
-		// if (isScrolling) return;
-		const scrollPosition = window.scrollY + window.innerHeight / 2;
-
-		const projectsTop = getOffsetTop("#projects");
-		const projectsBottom = getOffsetBottom("#projects");
-
-		if (scrollPosition >= projectsBottom) {
-			activeSection = "contact";
-		} else if (scrollPosition >= projectsTop) {
-			activeSection = "projects";
-		} else {
-			activeSection = "home";
-		}
-
-		moveHighlight();
-	});
-
-	// move highlight on click
-	sections.forEach((link) => {
 		link.addEventListener("click", (event) => {
 			const href = link.getAttribute("href");
 			if (!href || !href.startsWith("#")) return;
 
 			event.preventDefault();
-			activeSection = href.substring(1);
-			moveHighlight();
+			ensureMeasured();
+			const sectionId = href.substring(1);
+			if (activeSection !== sectionId) {
+				activeSection = sectionId;
+				applyHighlight(activeSection);
+			}
 			scrollToSection(href);
 		});
 	});
-	// initial highlight position
-	moveHighlight();
+
+	// Fast scroll listener: zero forced layouts, zero DOM mutation unless section changes
+	let scrollTicking = false;
+	window.addEventListener("scroll", () => {
+		if (scrollTicking || !isMeasured) return;
+		scrollTicking = true;
+		requestAnimationFrame(() => {
+			const newSection = getSectionForScroll();
+
+			if (newSection !== activeSection) {
+				activeSection = newSection;
+				applyHighlight(activeSection);
+			}
+			scrollTicking = false;
+		});
+	}, { passive: true });
 </script>
 
 <nav>
@@ -112,18 +159,15 @@ const links = [
 
 <style>
 	nav {
-		top: 3vh;
+		top: 3svh;
 		position: fixed;
-		background-color: rgba(20, 20, 20, 0.5);
 		border-radius: 90pt;
 		padding: 0.5rem;
-		-webkit-backdrop-filter: blur(7px);
-		backdrop-filter: blur(7px);
+		background-color: rgba(20, 20, 20, 0.8);
+		-webkit-backdrop-filter: blur(18px);
+		backdrop-filter: blur(18px);
 		z-index: 100;
 		box-shadow: inset 0 0 15px 0 rgba(53, 53, 53, 0.5);
-		@media (max-width: 600px) {
-			width: 90%;
-		}
 		@media (max-width: 1200px) {
 			width: 80vw;
 		}
@@ -140,32 +184,22 @@ const links = [
 		align-items: center;
 	}
 
-	a {
+	nav a {
 		color: rgb(216, 216, 216);
-		text-decoration: none;
 		padding: 0.7rem 1.2rem;
 		position: relative;
+		z-index: 1;
 		@media (min-width: 1000px) and (max-width: 1920px) {
 			font-size: 28px;
 		}
 	}
 
-	nav a {
-		position: relative;
-		z-index: 1;
-		transition:
-			color 0.25s ease,
-			transform 0.2s ease;
-	}
-
-	nav a.active {
-		color: white;
-	}
 	.highlight {
 		position: absolute;
 		left: 0;
 		top: 0;
 		height: 100%;
+		opacity: 0;
 		will-change: transform, width;
 		border-radius: 999px;
 
@@ -174,13 +208,6 @@ const links = [
 		backdrop-filter: blur(18px) saturate(180%);
 		-webkit-backdrop-filter: blur(18px) saturate(180%);
 
-		/* background-image: linear-gradient(
-		135deg,
-		rgba(0, 255, 140, 0.18),
-		rgba(0, 200, 255, 0.12)
-	); */
-		transition: all 0.3s ease;
-
 		border: 1px solid rgba(255, 255, 255, 0.18);
 
 		box-shadow:
@@ -188,8 +215,12 @@ const links = [
 			inset 0 1px 1px rgba(255, 255, 255, 0.35),
 			inset 0 -6px 12px rgba(0, 0, 0, 0.15);
 
-		position: absolute;
 		overflow: hidden;
+	}
+
+	.highlight.ready {
+		opacity: 1;
+		transition: transform 0.3s ease, width 0.3s ease, opacity 0.15s ease;
 	}
 
 	.highlight::before {

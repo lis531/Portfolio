@@ -7,44 +7,52 @@ interface Props {
     date: string;
     href: string;
     hrefTryOut: string;
+    isDuplicate?: boolean;
 }
 
-const { title, description, date, href, hrefTryOut } = Astro.props;
+const { title, description, date, href, hrefTryOut, isDuplicate = false } = Astro.props;
 const images = import.meta.glob('/public/images/*/*.avif');
 const imageUrls = Object.keys(images).map((imagePath) => imagePath.replace('/public', ''));
-const filteredImageUrls = imageUrls.filter(url => url.startsWith(`/images/${title.replace(/\s/g, "")}/`));
-console.log(filteredImageUrls, title);
+const slug = title.replace(/\s/g, "");
+const filteredImageUrls = imageUrls.filter(url => url.startsWith(`/images/${slug}/`));
 ---
 
-<div class="carousel-element" id={title.replace(/\s/g, "")}>
-    <div class="inset">
-        <Image src={filteredImageUrls[0]} alt={title} class={'hidden'} id={`button-img-${title}`} width="600" height="400" />
+<div class="carousel-element col-center" data-project={slug}>
+    <div class="inset flex-center">
+        <Image src={filteredImageUrls[0]} alt={title} loading="eager" decoding="sync" width="600" height="400" />
         <span>
-            <p style="color: #ebebeb;">{title}</p>
-            <p style="color: rgba(204, 204, 204, 0.75);">{date}</p>
+            <p>{title}</p>
+            <p>{date}</p>
         </span>
     </div>
-    <a class="link" href={href} target="_blank">
-        View Production <img src="/images/Icons/arrow_link.svg" alt="arrow" width="16px" height="16px" loading="lazy" />
-    </a>
 </div>
-<dialog id={`dialog-${title.replace(/\s/g, "")}`} class="dialog" data-current-index="0">
-    <div class="dialog-surface">
-        <button class="closeIcon" aria-label="Close dialog" onclick="() => handleDialogClose">X</button>
-        <div class="images">
-            <button class="prev-button">
-                <img src="/images/Icons/arrow_modal.svg" alt="arrow" width="22px" height="22px" loading="lazy" />
+{!isDuplicate && (
+<dialog id={`dialog-${slug}`} class="dialog no-scrollbar" data-current-index="0">
+    <div class="dialog-surface col-center no-scrollbar">
+        <button class="dialog-close-btn" aria-label="Close dialog" type="button">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+        </button>
+        <div class="images flex-center">
+            <button class="prev-button" aria-label="Previous image">
+                <svg width="22" height="22" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                    <path d="M20.1429 24.0524L6 14.5261L20.1429 5" stroke="white" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
             </button>
             {filteredImageUrls.map((url, index) => (
-                <img src={url} alt={title + index} loading="lazy" class={index === 0 ? 'fade-in' : 'fade-out'} style={index === 0 ? 'display: block;' : ''} />
+                <img src={url} alt={title + index} loading="eager" decoding="sync" style={index === 0 ? 'display: block;' : ''} />
             ))}
-            <button class="next-button">
-                <img src="/images/Icons/arrow_modal.svg" alt="arrow" width="22px" height="22px" loading="lazy" />
+            <button class="next-button" aria-label="Next image">
+                <svg width="22" height="22" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                    <path d="M20.1429 24.0524L6 14.5261L20.1429 5" stroke="white" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
             </button>
         </div>
 
-        <div class="dialog-copy">
-            <h1>{title}</h1>
+        <div class="dialog-copy col-center">
+            <h1 class="no-glow">{title}</h1>
             <p>{description}</p>
         </div>
         <div class="dialog-buttons">
@@ -56,177 +64,338 @@ console.log(filteredImageUrls, title);
         </div>
     </div>
 </dialog>
+)}
 
 <script>
-    const carouselElements = document.querySelectorAll('.carousel-horizontal > .carousel-element');
-    carouselElements.forEach(element => {
-        element.addEventListener('click', (e) => {
-            if(e.target instanceof HTMLAnchorElement) return;
+    const carouselElements = document.querySelectorAll('.carousel-element');
+    const allDialogs = document.querySelectorAll('dialog');
 
-            const target = e.currentTarget as HTMLElement;
-            const dialog = document.getElementById(`dialog-${target.id}`) as HTMLDialogElement;
-            const images = dialog.querySelectorAll('.images > img') as NodeListOf<HTMLImageElement>;
+    // Give each card a unique DOM id for 1-to-1 tracking
+    carouselElements.forEach((card, idx) => {
+        if (!card.id) card.id = `carousel-card-${idx}`;
+    });
 
-            images.forEach((img, i) => {
-                img.style.display = i === 0 ? 'block' : '';
-                img.addEventListener('load', () => {
-                    img.classList.add('fade-in');
-                });
-            });
+    // Prevent background scrolling while any dialog is open
+    if (!(window as any)._hasDialogScrollLock) {
+        (window as any)._hasDialogScrollLock = true;
 
-            dialog.dataset.currentIndex = '0';
-            dialog.showModal();
-            
-            const handleDialogClose = (e: Event) => {
-                if (e.target === dialog || e.target === dialog.querySelector('.closeIcon')) {
-                    dialog.classList.add('closing');
-                    dialog.animate([
-                        { transform: 'translate3d(0, 0, 0)', opacity: 1 },
-                        { transform: 'translate3d(0, 100%, 0)', opacity: 0 }
-                    ], 200).finished.then(() => {
-                        dialog.close();
-                        dialog.classList.remove('closing');
-                    });
-                }
-            };
+        const preventBackgroundScroll = (e: TouchEvent | WheelEvent) => {
+            const openDialog = document.querySelector('dialog[open]');
+            if (!openDialog) return;
 
-            document.body.addEventListener('click', handleDialogClose);
-
-            if (images.length <= 1) return;
-
-            const prevButton = dialog.querySelector('.prev-button') as HTMLButtonElement;
-            const nextButton = dialog.querySelector('.next-button') as HTMLButtonElement;
-
-            prevButton.style.display = 'block';
-            nextButton.style.display = 'block';
-
-            let isAllowed = true;
-
-            const updateImages = (newIndex: number) => {
-                const currentIndex = parseInt(dialog.dataset.currentIndex || '0');
-                isAllowed = false;
-                images[currentIndex].animate([
-                    { opacity: 1 },
-                    { opacity: 0 }
-                ], 200).finished.then(() => {
-                    images[currentIndex].style.display = 'none';
-                    images[newIndex].style.display = 'block';
-                    images[newIndex].animate([
-                        { opacity: 0 },
-                        { opacity: 1 }
-                    ], 200).finished.then(() => {
-                        dialog.dataset.currentIndex = newIndex.toString();
-                        isAllowed = true;
-                    });
-                });
+            const target = e.target as HTMLElement | null;
+            const scrollable = target?.closest('.dialog-surface') as HTMLElement | null;
+            if (scrollable && scrollable.scrollHeight > scrollable.clientHeight) {
+                return;
             }
 
-            const handlePrevClick = () => {
-                if (!isAllowed) return;
-                const currentIndex = parseInt(dialog.dataset.currentIndex || '0');
-                const newIndex = (currentIndex > 0) ? currentIndex - 1 : images.length - 1;
-                updateImages(newIndex);
-            };
+            if (e.cancelable) e.preventDefault();
+        };
 
-            const handleNextClick = () => {
-                if (!isAllowed) return;
-                const currentIndex = parseInt(dialog.dataset.currentIndex || '0');
-                const newIndex = (currentIndex < images.length - 1) ? currentIndex + 1 : 0;
-                updateImages(newIndex);
-            };
+        window.addEventListener('wheel', preventBackgroundScroll, { passive: false });
+        window.addEventListener('touchmove', preventBackgroundScroll, { passive: false });
+    }
 
-            prevButton.addEventListener('click', handlePrevClick);
-            nextButton.addEventListener('click', handleNextClick);
-            document.addEventListener('keydown', (e) => {
-                if (e.key === 'ArrowLeft') handlePrevClick();
-                if (e.key === 'ArrowRight') handleNextClick();
+    // Flyer element creator with forced reflow for consistent cross-browser transitions (esp Firefox)
+    const createFlyer = (dialog: HTMLElement, src: string, rect: DOMRect, radius: string) => {
+        const flyer = document.createElement('img');
+        flyer.src = src;
+        flyer.className = 'hero-flyer';
+        Object.assign(flyer.style, {
+            top: `${rect.top}px`,
+            left: `${rect.left}px`,
+            width: `${rect.width}px`,
+            height: `${rect.height}px`,
+            borderRadius: radius,
+        });
+        dialog.appendChild(flyer);
+        void flyer.offsetWidth;
+        return flyer;
+    };
+
+    // Close handler for a dialog
+    const closeDialog = (dialog: HTMLDialogElement) => {
+        if (dialog.dataset.closing === 'true' || !dialog.open) return;
+        dialog.dataset.closing = 'true';
+        dialog.classList.add('closing');
+        dialog.querySelectorAll('.hero-flyer').forEach(f => f.remove());
+
+        const surface = dialog.querySelector('.dialog-surface') as HTMLElement | null;
+        const currentIdx = parseInt(dialog.dataset.currentIndex || '0');
+        const images = dialog.querySelectorAll('.images > img') as NodeListOf<HTMLImageElement>;
+        const activeImg = images[currentIdx] || images[0];
+
+        const cardId = dialog.dataset.triggerCardId;
+        const card = cardId ? document.getElementById(cardId) : null;
+        const cardImg = card ? card.querySelector('.inset > img') as HTMLImageElement | null : null;
+
+        const startRect = activeImg ? activeImg.getBoundingClientRect() : null;
+        const endRect = cardImg ? cardImg.getBoundingClientRect() : (card ? card.getBoundingClientRect() : null);
+
+        const finishClose = () => {
+            document.documentElement.classList.remove('dialog-open');
+            document.body.classList.remove('dialog-open');
+            dialog.close();
+            dialog.classList.remove('closing');
+            dialog.dataset.closing = 'false';
+            dialog.style.opacity = '';
+            dialog.style.transition = '';
+            if (surface) {
+                surface.style.opacity = '';
+                surface.style.transform = '';
+                surface.style.transition = '';
+            }
+        };
+
+        if (surface) {
+            surface.style.transition = 'opacity 0.26s ease, transform 0.26s ease';
+            surface.style.opacity = '0';
+            surface.style.transform = 'scale(0.95)';
+        }
+
+        if (startRect && endRect && activeImg) {
+            const flyer = createFlyer(dialog, activeImg.src, startRect, '1.25rem');
+            activeImg.style.opacity = '0';
+
+            requestAnimationFrame(() => {
+                const ease = 'cubic-bezier(0.16, 1, 0.3, 1)';
+                Object.assign(flyer.style, {
+                    transition: `top 0.32s ${ease}, left 0.32s ${ease}, width 0.32s ${ease}, height 0.32s ${ease}, border-radius 0.32s ${ease}, opacity 0.28s ease 0.04s`,
+                    top: `${endRect.top}px`,
+                    left: `${endRect.left}px`,
+                    width: `${endRect.width}px`,
+                    height: `${endRect.height}px`,
+                    borderRadius: '18px',
+                    opacity: '0.2',
+                });
+                dialog.style.transition = 'opacity 0.28s ease';
+                dialog.style.opacity = '0';
             });
+
+            setTimeout(() => {
+                flyer.remove();
+                activeImg.style.opacity = '1';
+                finishClose();
+            }, 330);
+        } else {
+            setTimeout(finishClose, 300);
+        }
+    };
+
+    // Attach permanent close listeners to all dialogs
+    allDialogs.forEach(dialog => {
+        if ((dialog as any)._hasCloseInit) return;
+        (dialog as any)._hasCloseInit = true;
+
+        dialog.addEventListener('click', (e) => {
+            if (e.target === dialog) closeDialog(dialog);
+        });
+
+        dialog.addEventListener('cancel', (e) => {
+            e.preventDefault();
+            closeDialog(dialog);
+        });
+
+        const closeBtn = dialog.querySelector('.dialog-close-btn');
+        if (closeBtn) {
+            closeBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                closeDialog(dialog);
+            });
+        }
+
+        // Gallery navigation buttons
+        const images = dialog.querySelectorAll('.images > img') as NodeListOf<HTMLImageElement>;
+        if (images.length > 1) {
+            const prevButton = dialog.querySelector('.prev-button') as HTMLButtonElement | null;
+            const nextButton = dialog.querySelector('.next-button') as HTMLButtonElement | null;
+            if (prevButton && nextButton) {
+                prevButton.style.display = 'flex';
+                nextButton.style.display = 'flex';
+
+                let isAllowed = true;
+                const updateImages = (newIndex: number) => {
+                    const currentIndex = parseInt(dialog.dataset.currentIndex || '0');
+                    if (currentIndex === newIndex) return;
+                    isAllowed = false;
+
+                    const curImg = images[currentIndex];
+                    const nextImg = images[newIndex];
+                    if (!curImg || !nextImg) {
+                        isAllowed = true;
+                        return;
+                    }
+
+                    nextImg.style.display = 'block';
+                    nextImg.style.opacity = '0';
+                    void nextImg.offsetWidth;
+
+                    const fadeOut = curImg.animate([{ opacity: '1' }, { opacity: '0' }], { duration: 240, easing: 'ease', fill: 'forwards' });
+                    const fadeIn = nextImg.animate([{ opacity: '0' }, { opacity: '1' }], { duration: 240, easing: 'ease', fill: 'forwards' });
+
+                    Promise.all([fadeOut.finished, fadeIn.finished]).then(() => {
+                        curImg.style.display = 'none';
+                        curImg.style.opacity = '';
+                        nextImg.style.opacity = '1';
+                        dialog.dataset.currentIndex = newIndex.toString();
+                        isAllowed = true;
+                    }).catch(() => {
+                        isAllowed = true;
+                    });
+                };
+
+                prevButton.onclick = (e) => {
+                    e.stopPropagation();
+                    if (!isAllowed) return;
+                    const cur = parseInt(dialog.dataset.currentIndex || '0');
+                    updateImages(cur > 0 ? cur - 1 : images.length - 1);
+                };
+
+                nextButton.onclick = (e) => {
+                    e.stopPropagation();
+                    if (!isAllowed) return;
+                    const cur = parseInt(dialog.dataset.currentIndex || '0');
+                    updateImages(cur < images.length - 1 ? cur + 1 : 0);
+                };
+            }
+        }
+    });
+
+    // Card click listener
+    carouselElements.forEach(element => {
+        if ((element as any)._hasHeroListener) return;
+        (element as any)._hasHeroListener = true;
+
+        element.addEventListener('click', (e) => {
+            const target = e.currentTarget as HTMLElement;
+            const projectName = target.dataset.project;
+            const dialog = projectName ? document.getElementById(`dialog-${projectName}`) as HTMLDialogElement | null : null;
+            if (!dialog || dialog.open) return;
+
+            // Clear any lingering flyers or animations from previous runs
+            dialog.querySelectorAll('.hero-flyer').forEach(f => f.remove());
+            dialog.getAnimations().forEach(a => a.cancel());
+
+            dialog.dataset.triggerCardId = target.id;
+            dialog.dataset.closing = 'false';
+            dialog.classList.remove('closing');
+
+            const surface = dialog.querySelector('.dialog-surface') as HTMLElement | null;
+            const dialogImagesEl = dialog.querySelector('.images') as HTMLElement | null;
+            const cardImg = target.querySelector('.inset > img') as HTMLImageElement | null;
+            const images = dialog.querySelectorAll('.images > img') as NodeListOf<HTMLImageElement>;
+
+            if (surface) {
+                surface.getAnimations().forEach(a => a.cancel());
+                surface.style.opacity = '';
+                surface.style.transform = '';
+                surface.style.transition = '';
+            }
+            dialog.style.opacity = '';
+            dialog.style.transition = '';
+
+            // Reset image gallery to first image
+            images.forEach((img, i) => {
+                img.style.display = i === 0 ? 'block' : 'none';
+                img.style.opacity = '1';
+            });
+            dialog.dataset.currentIndex = '0';
+
+            const cardRect = cardImg ? cardImg.getBoundingClientRect() : target.getBoundingClientRect();
+
+            // Open dialog
+            document.documentElement.classList.add('dialog-open');
+            document.body.classList.add('dialog-open');
+            dialog.showModal();
+
+            // Measure target position (the exact picture inside the dialog)
+            const targetImg = images[0];
+            const targetRect = targetImg ? targetImg.getBoundingClientRect() : (dialogImagesEl ? dialogImagesEl.getBoundingClientRect() : null);
+
+            if (targetRect && cardImg) {
+                const flyer = createFlyer(dialog, cardImg.src, cardRect, '18px');
+                if (images[0]) images[0].style.opacity = '0';
+
+                if (surface) {
+                    surface.style.opacity = '0';
+                    surface.style.transform = 'scale(0.95)';
+                    void surface.offsetWidth;
+                }
+
+                requestAnimationFrame(() => {
+                    const ease = 'cubic-bezier(0.16, 1, 0.3, 1)';
+                    if (surface) {
+                        surface.style.transition = 'opacity 0.34s ease, transform 0.38s cubic-bezier(0.16, 1, 0.3, 1)';
+                        surface.style.opacity = '1';
+                        surface.style.transform = 'scale(1)';
+                    }
+                    Object.assign(flyer.style, {
+                        transition: `top 0.38s ${ease}, left 0.38s ${ease}, width 0.38s ${ease}, height 0.38s ${ease}, border-radius 0.38s ${ease}`,
+                        top: `${targetRect.top}px`,
+                        left: `${targetRect.left}px`,
+                        width: `${targetRect.width}px`,
+                        height: `${targetRect.height}px`,
+                        borderRadius: '1.25rem',
+                    });
+                });
+
+                setTimeout(() => {
+                    if (images[0]) images[0].style.opacity = '1';
+                    flyer.remove();
+                    if (surface) surface.style.transition = '';
+                }, 390);
+            }
         });
     });
 </script>
 
 <style>
-    @keyframes transformIn {
-        from {
-            transform: translate3d(0, 24px, 0) scale(0.97);
-            opacity: 0;
-        }
-        to {
-            transform: translate3d(0, 0, 0) scale(1);
-            opacity: 1;
-        }
-    }
     @keyframes backdropAppear {
         from {
             opacity: 0;
-            filter: blur(0px);
         }
         to {
             opacity: 1;
-            filter: blur(10px);
         }
     }
     @keyframes backdropDisappear {
         from {
             opacity: 1;
-            filter: blur(10px);
         }
         to {
             opacity: 0;
-            filter: blur(0px);
         }
     }
     .images {
         position: relative;
         width: 100%;
         height: min(44vh, 430px);
-        object-fit: cover;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        flex-direction: row;
         margin-top: 0.5rem;
         & > img {
             border-radius: 1.25rem;
             display: none;
+            width: auto;
             max-width: 100%;
-            max-height: 100%;
             height: min(44vh, 430px);
-            object-fit: cover;
+            max-height: 100%;
+            object-fit: contain;
             border: 1px solid rgba(255, 255, 255, 0.18);
             box-shadow: 0 24px 50px rgba(0, 0, 0, 0.4);
         }
         @media screen and (max-width: 600px) {
-            height: 34vh;
+            height: clamp(240px, 35svh, 320px);
+            margin-top: 2rem;
             margin-bottom: 0;
-            padding: 3.5rem 0 3rem;
+            padding: 0;
             & > img {
-                height: 34vh;
+                height: 100%;
+                width: 100%;
+                object-fit: cover;
             }
         }
     }
-    .link {
-        font-size: 30px;
-        background-color: rgba(28, 28, 28, 0.5);
-        border-radius: 1rem;
-        color: white;
-        text-decoration: none;
-        text-align: center;
-        width: 100%;
-        padding: 0.7rem 0;
-        transition: background-color ease-in-out 0.2s;
-        &:hover {
-            background-color: rgba(28, 28, 28, 0.75);
-        }
-        & > img {
-            margin-left: 0.5rem;
-        }
-        @media (max-width: 600px) {
-            font-size: 20px;
-        }
-        @media (min-width: 1000px) and (max-width: 1920px) {
-            font-size: 22px;
-        }
+    dialog:not([open]) {
+        display: none !important;
     }
     dialog {
         color: white;
@@ -240,67 +409,50 @@ console.log(filteredImageUrls, title);
         height: 100%;
         max-width: none;
         max-height: none;
-        overflow: hidden;
+        overflow: hidden !important;
+        overscroll-behavior: none;
+        touch-action: none;
         & h1 {
             margin: 0.5rem;
             font-size: clamp(2.2rem, 4.6vw, 4.2rem);
             line-height: 0.95;
             letter-spacing: 0.02em;
+            -webkit-background-clip: text;
             @media (max-width: 600px) {
                 font-size: 2.3rem;
             }
         }
         & p {
-            max-width: 70ch;
             margin: 0;
         }
         & > .dialog-surface {
+            touch-action: pan-y;
+            overscroll-behavior: contain;
+            overflow-x: hidden !important;
             margin-inline: auto;
             width: min(88%, 1120px);
-            min-height: min(90vh, 860px);
+            min-height: min(85vh, 820px);
             background:
-                radial-gradient(circle at 20% 0%, rgba(63, 188, 255, 0.14), transparent 42%),
-                radial-gradient(circle at 80% 100%, rgba(255, 157, 83, 0.17), transparent 45%),
-                rgba(10, 13, 17, 0.88);
+                radial-gradient(circle at 15% 10%, rgba(46, 153, 240, 0.16), transparent 45%),
+                radial-gradient(circle at 85% 90%, rgba(155, 39, 176, 0.18), transparent 45%),
+                rgba(10, 13, 20, 0.92);
             border: 1px solid rgba(255, 255, 255, 0.14);
-            box-shadow: 0 30px 90px rgba(0, 0, 0, 0.5);
-            padding: 1.75rem;
+            box-shadow: 0 30px 90px rgba(0, 0, 0, 0.6), 0 0 50px rgba(46, 153, 240, 0.1);
+            padding: 2rem;
             border-radius: 1.8rem;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
             justify-content: space-between;
             gap: 1.2rem;
             position: relative;
-            & > .closeIcon {
-                position: absolute;
-                top: 0.9rem;
-                right: 0.9rem;
-                border: 1px solid rgba(255, 255, 255, 0.3);
-                width: 2.6rem;
-                height: 2.6rem;
-                border-radius: 999px;
-                font-size: 1.15rem;
-                color: white;
-                background: rgba(0, 0, 0, 0.35);
-                cursor: pointer;
-                z-index: 20;
-                transition: background-color 0.2s ease, transform 0.2s ease;
-                &:hover {
-                    background: rgba(255, 255, 255, 0.12);
-                    transform: scale(1.05);
-                }
-            }
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            will-change: transform, opacity;
             &::before {
                 content: "";
                 z-index: -10;
                 position: absolute;
-                top: 0;
-                right: 0;
-                bottom: 0;
-                left: 0;
-                opacity: 0.9;
-                background: linear-gradient(125deg, rgba(73, 183, 255, 0.24) 0%, rgba(255, 170, 88, 0.24) 100%);
+                inset: 0;
+                opacity: 0.8;
+                background: linear-gradient(135deg, rgba(46, 153, 240, 0.28) 0%, rgba(155, 39, 176, 0.28) 100%);
                 transform: scale(1.012);
                 filter: blur(26px);
                 transition: opacity 0.3s;
@@ -308,265 +460,274 @@ console.log(filteredImageUrls, title);
             }
             @media (max-width: 600px) {
                 width: calc(100% - 1.3rem);
-                height: calc(100% - 1.3rem);
+                height: auto;
+                max-height: calc(100svh - 1.4rem);
                 min-height: unset;
-                border-radius: 1.25rem;
-                padding: 1rem 0.8rem 1rem;
-                gap: 0.75rem;
-                & > .closeIcon {
-                    width: 2.2rem;
-                    height: 2.2rem;
-                    top: 0.7rem;
-                    right: 0.7rem;
-                }
+                border-radius: 1.4rem;
+                padding: 1.2rem 1rem 1.3rem;
+                gap: 0;
+                overflow-y: auto;
             }
         }
         &::backdrop {
             background:
-                radial-gradient(circle at 10% 20%, rgba(69, 166, 255, 0.18), transparent 40%),
-                radial-gradient(circle at 85% 80%, rgba(255, 150, 73, 0.16), transparent 40%),
-                rgba(1, 5, 10, 0.74);
-            -webkit-backdrop-filter: blur(10px) saturate(130%);
-            backdrop-filter: blur(10px) saturate(130%);
-            animation: backdropAppear 0.3s;
+                radial-gradient(circle at 15% 20%, rgba(46, 153, 240, 0.18), transparent 45%),
+                radial-gradient(circle at 85% 80%, rgba(155, 39, 176, 0.18), transparent 45%),
+                rgba(3, 6, 12, 0.85);
+            -webkit-backdrop-filter: blur(8px);
+            backdrop-filter: blur(8px);
+            animation: backdropAppear 0.3s ease forwards;
         }
     }
     dialog.closing::backdrop {
-        animation: backdropDisappear 0.3s;
+        animation: backdropDisappear 0.3s ease forwards;
     }
-    dialog[open] {
-        animation: transformIn 0.3s;
+    .dialog-close-btn,
+    .next-button,
+    .prev-button {
+        position: absolute;
+        color: #ffffff;
+        cursor: pointer;
+        padding: 0;
+        align-items: center;
+        justify-content: center;
     }
-    body:has(dialog[open]) {
-        overflow: hidden;
-        margin-right: 10px;
+    .dialog-close-btn {
+        display: none;
+        top: 0.5rem;
+        right: 0.65rem;
+        width: 40px;
+        height: 34px;
+        border-radius: 9px;
+        border: 1px solid rgba(255, 255, 255, 0.25);
+        background: rgba(14, 18, 28, 0.85);
+        z-index: 30;
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.5);
+        transition: transform 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
+    }
+    .dialog-close-btn:hover,
+    .dialog-close-btn:active {
+        transform: scale(1.08);
+        background-color: rgba(28, 56, 98, 0.94);
+        border-color: rgba(46, 153, 240, 0.8);
+    }
+    .dialog-close-btn svg {
+        pointer-events: none;
+    }
+    @media (max-width: 768px) {
+        .dialog-close-btn {
+            display: flex;
+        }
+    }
+    :global(.hero-flyer) {
+        position: fixed;
+        z-index: 10000;
+        object-fit: cover;
+        pointer-events: none;
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7), 0 0 35px rgba(46, 153, 240, 0.4);
+        will-change: top, left, width, height, border-radius, opacity;
     }
     .dialog-buttons {
         display: flex;
-        flex-direction: row;
-        gap: 0.9rem;
+        gap: 1.2rem;
         width: 100%;
-        margin-top: 8vh;
+        margin-top: 4vh;
+        justify-content: center;
         & > .link {
-            font-size: clamp(1.1rem, 2vw, 1.5rem);
-            display: flex;
+            font-size: clamp(1rem, 1.6vw, 1.25rem);
+            font-family: "Alata", sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            display: inline-flex;
             align-items: center;
             justify-content: center;
-            gap: 0.45rem;
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            border-radius: 0.95rem;
-            background: linear-gradient(180deg, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0.06));
-            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2);
-            transition: transform 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
+            gap: 0.6rem;
+            padding: 0.95rem 2.2rem;
+            min-width: 200px;
+            border: 1px solid rgba(255, 255, 255, 0.16);
+            border-radius: 14px;
+            background: rgba(255, 255, 255, 0.06);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+            transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1),
+                        border-color 0.25s ease,
+                        background 0.25s ease,
+                        box-shadow 0.25s ease,
+                        color 0.25s ease;
+            color: rgba(255, 255, 255, 0.9);
+            & > img {
+                transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+            }
             &:hover {
-                transform: translateY(-2px);
-                border-color: rgba(124, 214, 255, 0.5);
-                background: linear-gradient(180deg, rgba(68, 183, 255, 0.3), rgba(255, 160, 91, 0.2));
+                transform: translateY(-3px) scale(1.02);
+                color: #ffffff;
+                border-color: rgba(46, 153, 240, 0.6);
+                background: linear-gradient(135deg, rgba(46, 153, 240, 0.28) 0%, rgba(155, 39, 176, 0.28) 100%);
+                box-shadow: 0 12px 30px rgba(46, 153, 240, 0.3), 0 0 35px rgba(155, 39, 176, 0.2);
+                & > img {
+                    transform: translate(3px, -3px);
+                }
+            }
+            &:active {
+                transform: translateY(-1px) scale(0.99);
             }
         }
         @media (max-width: 600px) {
-            gap: 0.5rem;
+            gap: 0.6rem;
             flex-direction: column;
-            width: 96%;
+            margin-top: 1.3rem;
+            & > .link {
+                width: 100%;
+                min-width: unset;
+            }
         }
     }
     .dialog-copy {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
         gap: 0.5rem;
         width: 100%;
         padding-bottom: 0.15rem;
         & > p {
             max-width: 90%;
         }
+        @media (max-width: 600px) {
+            margin-top: 1.2rem;
+            margin-bottom: 0.2rem;
+        }
     }
     .next-button, .prev-button {
-        -webkit-user-select: none;
-        user-select: none;
-        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
         border-radius: 100rem;
-        font-size: x-large;
-        color: white;
-        text-decoration: none;
-        text-align: center;
         width: 52px;
         height: 52px;
-        padding: 0;
-        cursor: pointer;
-        border: 1px solid rgba(255, 255, 255, 0.25);
-        background-color: rgba(13, 19, 28, 0.7);
-        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.35);
-        -webkit-backdrop-filter: blur(8px) saturate(120%);
-        backdrop-filter: blur(8px) saturate(120%);
+        border: 1px solid rgba(255, 255, 255, 0.28);
+        background-color: rgba(12, 18, 30, 0.88);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+        -webkit-backdrop-filter: blur(12px) saturate(140%);
+        backdrop-filter: blur(12px) saturate(140%);
         z-index: 10;
-        transition: transform 0.2s ease, background-color 0.2s ease;
+        display: none;
+        transition: transform 0.25s ease, background-color 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
         &:hover {
-            transform: scale(1.06);
-            background-color: rgba(48, 137, 191, 0.5);
+            transform: translateY(-50%) scale(1.1);
+            border-color: rgba(46, 153, 240, 0.9);
+            background-color: rgba(28, 56, 98, 0.94);
+            box-shadow: 0 0 25px rgba(46, 153, 240, 0.45), 0 10px 30px rgba(0, 0, 0, 0.65);
         }
-        & > img {
-            padding: 14px;
+        & > svg {
+            width: 22px;
+            height: 22px;
+            display: block;
+            pointer-events: none;
+            box-sizing: content-box;
         }
         @media (max-width: 600px) {
-            font-size: x-large;
-            width: 42%;
-            bottom: 0;
+            width: 44px;
+            height: 44px;
+            &:hover,
+            &:active {
+                transform: translateY(-50%) scale(1.08);
+            }
         }
     }
     .next-button {
-        display: none;
         right: 1vw;
-        & > img {
+        & > svg {
             transform: rotate(180deg);
+        }
+        @media (max-width: 600px) {
+            right: 0.6rem;
         }
     }
     .prev-button {
-        display: none;
         left: 1vw;
-    }
-    p {
-        font-size: 26px;
-        color: white;
-        text-align: center;
-        margin: 0;
         @media (max-width: 600px) {
-            font-size: 20px;
-        }
-        @media (min-width: 1000px) and (max-width: 1920px) {
-            font-size: 22px;
+            left: 0.6rem;
         }
     }
     .inset {
         width: 100%;
         height: 100%;
-        box-shadow: 0 0 12px 6px rgba(0, 0, 0, 0.5);
-        background: linear-gradient(0deg, rgba(0, 0, 0, 0.5), transparent);
         position: relative;
-        border-radius: 1rem;
+        border-radius: inherit;
         overflow: hidden;
         & > img {
-            position: relative;
-            width: inherit;
-            height: inherit;
+            width: 100%;
+            height: 100%;
             object-fit: cover;
-            border-radius: 1rem;
-            filter: blur(1px);
-            clip-path: border-box;
-            z-index: -1;
+            display: block;
+            border-radius: inherit;
+            transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
         }
     }
     span {
         display: flex;
-        align-items: end;
+        align-items: flex-end;
         justify-content: space-between;
         position: absolute;
-        width: -webkit-fill-available;
-        width: -moz-available;
-        bottom: 1rem;
-        margin: 0 1rem;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        width: 100%;
+        padding: 4.8rem 1.6rem 1.4rem;
+        background: linear-gradient(0deg, rgba(2, 4, 10, 0.98) 0%, rgba(2, 4, 10, 0.88) 45%, rgba(2, 4, 10, 0.4) 75%, transparent 100%);
+        pointer-events: none;
+        border-bottom-left-radius: inherit;
+        border-bottom-right-radius: inherit;
+        z-index: 2;
+        gap: 1rem;
         & > p:first-of-type {
             text-align: left;
+            font-family: "FugazOne", serif;
+            font-size: clamp(1.2rem, 1.8vw, 1.7rem);
+            color: #ffffff;
+            letter-spacing: 0.02em;
         }
         & > p:last-of-type {
             text-align: right;
+            font-family: "Alata", sans-serif;
+            font-size: clamp(0.9rem, 1.2vw, 1.15rem);
+            color: rgba(255, 255, 255, 0.8);
+            white-space: nowrap;
         }
         & > p {
-            font-family: "FugazOne",serif;
-            line-height: 1;
+            line-height: 1.15;
+            margin: 0;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.7);
         }
     }
 
-    /* .grid-element {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        border: 3px solid rgba(20, 20, 20, 0.5);
-        border-radius: 1.5rem;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-        padding: 0.7rem;
-        gap: 1vh;
-        font-family: inherit;
-        background: transparent;
-        -webkit-backdrop-filter: blur(7px);
-        backdrop-filter: blur(7px);
-        cursor: pointer;
-        &::before {
-            content: "";
-            z-index: -10;
-            position: absolute;
-            top: 0;
-            right: 0;
-            bottom: 0;
-            left: 0;
-            opacity: 0;
-            background: linear-gradient(45deg, #e81cff 0%, #40c9ff 100%);
-            transform: scale(1.01);
-            filter: blur(20px);
-            transition: opacity 0.3s;
-            border-radius: inherit;
-        }
-        &:hover::before {
-            opacity: 0.4;
-        }
-        @media (max-width: 600px) {
-            padding: 0.5rem;
-        }
-    } */
-    /* .grid-element:hover {
-        background: linear-gradient(-45deg, rgba(232, 28, 255, 0.2) 0%, rgba(64, 201, 255, 0.2) 100%);
-    } */
-
     .carousel-element {
-        /* height: 50vh; */
-        flex: 0 0 20vw;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
+        --card-w: clamp(420px, 32vw, 560px);
+        position: relative;
+        flex: 0 0 var(--card-w);
+        width: var(--card-w);
+        aspect-ratio: 3 / 2;
         justify-content: center;
-        border: 3px solid rgba(20, 20, 20, 0.5);
-        border-radius: 1.5rem;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-        padding: 0.7rem;
-        gap: 1vh;
-        scroll-snap-align: start;
-        font-family: inherit;
-        background: transparent;
-        -webkit-backdrop-filter: blur(7px);
-        backdrop-filter: blur(7px);
+        border: 1px solid rgba(255, 255, 255, 0.16);
+        border-radius: 18px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+        background: #0d111a;
         cursor: pointer;
-        &::before {
-            content: "";
-            z-index: -10;
-            position: absolute;
-            top: 0;
-            right: 0;
-            bottom: 0;
-            left: 0;
-            opacity: 0;
-            background: linear-gradient(45deg, #e81cff 0%, #40c9ff 100%);
-            transform: scale(1.01);
-            filter: blur(20px);
-            transition: opacity 0.3s;
-            border-radius: inherit;
+        overflow: hidden;
+        transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1),
+                    border-color 0.3s ease,
+                    box-shadow 0.3s ease;
+        &:hover {
+            transform: translateY(-6px) scale(1.015);
+            box-shadow: 0 22px 50px rgba(0, 0, 0, 0.65),
+                        0 0 35px rgba(46, 153, 240, 0.5),
+                        0 0 70px rgba(155, 39, 176, 0.28);
         }
-        &:hover::before {
-            opacity: 0.4;
+        &:hover .inset > img {
+            transform: scale(1.04);
         }
-        @media screen and (max-width: 1000px) {
-            flex: initial;
-            width: 100%;
-            min-height: 0;
-            transition: transform 0.25s ease;
-            &:nth-of-type(odd) {
-                grid-row: 1;
-                transform: translateX(0);
-            }
-            &:nth-of-type(even) {
-                grid-row: 2;
-                transform: translateX(50%) !important;
-            }
+        @media screen and (max-width: 700px) {
+            --card-w: clamp(290px, 78vw, 400px);
         }
     }
 </style>

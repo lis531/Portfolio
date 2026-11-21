@@ -6,6 +6,87 @@ import MySkills from "../components/MySkills.astro";
 import FooterSection from "../components/FooterSection.astro";
 import HeroLanding from "../components/HeroLanding.astro";
 import AboutTimeline from "../components/AboutTimeline.astro";
+
+const projectRows = [
+	{
+		direction: "marquee-left",
+		projects: [
+			{
+				title: "Borufi",
+				description: "It is my own music library (AKA Spotify). Made using Astro, TS and Firebase.",
+				date: "January 2024",
+				href: "https://github.com/lis531/borufi",
+				hrefTryOut: "",
+			},
+			{
+				title: "School Projects",
+				description: "Contains some of my smaller school projects yet when combined it is big enough to upload here. All made using JS.",
+				date: "2022 - 2024",
+				href: "https://github.com/lis531/schoolProjects",
+				hrefTryOut: "https://lis531.github.io/schoolProjects",
+			},
+			{
+				title: "TicTacToe",
+				description: "Simple tic-tac-toe game built with Vue and Vite.",
+				date: "November 2024",
+				href: "https://github.com/lis531/Tic-tac-toe",
+				hrefTryOut: "https://lis531-tic-tac-toe.vercel.app",
+			},
+		],
+	},
+	{
+		direction: "marquee-right",
+		projects: [
+			{
+				title: "TechNews",
+				description: "It is website created in js that fetches news from www.wired.com and lets you order them or select certain categories. Made as a school project using plain JS.",
+				date: "June 2023",
+				href: "https://github.com/lis531/TechNews",
+				hrefTryOut: "https://lis531.github.io/TechNews",
+			},
+			{
+				title: "Image Comparison",
+				description: "Website for quick image comparison built with Vue and Vite.",
+				date: "December 2024",
+				href: "https://github.com/lis531/image-compare",
+				hrefTryOut: "https://lis531-image-compare.vercel.app/",
+			},
+			{
+				title: "Discord Bot",
+				description: "Discord bot that can play music, queue songs, and more build with Python.",
+				date: "January 2025",
+				href: "https://github.com/lis531/DiscordBot",
+				hrefTryOut: "",
+			},
+		],
+	},
+	{
+		direction: "marquee-left",
+		projects: [
+			{
+				title: "Bargebo Guesser",
+				description: "A game where you guess the song that is currently playing built with React, Vite and Firebase.",
+				date: "Mar - Apr 2025",
+				href: "https://github.com/lis531/bargebo-guesser",
+				hrefTryOut: "https://bargebo-guesser.vercel.app/",
+			},
+			{
+				title: "Spotify Like Script",
+				description: "Script to like currently playing song with ease. Made with Python.",
+				date: "July 2025",
+				href: "https://github.com/lis531/spotify-liked-toggle",
+				hrefTryOut: "",
+			},
+			{
+				title: "Spotilyzer",
+				description: "A tool to analyze your Spotify data and generate insights about your music preferences.",
+				date: "August 2025",
+				href: "https://github.com/lis531/Spotilyzer",
+				hrefTryOut: "https://spotilyzer.vercel.app/",
+			},
+		],
+	},
+];
 ---
 
 <script>
@@ -38,111 +119,40 @@ import AboutTimeline from "../components/AboutTimeline.astro";
 		});
 	});
 
-	const images = document.querySelectorAll(".hidden");
-	images.forEach((img) => {
-		img.addEventListener("load", () => {
-			img
-				.animate(
-					[
-						{ opacity: 0, filter: "blur(10px)" },
-						{ opacity: 1, filter: "blur(1px)" },
-					],
-					500,
-				)
-				.finished.then(() => {
-					img.classList.remove("hidden");
+	document.querySelectorAll<HTMLElement>(".animate, mark").forEach((el) => observer.observe(el));
+
+	const light = document.querySelector(".light") as HTMLElement | null;
+	if (light) {
+		let mouseTicking = false;
+		let targetX = window.innerWidth / 2;
+		let targetY = window.innerHeight * 0.45;
+		window.addEventListener("mousemove", (e) => {
+			targetX = e.clientX;
+			targetY = e.clientY;
+			if (!mouseTicking) {
+				mouseTicking = true;
+				requestAnimationFrame(() => {
+					light.style.transform = `translate3d(${targetX}px, ${targetY}px, 0)`;
+					mouseTicking = false;
 				});
-		});
-	});
-
-	const carouselElements = document.querySelectorAll(
-		".carousel-element",
-	) as NodeListOf<HTMLElement>;
-	carouselElements.forEach((element) => {
-		observer.observe(element);
-	});
-
-	const animateElements = document.querySelectorAll(
-		".animate",
-	) as NodeListOf<HTMLElement>;
-	animateElements.forEach((element) => {
-		observer.observe(element);
-	});
-
-	const marks = document.querySelectorAll("mark");
-	marks.forEach((mark) => {
-		observer.observe(mark);
-	});
-
-	const light = document.querySelector(".light") as HTMLElement;
-	document.addEventListener("mousemove", (e) => {
-		const x = e.clientX / window.innerWidth;
-		const y = e.clientY / window.innerHeight;
-		light.style.background = `radial-gradient(circle at ${x * 100}% ${y * 100}%, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.7) 20%)`;
-	});
-
-	const parallax = document.querySelector(".parallax") as HTMLElement;
-	document.addEventListener("scroll", () => {
-		const scrollPosition = window.scrollY;
-		const yPos = scrollPosition * 0.3;
-		parallax.style.backgroundPosition = `center ${-yPos}px`;
-	});
-
-	const initHorizontalScroll = () => {
-		const section = document.querySelector(".horizontal-scroll-section") as HTMLElement | null;
-		const sticky = document.querySelector(".horizontal-scroll-sticky") as HTMLElement | null;
-		const track = document.querySelector(".carousel-horizontal") as HTMLElement | null;
-
-		if (!section || !sticky || !track) {
-			return;
-		}
-
-		let distance = 0;
-		let startX = 0;
-		let endX = 0;
-
-		const update = () => {
-			if (distance === 0) {
-				track.style.transform = "translateX(0)";
-				return;
 			}
-			const progress = Math.min(
-				Math.max(-section.getBoundingClientRect().top / distance, 0),
-				1,
-			);
+		}, { passive: true });
+	}
 
-			const x = startX - progress * distance;
-			track.style.transform = `translateX(${x}px)`;
-		};
-
-		const measure = () => {
-			const viewportWidth = sticky.clientWidth;
-			const trackWidth = track.scrollWidth;
-
-			if (trackWidth === 0) {
-				startX = 0;
-				endX = 0;
-				distance = 0;
-			} else {
-				// Move from fully off-screen on the right to fully off-screen on the left.
-				startX = viewportWidth;
-				endX = -trackWidth;
-				distance = startX - endX;
+	const parallax = document.querySelector(".parallax") as HTMLElement | null;
+	if (parallax) {
+		let scrollTicking = false;
+		window.addEventListener("scroll", () => {
+			if (!scrollTicking) {
+				scrollTicking = true;
+				requestAnimationFrame(() => {
+					const yOffset = (window.scrollY * 0.3) % 18;
+					parallax.style.transform = `translate3d(0, ${-yOffset}px, 0)`;
+					scrollTicking = false;
+				});
 			}
-
-			section.style.height = `${window.innerHeight + distance}px`;
-			update();
-		};
-
-		window.addEventListener("resize", measure);
-		window.addEventListener("scroll", update, { passive: true });
-
-		measure();
-	};
-
-	document.addEventListener("DOMContentLoaded", () => {
-		initHorizontalScroll();
-	});
+		}, { passive: true });
+	}
 </script>
 
 <Layout title="Borys Gajewski">
@@ -150,132 +160,95 @@ import AboutTimeline from "../components/AboutTimeline.astro";
 		<div class="parallax"></div>
 		<div class="overlay"></div>
 		<div class="light"></div>
-		<div class="blob blob-one" data-speed="0.05" data-drift="18" aria-hidden="true"></div>
-		<div class="blob blob-two" data-speed="-0.04" data-drift="24" aria-hidden="true"></div>
-		<div class="blob blob-three" data-speed="0.09" data-drift="16" aria-hidden="true"></div>
-		<div class="blob blob-four" data-speed="-0.07" data-drift="20" aria-hidden="true"></div>
-		<div class="blob blob-five" data-speed="0.12" data-drift="12" aria-hidden="true"></div>
-		<div class="blob blob-six" data-speed="-0.1" data-drift="15" aria-hidden="true"></div>
+		<div class="blobs-layer" aria-hidden="true">
+			<div class="blob blob-1"></div>
+			<div class="blob blob-2"></div>
+			<div class="blob blob-3"></div>
+			<div class="blob blob-4"></div>
+			<div class="blob blob-5"></div>
+			<div class="blob blob-6"></div>
+			<div class="blob blob-7"></div>
+			<div class="blob blob-8"></div>
+			<div class="blob blob-9"></div>
+			<div class="blob blob-10"></div>
+			<div class="blob blob-11"></div>
+			<div class="blob blob-12"></div>
+		</div>
 		<NavBar />
 		<HeroLanding />
 		<AboutTimeline />
-		<h1 class="animate">MY SKILLS</h1>
-		<MySkills
-			skills={[
-				{ logo: "/images/Logos/HTML5.svg", alt: "HTML5", level: 100 },
-				{ logo: "/images/Logos/CSS.svg", alt: "CSS", level: 95 },
-				{
-					logo: "/images/Logos/FramerMotion.svg",
-					alt: "Framer Motion",
-					level: 60,
-				},
-				{ logo: "/images/Logos/JS.svg", alt: "JS", level: 95 },
-				{ logo: "/images/Logos/TS.svg", alt: "TS", level: 85 },
-				{ logo: "/images/Logos/React.svg", alt: "React", level: 80 },
-				{ logo: "/images/Logos/Vue.svg", alt: "Vue", level: 50 },
-				{ logo: "/images/Logos/Astro.svg", alt: "Astro", level: 75 },
-				{ logo: "/images/Logos/Nodejs.svg", alt: "Node", level: 60 },
-				{ logo: "/images/Logos/Nextjs.svg", alt: "Next.js", level: 40 },
-				{ logo: "/images/Logos/Firebase.svg", alt: "Firebase", level: 65 },
-				{ logo: "/images/Logos/Python.svg", alt: "Python", level: 60 },
-				{ logo: "/images/Logos/CPP.svg", alt: "CPP", level: 15 },
-				{ logo: "/images/Logos/Csharp.svg", alt: "Csharp", level: 20 },
-				{ logo: "/images/Logos/Java.svg", alt: "Java", level: 5 },
-				{ logo: "/images/Logos/Unity.svg", alt: "Unity", level: 30 },
-				{ logo: "/images/Logos/Unreal.svg", alt: "Unreal", level: 1 },
-				{ logo: "/images/Logos/Figma.svg", alt: "Figma", level: 75 },
-			]}
-		/>
-		<div id="projects">
-			<section class="projects-carousel-section" aria-labelledby="projects-title">
-				<h1 id="projects-title">MY PROJECTS</h1>
-				<div class="projects-carousel-shell">
-					<div class="projects-carousel-viewport" tabindex="0">
-					<div class="carousel-horizontal">
-						<Project
-							title="Borufi"
-							description="It is my own music library (AKA Spotify). Made using Astro, TS and Firebase."
-							date="January 2024"
-							href="https://github.com/lis531/borufi"
-							hrefTryOut=""
-						/>
-						<Project
-							title="School Projects"
-							description="Contains some of my smaller school projects yet when combined it is big enough to upload here. All made using JS."
-							date="2022 - 2024"
-							href="https://github.com/lis531/schoolProjects"
-							hrefTryOut="https://lis531.github.io/schoolProjects"
-						/>
-						<Project
-							title="TicTacToe"
-							description="Simple tic-tac-toe game built with Vue and Vite."
-							date="November 2024"
-							href="https://github.com/lis531/Tic-tac-toe"
-							hrefTryOut="https://lis531-tic-tac-toe.vercel.app"
-						/>
-						<Project
-							title="TechNews"
-							description="It is website created in js that fetches news from www.wired.com and lets you order them or select certain categories. Made as a school project using plain JS."
-							date="June 2023"
-							href="https://github.com/lis531/TechNews"
-							hrefTryOut="https://lis531.github.io/TechNews"
-						/>
-						<Project
-							title="Image Comparison"
-							description="Website for quick image comparison built with Vue and Vite."
-							date="December 2024"
-							href="https://github.com/lis531/image-compare"
-							hrefTryOut="https://lis531-image-compare.vercel.app/"
-						/>
-						<Project
-							title="Discord Bot"
-							description="Discord bot that can play music, queue songs, and more build with Python."
-							date="January 2025"
-							href="https://github.com/lis531/DiscordBot"
-							hrefTryOut=""
-						/>
-						<Project
-							title="Bargebo Guesser"
-							description="A game where you guess the song that is currently playing built with React, Vite and Firebase."
-							date="Mar - Apr 2025"
-							href="https://github.com/lis531/bargebo-guesser"
-							hrefTryOut="https://bargebo-guesser.vercel.app/"
-						/>
-						<Project
-							title="Spotify Like Script"
-							description="Script to like currently playing song with ease. Made with Python."
-							date="July 2025"
-							href="https://github.com/lis531/spotify-liked-toggle"
-							hrefTryOut=""
-						/>
-						<!-- add photos -->
-						<Project
-							title="Spotilyzer"
-							description="A tool to analyze your Spotify data and generate insights about your music preferences."
-							date="August 2025"
-							href="https://github.com/lis531/Spotilyzer"
-							hrefTryOut="https://spotilyzer.vercel.app/"
-						/>
-						<!-- add photos -->
-						<!-- <Project
-							title="Borufi Remake"
-							description='A remake of my music library (AKA Spotify) with new design and features. Made using Astro, TS and Firebase.'
-							date="Jun - Sep 2025"
-							href="https://github.com/lis531/borufi-remake"
-							hrefTryOut="https://borufi.netlify.app"
-						/> -->
-						<!-- add photos -->
-					</div>
-				</div>
-				</div>
-			</section>
-		</div>
 		<div class="space">
-			<h1 class="animate" id="contact">CONTACT</h1>
+			<div class="section-header">
+				<p class="kicker animate">SKILLS / TECHNOLOGIES / TOOLS</p>
+				<h1 class="animate">MY SKILLS</h1>
+			</div>
+			<MySkills
+				skills={[
+					{ logo: "/images/Logos/HTML5.svg", alt: "HTML5", level: 100 },
+					{ logo: "/images/Logos/CSS.svg", alt: "CSS", level: 95 },
+					{ logo: "/images/Logos/FramerMotion.svg", alt: "Framer Motion", level: 60 },
+					{ logo: "/images/Logos/JS.svg", alt: "JS", level: 95 },
+					{ logo: "/images/Logos/TS.svg", alt: "TS", level: 85 },
+					{ logo: "/images/Logos/React.svg", alt: "React", level: 80 },
+					{ logo: "/images/Logos/Vue.svg", alt: "Vue", level: 50 },
+					{ logo: "/images/Logos/Astro.svg", alt: "Astro", level: 75 },
+					{ logo: "/images/Logos/Nodejs.svg", alt: "Node", level: 60 },
+					{ logo: "/images/Logos/Nextjs.svg", alt: "Next.js", level: 40 },
+					{ logo: "/images/Logos/Firebase.svg", alt: "Firebase", level: 65 },
+					{ logo: "/images/Logos/Python.svg", alt: "Python", level: 60 },
+					{ logo: "/images/Logos/CPP.svg", alt: "CPP", level: 15 },
+					{ logo: "/images/Logos/Csharp.svg", alt: "Csharp", level: 20 },
+					{ logo: "/images/Logos/Java.svg", alt: "Java", level: 5 },
+					{ logo: "/images/Logos/Unity.svg", alt: "Unity", level: 30 },
+					{ logo: "/images/Logos/Unreal.svg", alt: "Unreal", level: 1 },
+					{ logo: "/images/Logos/Figma.svg", alt: "Figma", level: 75 },
+				]}
+			/>
+		</div>
+		<section id="projects" class="col-center" aria-labelledby="projects-title">
+			<div class="section-header projects-marquee-header">
+				<p class="kicker animate">SELECTED WORK / SHOWCASE</p>
+				<h1 id="projects-title" class="animate">MY PROJECTS</h1>
+			</div>
+			<div class="marquee-container">
+				{projectRows.map((row) => (
+					<div class="marquee-row">
+						<div class={`marquee-track ${row.direction}`}>
+							<div class="marquee-group">
+								{row.projects.map((p) => <Project {...p} />)}
+								{row.projects.map((p) => <Project {...p} isDuplicate />)}
+							</div>
+							<div class="marquee-group" aria-hidden="true">
+								{row.projects.map((p) => <Project {...p} isDuplicate />)}
+								{row.projects.map((p) => <Project {...p} isDuplicate />)}
+							</div>
+						</div>
+					</div>
+				))}
+			</div>
+		</section>
+		<div class="space">
+			<div class="section-header" id="contact">
+				<p class="kicker animate">GET IN TOUCH / CONNECT / SOCIALS</p>
+				<h1 class="animate">CONTACT</h1>
+			</div>
 			<div class="contact">
-				<a class="animate" href="https://x.com/Lisu22361857">Twitter</a>
-				<a class="animate" href="mailto:borys.gajewski7@gmail.com">Email</a>
-				<a class="animate" href="https://github.com/lis531/">Github</a>
+				<a class="glass-btn contact-btn animate" href="https://x.com/Lisu22361857" target="_blank" rel="noopener">
+					<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+					Twitter
+				</a>
+				<a class="glass-btn contact-btn animate" href="mailto:borys.gajewski7@gmail.com">
+					<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+					Email
+				</a>
+				<a class="glass-btn contact-btn animate" href="https://github.com/lis531/" target="_blank" rel="noopener">
+					<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+					Github
+				</a>
+				<a class="glass-btn contact-btn animate contact-cv-btn" href="/Borys_Gajewski_CV.pdf" target="_blank" rel="noopener" download>
+					<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+					Download CV
+				</a>
 			</div>
 		</div>
 		<FooterSection />
@@ -283,135 +256,138 @@ import AboutTimeline from "../components/AboutTimeline.astro";
 </Layout>
 
 <style>
-	.parallax {
-		position: fixed;
-		top: 0;
-		left: 0;
-		width: 100%;
-		height: 100%;
-		/* background-image: url("/images/Background/background.avif"); */
-		--pattern-foreground: color-mix(in oklab, white 32%, transparent);
-		background-image: radial-gradient(var(--pattern-foreground) 1.5px, transparent 1.5px);
-		background-size: 12px 12px;
-		background-repeat: repeat;
-		background-position: 0 0;
-		filter: none;
-		z-index: -102;
-		@media (max-width: 1200px) {
-			background-position: 0 !important;
-		}
-	}
-	.overlay {
-		position: fixed;
-		top: 0;
-		left: 0;
-		width: 100%;
-		height: 100%;
-		pointer-events: none;
-		background: linear-gradient(
-			to right,
-			rgba(0, 0, 0, 0.7),
-			rgba(0, 0, 0, 0.3) 50%,
-			rgba(0, 0, 0, 0.7)
-		);
-		z-index: -101;
-		@media (max-width: 1200px) {
-			background: linear-gradient(
-				to right,
-				rgba(0, 0, 0, 0.7),
-				rgba(0, 0, 0, 0) 50%,
-				rgba(0, 0, 0, 0.7)
-			);
-		}
-	}
+	.parallax,
+	.overlay,
 	.light {
 		position: fixed;
-		top: 0;
 		left: 0;
-		width: 100%;
-		height: 100%;
 		pointer-events: none;
-		background: radial-gradient(circle at 50% 45%, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.7) 20%);
+	}
+	.overlay,
+	.blobs-layer {
+		inset: 0;
+	}
+	.parallax {
+		top: -36px;
+		width: 100%;
+		height: calc(100% + 72px);
+		--pattern-foreground: color-mix(in oklab, white 22%, transparent);
+		background-image: radial-gradient(var(--pattern-foreground) 1.5px, transparent 1.5px);
+		background-size: 18px 18px;
+		z-index: -102;
+		will-change: transform;
+		transform: translate3d(0, 0, 0);
+	}
+	.overlay {
+		background: linear-gradient(
+			to right,
+			rgba(0, 0, 0, 0.82),
+			rgba(0, 0, 0, 0.45) 50%,
+			rgba(0, 0, 0, 0.82)
+		);
+		z-index: -101;
+	}
+	.light {
+		top: 0;
+		width: 520px;
+		height: 520px;
+		margin: -260px 0 0 -260px;
+		border-radius: 50%;
+		background: radial-gradient(
+			circle at 50% 50%,
+			rgba(255, 255, 255, 0.10) 0%,
+			rgba(46, 153, 240, 0.14) 25%,
+			rgba(138, 93, 255, 0.08) 50%,
+			transparent 70%
+		);
+		box-shadow: 0 0 90px 30px rgba(0, 0, 0, 0.8), 0 0 0 9999px rgba(0, 0, 0, 0.8);
 		z-index: -100;
-		@media (max-width: 1200px) {
+		will-change: transform;
+		transform: translate3d(50vw, 45vh, 0);
+	}
+	@media (max-width: 1200px) {
+		.parallax {
+			top: 0;
+			height: 100%;
+			transform: none !important;
+		}
+		.overlay {
+			background: linear-gradient(
+				to right,
+				rgba(0, 0, 0, 0.82),
+				rgba(0, 0, 0, 0.25) 50%,
+				rgba(0, 0, 0, 0.82)
+			);
+		}
+		.light {
 			display: none;
 		}
 	}
-	.blob {
+	.blobs-layer {
 		position: absolute;
-		border-radius: 999px;
-		filter: blur(48px) saturate(135%);
-		opacity: 0.28;
+		overflow: hidden;
 		pointer-events: none;
 		z-index: -99;
-		animation: blobFloat 14s ease-in-out infinite alternate;
-		transform: translate3d(
-			var(--blob-mouse-x, 0px),
-			calc(var(--blob-scroll, 0px) + var(--blob-mouse-y, 0px)),
-			0
-		) scale(1);
+		contain: strict;
 	}
-	.blob-one {
-		top: 11vh;
-		right: 5vw;
-		width: clamp(180px, 24vw, 400px);
-		height: clamp(180px, 24vw, 400px);
-		background: radial-gradient(circle at 30% 30%, rgba(46, 153, 240, 0.9), rgba(46, 153, 240, 0));
+	.blob {
+		position: absolute;
+		aspect-ratio: 1;
+		will-change: transform;
+		filter: blur(16px);
+		background: radial-gradient(
+			closest-side circle at 50% 50%,
+			rgb(var(--c) / var(--a, 0.25)) 0%,
+			rgb(var(--c) / calc(var(--a, 0.25) * 0.64)) 25%,
+			rgb(var(--c) / calc(var(--a, 0.25) * 0.28)) 50%,
+			rgb(var(--c) / calc(var(--a, 0.25) * 0.072)) 75%,
+			rgb(var(--c) / 0) 92%,
+			transparent 100%
+		);
+		animation: blobFloat var(--dur, 25s) ease-in-out infinite alternate;
 	}
-	.blob-two {
-		top: 72vh;
-		left: 4vw;
-		width: clamp(200px, 28vw, 420px);
-		height: clamp(200px, 28vw, 420px);
-		background: radial-gradient(circle at 65% 35%, rgba(155, 39, 176, 0.9), rgba(155, 39, 176, 0));
-		animation-duration: 18s;
+	.blob:nth-child(even) {
+		animation-name: blobFloatAlt;
 	}
-	.blob-three {
-		top: 45vh;
-		left: 18vw;
-		width: clamp(140px, 18vw, 310px);
-		height: clamp(140px, 18vw, 310px);
-		background: radial-gradient(circle at 45% 40%, rgba(255, 170, 88, 0.8), rgba(255, 170, 88, 0));
-		animation-duration: 16s;
-	}
-	.blob-four {
-		top: 103vh;
-		right: 13vw;
-		width: clamp(170px, 22vw, 360px);
-		height: clamp(170px, 22vw, 360px);
-		background: radial-gradient(circle at 50% 35%, rgba(95, 209, 255, 0.72), rgba(95, 209, 255, 0));
-		animation-duration: 20s;
-	}
-	.blob-five {
-		top: 172vh;
-		left: 8vw;
-		width: clamp(190px, 25vw, 390px);
-		height: clamp(190px, 25vw, 390px);
-		background: radial-gradient(circle at 40% 30%, rgba(232, 28, 255, 0.62), rgba(232, 28, 255, 0));
-		animation-duration: 22s;
-	}
-	.blob-six {
-		top: 252vh;
-		right: 2vw;
-		width: clamp(180px, 24vw, 380px);
-		height: clamp(180px, 24vw, 380px);
-		background: radial-gradient(circle at 35% 35%, rgba(0, 182, 121, 0.64), rgba(0, 182, 121, 0));
-		animation-duration: 17s;
-	}
+	.blob-1, .blob-5, .blob-8, .blob-12 { --c: 46 153 240; }
+	.blob-2, .blob-6, .blob-9, .blob-11 { --c: 155 39 176; }
+	.blob-3, .blob-7, .blob-10 { --c: 26 170 226; }
+	.blob-4 { --c: 138 93 255; }
+
+	.blob-1 { top: 2%; right: 3vw; width: clamp(260px, 30vw, 480px); --a: 0.28; --dur: 22s; }
+	.blob-2 { top: 11%; left: 2vw; width: clamp(280px, 32vw, 500px); --a: 0.26; --dur: 26s; }
+	.blob-3 { top: 21%; right: 7vw; width: clamp(240px, 26vw, 440px); }
+	.blob-4 { top: 30%; left: 4vw; width: clamp(260px, 28vw, 460px); --a: 0.24; --dur: 24s; }
+	.blob-5 { top: 39%; right: 5vw; width: clamp(240px, 26vw, 420px); --a: 0.23; --dur: 28s; }
+	.blob-6 { top: 49%; left: 3vw; width: clamp(280px, 30vw, 480px); --dur: 27s; }
+	.blob-7 { top: 57%; right: 4vw; width: clamp(260px, 28vw, 460px); --a: 0.24; --dur: 23s; }
+	.blob-8 { top: 67%; left: 6vw; width: clamp(290px, 32vw, 520px); }
+	.blob-9 { top: 75%; right: 4vw; width: clamp(300px, 34vw, 540px); --a: 0.24; --dur: 29s; }
+	.blob-10 { top: 83%; left: 3vw; width: clamp(280px, 30vw, 500px); --a: 0.23; --dur: 24s; }
+	.blob-11 { top: 90%; right: 12vw; width: clamp(280px, 30vw, 480px); --dur: 26s; }
+	.blob-12 { top: 94%; left: 10vw; width: clamp(260px, 28vw, 460px); --dur: 28s; }
+
 	@keyframes blobFloat {
-		from {
-			transform: translate3d(
-				var(--blob-mouse-x, 0px),
-				calc(var(--blob-scroll, 0px) + var(--blob-mouse-y, 0px)),
-				0
-			) scale(1);
+		0% {
+			transform: translate3d(0, 0, 0) scale(1);
 		}
-		to {
-			transform: translate3d(
-				var(--blob-mouse-x, 0px),
-				calc(var(--blob-scroll, 0px) + var(--blob-mouse-y, 0px) - 24px),
-				0
-			) scale(1.08);
+		50% {
+			transform: translate3d(24px, -32px, 0) scale(1.06);
+		}
+		100% {
+			transform: translate3d(-18px, -50px, 0) scale(0.97);
+		}
+	}
+
+	@keyframes blobFloatAlt {
+		0% {
+			transform: translate3d(0, 0, 0) scale(1);
+		}
+		50% {
+			transform: translate3d(-24px, 30px, 0) scale(1.05);
+		}
+		100% {
+			transform: translate3d(20px, 16px, 0) scale(0.98);
 		}
 	}
 	mark {
@@ -440,176 +416,136 @@ import AboutTimeline from "../components/AboutTimeline.astro";
 		}
 	}
 	#projects {
-		padding-top: 15vh;
-		margin-top: 20vh;
+		margin-top: 10vh;
+		scroll-margin-top: 6rem;
+		width: 100%;
+		position: relative;
+		overflow: hidden;
+		padding-bottom: 6rem;
+	}
+
+	.projects-marquee-header {
+		margin-bottom: clamp(2rem, 4svh, 3.5rem);
+		z-index: 5;
+	}
+
+	.marquee-container {
+		position: relative;
+		width: 100%;
 		display: flex;
 		flex-direction: column;
-		align-items: center;
-		width: 100%;
-		@media screen and (max-width: 600px) {
-			width: 100%;
-		}
+		gap: clamp(0.5rem, 1.2vw, 0.9rem);
 	}
-	.projects-carousel-section {
+
+	.marquee-container::before,
+	.marquee-container::after {
+		content: "";
+		position: absolute;
+		top: 0;
+		bottom: 0;
+		width: clamp(50px, 12vw, 180px);
+		z-index: 6;
+		pointer-events: none;
+	}
+
+	.marquee-container::before {
+		left: 0;
+		background: linear-gradient(to right, #000000 0%, rgba(0, 0, 0, 0.8) 40%, transparent 100%);
+	}
+
+	.marquee-container::after {
+		right: 0;
+		background: linear-gradient(to left, #000000 0%, rgba(0, 0, 0, 0.8) 40%, transparent 100%);
+	}
+
+	.marquee-row {
 		width: 100%;
-		min-height: 100vh;
+		overflow: hidden;
+		padding-block: 54px;
+		margin-block: -40px;
+	}
+
+	.marquee-track,
+	.marquee-group {
 		display: flex;
-		flex-direction: column;
-		justify-content: center;
-		align-items: center;
-		gap: 1.8rem;
-		box-sizing: border-box;
+		flex-shrink: 0;
+		width: max-content;
 	}
-	.projects-carousel-shell {
-		position: relative;
-		width: min(100vw, 1500px);
+
+	.marquee-track {
+		will-change: transform;
 	}
-	.projects-carousel-viewport {
-		width: 100%;
-		overflow: visible;
-		scrollbar-width: none;
-		padding: 1.5rem 1rem 6rem;
-		box-sizing: border-box;
-		perspective: 1500px;
-		perspective-origin: center 42%;
+
+	.marquee-group {
+		gap: clamp(1rem, 2vw, 1.5rem);
+		padding-right: clamp(1rem, 2vw, 1.5rem);
 	}
-	.projects-carousel-viewport::-webkit-scrollbar {
-		display: none;
-	}
-	/* .grid {
-		display: grid;
-		grid-template-columns: repeat(5, 220px);
-		grid-template-rows: repeat(12, 220px);
-		max-width: 1250px;
-		gap: 0.7em 0.7em;
-		grid-template-areas:
-			"Borufi Borufi Borufi SchoolProjects SchoolProjects"
-			"Borufi Borufi Borufi SchoolProjects SchoolProjects"
-			"TicTacToe TicTacToe TechNews TechNews TechNews"
-			"TicTacToe TicTacToe TechNews TechNews TechNews"
-			"TicTacToe TicTacToe ImageComparison ImageComparison ImageComparison"
-			"DiscordBot DiscordBot ImageComparison ImageComparison ImageComparison"
-			"DiscordBot DiscordBot BargeboGuesser BargeboGuesser BargeboGuesser"
-			"DiscordBot DiscordBot BargeboGuesser BargeboGuesser BargeboGuesser"
-			"Spotilyzer Spotilyzer Spotilyzer SpotifyLikeScript SpotifyLikeScript"
-			"Spotilyzer Spotilyzer Spotilyzer SpotifyLikeScript SpotifyLikeScript"
-			". . . SpotifyLikeScript SpotifyLikeScript";
-		@media (max-width: 900px) {
-			grid-template-areas:
-				"Borufi"
-				"SchoolProjects"
-				"TechNews"
-				"TicTacToe"
-				"ImageComparison"
-				"DiscordBot"
-				"BargeboGuesser"
-				"SpotifyLikeScript"
-				"Spotilyzer";
-			grid-template-rows: repeat(5, 440px);
-			grid-template-columns: 1fr;
-			margin: 0 3px;
+
+	@media (hover: hover) and (min-width: 821px) {
+		.marquee-row:hover .marquee-track,
+		.marquee-track:hover {
+			animation-play-state: paused !important;
 		}
-		@media screen and (max-width: 600px) {
-			grid-template-rows: auto;
-		}
-		@media (min-width: 1000px) and (max-width: 1920px) {
-			grid-template-columns: repeat(5, 190px);
-			grid-template-rows: repeat(12, 190px);
-		}
-	} */
-	.carousel-horizontal {
-		height: clamp(560px, 70vh, 740px);
-		position: relative;
-		width: min(100%, 1320px);
-		margin: 0 auto;
 	}
-	.carousel-horizontal::-webkit-scrollbar {
-		display: none;
+
+	.marquee-left,
+	.marquee-right {
+		animation: marqueeLeft 40s linear infinite;
 	}
+
+	.marquee-right {
+		animation-direction: reverse;
+	}
+
+	@keyframes marqueeLeft {
+		0% {
+			transform: translateX(0);
+		}
+		100% {
+			transform: translateX(-50%);
+		}
+	}
+
 	@media screen and (max-width: 700px) {
-		.projects-carousel-section {
-			gap: 0.8rem;
+		#projects {
+			margin-top: 5svh;
+			padding-bottom: 3rem;
 		}
-		.projects-carousel-viewport {
-			padding-block: 1.5rem 3rem;
-			padding-inline: max(0.8rem, calc((100vw - min(84vw, 360px)) / 2));
+
+		.marquee-row {
+			padding-block: 36px;
+			margin-block: -24px;
 		}
-		.carousel-horizontal {
-			height: 520px;
-			gap: 1rem;
+
+		.marquee-left,
+		.marquee-right {
+			animation-duration: 25s;
 		}
+	}
+	#contact {
+		scroll-margin-top: 6rem;
 	}
 	.contact {
 		display: flex;
 		justify-content: center;
-		gap: 5vw;
+		gap: clamp(1.2rem, 3vw, 2rem);
 		padding: 1rem;
-		@media screen and (max-width: 1000px) {
+	}
+	.contact-btn.contact-cv-btn {
+		display: none !important;
+	}
+	@media screen and (max-width: 820px) {
+		.contact {
 			flex-direction: column;
 			width: 100%;
+			align-items: center;
 		}
-	}
-	.contact > a {
-		text-decoration: none;
-		color: white;
-		border: 2px solid rgba(72, 72, 72, 1);
-		-webkit-backdrop-filter: blur(7px);
-		backdrop-filter: blur(7px);
-		border-radius: 90pt;
-		padding: 0.5rem 5rem;
-		text-align: center;
-		overflow: hidden;
-		box-shadow:
-			inset 0 0 15px 0 rgba(72, 72, 72, 0.5),
-			0 0 15px 0 rgba(72, 72, 72, 0.5);
-		transition: box-shadow 0.3s;
-		&::before {
-			position: absolute;
-			content: "";
-			bottom: -60%;
-			left: 20%;
-			height: 70%;
-			border-radius: 100%;
-			width: 60%;
-			background-color: rgba(255, 255, 255, 0.4);
-			filter: blur(10px);
+		.contact .contact-btn {
+			width: min(280px, 85vw);
+			padding: 1.2rem 1.5rem;
 		}
-		&:hover {
-			box-shadow:
-				inset 0 0 20px 0px rgba(72, 72, 72, 0.8),
-				0 0 20px 5px rgba(72, 72, 72, 0.8);
-		}
-		@media screen and (max-width: 1000px) {
-			width: auto;
-			margin: 0 2rem;
-		}
-		@media (min-width: 1000px) and (max-width: 1920px) {
-			padding: 0.5rem 3rem;
-		}
-	}
-	.space {
-		&:has(#contact) {
-			height: 95lvh;
-		}
-		height: 100lvh;
-		display: flex;
-		flex-direction: column;
-		justify-content: center;
-		align-items: center;
-		& > p {
-			margin: 0;
-			width: 55vw;
-		}
-		@media (max-width: 600px) {
-			& > p {
-				width: 90vw;
-			}
-			width: 90%;
-		}
-		@media (max-width: 1200px) {
-			& > p {
-				width: 80vw;
-			}
+		.contact-btn.contact-cv-btn {
+			display: flex !important;
 		}
 	}
 </style>

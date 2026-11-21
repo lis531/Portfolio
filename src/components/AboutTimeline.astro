@@ -47,234 +47,302 @@ const events: TimelineEvent[] = [
 ---
 
 <script>
-	import { gsap } from "gsap";
-	import { ScrollTrigger } from "gsap/ScrollTrigger";
+	const clamp = (value: number, min: number, max: number) => Math.min(Math.max(value, min), max);
 
-	gsap.registerPlugin(ScrollTrigger);
+	const initTimelines = () => {
+		const timelines = [...document.querySelectorAll(".about-timeline")] as HTMLElement[];
 
-	const timelineSections = document.querySelectorAll(".about-timeline");
+		timelines.forEach((timeline) => {
+			const shell = timeline.querySelector(".timeline-shell") as HTMLElement | null;
+			const rail = timeline.querySelector(".timeline-rail") as HTMLElement | null;
+			const progress = timeline.querySelector(".timeline-progress") as HTMLElement | null;
+			const dots = [...timeline.querySelectorAll(".dot")] as HTMLElement[];
 
-	timelineSections.forEach((section) => {
-		const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-		if (reduceMotion) {
-			return;
-		}
+			if (!shell || !rail || !progress || dots.length === 0) return;
 
-		const shell = section.querySelector(".timeline-shell");
-		const heading = section.querySelector("#timeline-title");
-		const items = section.querySelectorAll(".timeline-item");
-		const dots = section.querySelectorAll(".dot");
-		const progressLine = section.querySelector(".timeline-progress");
-		const rail = section.querySelector(".timeline-rail") as HTMLElement | null;
+			let start = 0;
+			let height = 0;
+			let dotCenters: number[] = [];
+			let lineLead = 0;
 
-		if (!shell || !heading || items.length === 0 || !progressLine || !rail) {
-			return;
-		}
+			const measure = () => {
+				const shellRect = shell.getBoundingClientRect();
+				dotCenters = dots.map((dot) => {
+					const dotRect = dot.getBoundingClientRect();
+					return dotRect.top - shellRect.top + dotRect.height / 2;
+				});
+				start = dotCenters[0] || 0;
+				const end = dotCenters[dotCenters.length - 1] || 0;
+				height = Math.max(end - start, 0);
+				lineLead = (dots[0]?.offsetHeight || 0) / 2;
 
-		const measureRail = () => {
-			const shellRect = shell.getBoundingClientRect();
-			const dotCenters = Array.from(dots).map((dot) => {
-				const rect = dot.getBoundingClientRect();
-				return rect.top - shellRect.top + rect.height / 2;
-			});
+				rail.style.top = `${start}px`;
+				rail.style.height = `${height}px`;
+			};
 
-			const firstCenter = dotCenters[0] || 0;
-			const lastCenter = dotCenters[dotCenters.length - 1] || firstCenter;
-			rail.style.setProperty("--rail-top", `${firstCenter}px`);
-			rail.style.setProperty("--rail-bottom", `${Math.max(shellRect.height - lastCenter, 0)}px`);
-		};
+			const update = () => {
+				const shellRect = shell.getBoundingClientRect();
+				const scrollLine = window.innerHeight * 0.55 - shellRect.top - start;
+				progress.style.height = `${clamp(scrollLine + lineLead, 0, height)}px`;
 
-		measureRail();
-		window.addEventListener("resize", measureRail);
+				dots.forEach((dot, index) => {
+					const filled = scrollLine >= dotCenters[index] - start;
+					dot.classList.toggle("filled", filled);
+				});
+			};
 
-		const updateFilledDots = (progress: number) => {
-			if (dots.length === 1) {
-				dots[0].classList.toggle("dot--filled", progress >= 1);
-				return;
-			}
+			measure();
+			update();
 
-			dots.forEach((dot, index) => {
-				const threshold = index / (dots.length - 1);
-				dot.classList.toggle("dot--filled", progress + 0.01 >= threshold);
-			});
-		};
-	});
+			let ticking = false;
+			const onScroll = () => {
+				if (!ticking) {
+					requestAnimationFrame(() => {
+						update();
+						ticking = false;
+					});
+					ticking = true;
+				}
+			};
+
+			window.addEventListener("scroll", onScroll, { passive: true });
+			window.addEventListener("resize", () => {
+				measure();
+				onScroll();
+			}, { passive: true });
+		});
+	};
+
+	if (document.readyState === "complete") {
+		requestAnimationFrame(initTimelines);
+	} else {
+		window.addEventListener("load", () => {
+			requestAnimationFrame(initTimelines);
+		}, { once: true });
+	}
 </script>
 
-<section class="about-timeline" aria-labelledby="timeline-title">
-	<h1 id="timeline-title">ABOUT ME</h1>
-	<div class="timeline-shell">
-		<div class="timeline-rail" aria-hidden="true">
-			<div class="timeline-progress"></div>
+<section class="about-timeline space" id="about" aria-labelledby="timeline-title">
+	<div class="section-header about-heading">
+		<p class="kicker animate">ABOUT / EXPERIENCE / WAY OF WORKING</p>
+		<h1 id="timeline-title" class="animate">ABOUT ME</h1>
+	</div>
+	<div class="about-grid">
+		<p class="about-quote animate">
+			"Make it useful first. Then make it feel alive."
+		</p>
+		<div class="timeline-shell">
+			<div class="timeline-rail" aria-hidden="true">
+				<div class="timeline-progress"></div>
+			</div>
+
+			<ol class="timeline-list">
+				{events.map((event, index) => (
+					<li class="timeline-item">
+						<div class="dot" aria-hidden="true"></div>
+						<div class="content animate">
+							<div class="heading">
+								<span class="period">{event.period}</span>
+								<span class="event-index">0{index + 1}</span>
+							</div>
+							<div class="meta">
+								<h2>{event.title}</h2>
+								<p class="meta-text">{event.organization} / {event.location}</p>
+							</div>
+							<ul class="description">
+								{event.description.map((item) => (
+									<li>{item}</li>
+								))}
+							</ul>
+						</div>
+					</li>
+				))}
+			</ol>
 		</div>
-		<ol class="timeline-list">
-			{events.map((event) => (
-				<li class="timeline-item">
-					<div class="dot" aria-hidden="true"></div>
-					<div class="content">
-						<h3>{event.title}</h3>
-						<p class="meta">
-							{event.organization}
-							<br />
-							{event.period}
-							{event.location ? `, ${event.location}` : ""}
-						</p>
-						<ul class="description">
-							{event.description.map((item) => (
-								<li>{item}</li>
-							))}
-						</ul>
-					</div>
-				</li>
-			))}
-		</ol>
 	</div>
 </section>
 
 <style>
+	.about-grid {
+		width: min(1180px, 100%);
+		margin-inline: auto;
+		display: grid;
+		grid-template-columns: minmax(280px, 0.8fr) minmax(0, 1.2fr);
+		gap: clamp(1.2rem, 4vw, 3rem);
+		align-items: start;
+	}
+
 	.about-timeline {
-		--rail-column: 2.4rem;
-		--dot-size: 1.2rem;
-		--dot-radius: 0.6rem;
-		--heading-center-offset: clamp(0.66rem, 1.265vw, 1.045rem);
-		--timeline-gutter: 0.4rem;
 		width: min(96vw, 1100px);
-		padding: 0 0 8rem;
-		display: flex;
-    	flex-direction: column;
-    	align-items: center;
+		padding: 4rem 0 8rem;
+	}
+
+	.about-heading {
+		width: 100%;
 	}
 
 	.timeline-shell {
 		position: relative;
+		width: 100%;
 	}
 
 	.timeline-rail {
 		position: absolute;
-		left: calc(var(--timeline-gutter) + (var(--rail-column) / 2));
-		top: var(--rail-top, 0.65rem);
-		bottom: var(--rail-bottom, 0.7rem);
-		width: 2px;
-		transform: translateX(-50%);
-		background: linear-gradient(
-			180deg,
-			rgba(255, 255, 255, 0.14),
-			rgba(255, 255, 255, 0.3)
-		);
+		left: 13px;
+		width: 3px;
+		background: rgba(226, 235, 238, 0.1);
 		border-radius: 999px;
 	}
 
 	.timeline-progress {
 		width: 100%;
-		height: 100%;
-		transform-origin: top center;
-		background: linear-gradient(
-			180deg,
-			rgba(95, 209, 255, 0.95),
-			rgba(199, 86, 255, 0.8)
-		);
-		box-shadow: none;
+		background: #1aaae2;
 		border-radius: inherit;
+		box-shadow: 0 0 16px 2px rgba(47, 175, 214, 0.7);
 	}
 
 	.timeline-list {
-		list-style: none;
+		display: grid;
+		gap: clamp(1.4rem, 4vw, 2.4rem);
 		margin: 0;
-		padding: 0.6rem var(--timeline-gutter) 0.4rem;
-		display: flex;
-		flex-direction: column;
-		gap: 1.2rem;
+		padding: 0 0 0 4.25rem;
+		list-style: none;
+	}
+
+	.about-quote {
+		width: min(440px, 100%);
+		margin: 6rem 0 0 2rem;
+		color: rgba(226, 237, 238, 0.58);
+		font-family: "Dancing Script", "Caveat", "Segoe Script", cursive;
+		rotate: -2deg;
+		font-size: clamp(1.7rem, 3.2vw, 3rem);
+		font-style: italic;
+		line-height: 0.95;
+		text-align: left;
 	}
 
 	.timeline-item {
-		--content-pad-y: 1rem;
 		position: relative;
-		display: grid;
-		grid-template-columns: var(--rail-column) 1fr;
-		gap: 0.8rem;
-		align-items: start;
 	}
 
 	.dot {
-		width: var(--dot-size);
-		height: var(--dot-size);
-		justify-self: center;
-		border-radius: 50%;
-		background: transparent;
-		border: 2px solid #8ce6ff;
-		box-shadow:
-			0 0 0 8px #000,
-			0 0 10px rgba(140, 230, 255, 0.35);
+		position: absolute;
+		top: 50%;
+		left: -4.25rem;
+		width: 28px;
+		height: 28px;
+		border: 2px solid rgba(226, 236, 238, 0.78);
+		border-radius: 8px;
+		background: #0a0d12;
+		box-shadow: 0 0 8px rgba(229, 232, 238, 0.2);
+		transform: translateY(-50%);
 		z-index: 1;
-		transition: background-color 0.25s ease, box-shadow 0.25s ease;
-		align-self: start;
-		margin-top: calc(var(--content-pad-y) + var(--heading-center-offset) - var(--dot-radius));
+		transition: border-color 0.25s ease, box-shadow 0.25s ease, background-color 0.25s ease;
 	}
 
-	.dot--filled {
-		background-color: #8ce6ff;
-		box-shadow:
-			0 0 0 8px #000,
-			0 0 14px rgba(140, 230, 255, 0.6);
+	.dot.filled {
+		border-color: #1aaae2;
+		background-color: #1aaae2;
+		box-shadow: 0 0 16px rgba(47, 175, 214, 0.75);
 	}
 
 	.content {
-		padding: var(--content-pad-y) 1.2rem;
+		padding: clamp(1.15rem, 2.2vw, 1.55rem);
 		border-radius: 1rem;
-		background: linear-gradient(
-			140deg,
-			rgba(255, 255, 255, 0.08),
-			rgba(255, 255, 255, 0.03)
-		);
 		border: 1px solid rgba(255, 255, 255, 0.2);
-		backdrop-filter: blur(7px);
-		-webkit-backdrop-filter: blur(7px);
 		box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+		background:
+			linear-gradient(90deg, rgba(226, 236, 238, 0.05) 1px, transparent 1px),
+			linear-gradient(0deg, rgba(226, 236, 238, 0.05) 1px, transparent 1px),
+			rgba(10, 13, 15, 0.82);
+		background-size: 38px 38px;
 	}
 
-	h3 {
-		margin: 0;
+	.heading {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		gap: 0.5rem;
+	}
+
+	.period {
+		padding: 0.5rem 0.75rem;
+		border: 1px solid rgba(226, 235, 238, 0.13);
+		border-radius: 8px;
+		color: #1aaae2;
+		background: rgba(47, 175, 214, 0.08);
+		font-size: 0.9rem;
+		line-height: 1;
+	}
+
+	.event-index {
+		color: rgba(226, 235, 238, 0.22);
 		font-family: "FugazOne";
+		font-size: clamp(1.8rem, 4vw, 3.4rem);
+		line-height: 0.8;
+	}
+
+	.meta-text {
+		color: rgba(255, 255, 255, 0.72);
+		font-size: 1rem;
+		margin: 0;
+		text-align: left;
+	}
+
+	h2 {
+		margin: 0;
 		font-size: clamp(1.2rem, 2.3vw, 1.9rem);
-		text-transform: uppercase;
 	}
 
 	.meta {
 		margin: 0.35rem 0 0;
-		text-align: left;
 		font-size: clamp(0.95rem, 1.7vw, 1.15rem);
 		opacity: 0.85;
 		line-height: 1.4;
 	}
 
 	.description {
-		margin: 0.8rem 0 0;
-		padding-left: 1.2rem;
-		text-align: left;
-		font-size: clamp(1rem, 1.9vw, 1.3rem);
-		line-height: 1.45;
-		width: auto;
+		padding-left: 1.1rem;
+		margin-top: 0.9rem;
+		font-family: "Albert Sans";
+		font-size: 1rem;
+		line-height: 1.55;
+		color: rgba(255, 255, 255, 0.86);
 	}
 
 	.description > li {
 		margin: 0.35rem 0;
 	}
 
-	@media (max-width: 700px) {
+	@media (max-width: 768px) {
 		.about-timeline {
-			--rail-column: 1.7rem;
-			--dot-size: 0.95rem;
-			--dot-radius: 0.475rem;
-			--timeline-gutter: 0.25rem;
-			padding-bottom: 5rem;
+			width: 100% !important;
+			padding: 3rem 1rem 5rem;
 		}
 
-		.timeline-item {
-			--content-pad-y: 0.85rem;
+		.about-heading {
+			margin-bottom: 2rem;
+		}
+
+		.about-grid {
+			grid-template-columns: 1fr;
+			gap: 0;
+		}
+
+		.about-quote {
+			display: none !important;
+		}
+
+		.timeline-list {
+			padding: 0 0 0 3.5rem;
+		}
+
+		.dot {
+			left: -3.5rem;
 		}
 
 		.content {
-			padding: 0.85rem 0.9rem;
+			padding: 0.95rem 1rem;
 		}
 	}
 </style>
